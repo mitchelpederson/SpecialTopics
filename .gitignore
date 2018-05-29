@@ -1,0 +1,136 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+!data/*/*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+!data/*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+#codedatabases
+*.db
+*.sdf
+*.opensdf
+
+# =========================
+# Build Folder
+build/
+src/.vs/
+
+# =========================
+# Operating System Files
+# =========================
+
+# OSX
+# =========================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+# =========================
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+*.db
+*.opendb
+*.history
+data/log/
+*.suo
+*.TMP
+data/screenshot/
+*.log
+data/config/user.config
+Asteroids3D/Temporary/
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/fe3822ba9c189fd5/MATRIX44.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/ef20ec3bdbc2a8a6/FRAMEBUFFER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/ecd881decbc855a8/DEBUGRENDER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/e568628962fe751d/FIRSTPERSONCAMERA.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/e11f3fa5cbd6948/MESH.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/dc00e4fd72873689/RENDERBUFFER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/dacfc2ae5e0c60c1/ENTITY.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/d353253172b3a685/ENTITY.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/6cb4ee0680057068/SHIP.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/52cafda4be9af95c/TEXTURE.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/5163c0d90ef72369/GAMEOBJECT.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/50188758dbd2d9f0/MATERIAL.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/4fcd01b8ba8777a4/BULLET.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/4dc8621cbfeff8c9/COMMAND.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/46fb5e3c914bcf1b/AUDIOSYSTEM.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/3ce5649121e55ce9/MESHBUILDER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/359db630361c9961/TRANSFORM.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/34fc1ebcf464a8c6/RENDERER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/215459814e684997/FORWARDRENDERPATH.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/2086f935eeebdd04/XBOXCONTROLLER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/d25f83e8bf938a93/RENDERABLE.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/c9b9141410973e37/BULLET.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/c6c2ff82d278c11c/VECTOR3.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/c483bf856593329d/ERRORWARNINGASSERT.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/bd89da00a6edfb3e/INPUTSYSTEM.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/bb956301be0d92d/CLOCK.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/b8b241dab18f0a99/PARTICLEEMITTER.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/af4160bfd7922df1/ASTEROID.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/ac1ffa785291cccd/THEGAME.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/aa064ac126a4f1f9/MATHUTILS.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/a7a3c0dfbf5245cd/ANALOGJOYSTICK.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/a37c4dc8b27f771b/APP.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/902f72ecbb3b954a/GLBINDINGS.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/7e9c417436cc7c86/GAMEDEBUG.ipch
+Asteroids3D/.vs/Asteroids3D/v15/ipch/AutoPCH/76a75f65e04fd0f2/CAMERA.ipch

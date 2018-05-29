@@ -1,0 +1,20 @@
+<materials>
+
+	<material name="ship" shader="phong">
+		<textures>
+			<texture slot="0" path="Data/Models/ship/ship-diffuse.jpg"/>
+		</textures>
+	</material>
+
+	<material name="particle" shader="additive">
+		<textures>
+			<texture slot="0" path="Data/Images/particle.png"/>
+		</textures>
+	</material>
+
+	<material name="asteroid" shader="phong">
+		<textures>
+			<texture slot="0" path="Data/Images/white.png"/>
+		</textures>
+	</material>
+</materials>
