@@ -3,9 +3,8 @@
 *.lo
 *.o
 *.obj
-!Data/*/*.obj
-!Data/*/*/*.obj
-!data/*/*.obj
+!Data/**/*.obj
+!data/**/*.obj
 
 # Precompiled Headers
 *.gch
