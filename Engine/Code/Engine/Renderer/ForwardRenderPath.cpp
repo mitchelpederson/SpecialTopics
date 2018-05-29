@@ -47,7 +47,7 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 		renderer->Draw( drawCall );
 	}
 
-	ApplyCameraEffects(camera);
+	//ApplyCameraEffects(camera);
 
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F11)) {
 		g_theRenderer->SaveScreenshot();
@@ -160,5 +160,5 @@ void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 	}
 
 	m_effectScratchTarget = Texture::CreateDuplicateTarget( m_effectCurrentTarget );
-	m_effectCamera->SetColorTarget(  );
+	//m_effectCamera->SetColorTarget(  );
 }
