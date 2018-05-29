@@ -23,6 +23,7 @@
 *.la
 *.a
 *.lib
+!**/ThirdParty/**/*.lib
 
 # Executables
 *.exe
