@@ -99,6 +99,7 @@ extern PFNGLTEXSUBIMAGE2DPROC				glTexSubImage2D;
 extern PFNGLCLEARBUFFERIVPROC				glClearBufferiv;
 extern PFNGLCLEARBUFFERFVPROC				glClearBufferfv;
 extern PFNGLREADPIXELSPROC					glReadPixels;
+extern PFNGLDELETETEXTURESPROC				glDeleteTextures;
 
 
 void BindGLFunctions();

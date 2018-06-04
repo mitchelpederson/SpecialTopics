@@ -32,6 +32,11 @@ Texture::Texture()
 
 }
 
+
+Texture::~Texture() {
+	glDeleteTextures( 1, (GLuint*) &m_textureID );
+}
+
 //-----------------------------------------------------------------------------------------------
 // Creates a texture identity on the video card, and populates it with the given image texel data
 //
@@ -131,6 +136,11 @@ bool Texture::CreateRenderTarget( int width, int height, eTextureFormat format )
 		return false; 
 	}
 
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR) {
+		std::cout << "GL Error: " << error << std::endl;
+	}
+
 	// TODO - add a TextureFormatToGLFormats( GLenum*, GLenum*, GLenum*, eTextureFormat )
 	//        when more texture formats are required; 
 	GLenum internal_format = GL_RGBA8; 
@@ -146,6 +156,10 @@ bool Texture::CreateRenderTarget( int width, int height, eTextureFormat format )
 	glActiveTexture( GL_TEXTURE0 ); 
 	glBindTexture( GL_TEXTURE_2D, m_textureID );    // bind our texture to our current texture unit (0)
 
+
+	while ((error = glGetError()) != GL_NO_ERROR) {
+		std::cout << "GL Error: " << error << std::endl;
+	}
 												 // Copy data into it;
 	glTexImage2D( GL_TEXTURE_2D, 0, 
 		internal_format, // what's the format OpenGL should use
@@ -156,9 +170,16 @@ bool Texture::CreateRenderTarget( int width, int height, eTextureFormat format )
 		pixel_layout,  // how is the data laid out
 		nullptr );     // don't need to pass it initialization data 
 
+
+	while ((error = glGetError()) != GL_NO_ERROR) {
+		std::cout << "GL Error: " << error << std::endl;
+	}
 	// cleanup after myself; 
 	glBindTexture( GL_TEXTURE_2D, NULL ); // unset it; 
 
+	while ((error = glGetError()) != GL_NO_ERROR) {
+		std::cout << "GL Error: " << error << std::endl;
+	}
 		// Save this all off
 	m_dimensions.x = width;  
 	m_dimensions.y = height; 

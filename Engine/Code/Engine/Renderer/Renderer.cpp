@@ -536,16 +536,16 @@ void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 
 	vertices[0].position = Vector3(topLeft.x, topLeft.y, 0.f);
 	vertices[0].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMaxs.y);
-	vertices[1].position = Vector3(topRight.x, topRight.y, 0.f);
-	vertices[1].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
-	vertices[2].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
-	vertices[2].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
+	vertices[2].position = Vector3(topRight.x, topRight.y, 0.f);
+	vertices[2].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
+	vertices[1].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
+	vertices[1].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
 	vertices[3].position = Vector3(topRight.x, topRight.y, 0.f);
 	vertices[3].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
-	vertices[4].position = Vector3(bottomRight.x, bottomRight.y, 0.f);
-	vertices[4].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMins.y);
-	vertices[5].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
-	vertices[5].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
+	vertices[5].position = Vector3(bottomRight.x, bottomRight.y, 0.f);
+	vertices[5].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMins.y);
+	vertices[4].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
+	vertices[4].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
 
 	for (int i = 0; i < 6; i++) {
 		vertices[i].color = tint;
@@ -1225,6 +1225,7 @@ void Renderer::DrawCube(const Vector3& center, const Vector3& size
 void Renderer::SetCamera(Camera* cam) {
 	m_currentCamera = cam;
 	m_currentCamera->Finalize();
+	glBindFramebuffer(GL_FRAMEBUFFER, cam->m_frameBuffer->GetHandle());
 
 }
 

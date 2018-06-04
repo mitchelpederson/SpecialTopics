@@ -7,6 +7,12 @@ struct LightComparisonData {
 };
 
 
+ForwardRenderPath::ForwardRenderPath( Renderer* r ) : renderer( r ) {
+	m_effectCamera = new Camera();
+	m_effectCamera->SetProjectionOrtho(1.f, -1.f, 1.f);
+}
+
+
 void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 	scene->SortCameras();
 
@@ -47,7 +53,7 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 		renderer->Draw( drawCall );
 	}
 
-	//ApplyCameraEffects(camera);
+	ApplyCameraEffects(camera);
 
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F11)) {
 		g_theRenderer->SaveScreenshot();
@@ -155,10 +161,38 @@ void ForwardRenderPath::SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera*
 
 void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 
-	if (m_effectCurrentTarget == nullptr) {
-		m_effectCurrentTarget = camera->m_frameBuffer->m_colorTarget;
+	if (camera->cameraEffects.size() == 0) {
+		return;
+	}
+	 
+	Texture* defaultSourceTarget = Texture::CreateDuplicateTarget( camera->m_frameBuffer->m_colorTarget );
+	Texture* effectScratchTarget = Texture::CreateDuplicateTarget( defaultSourceTarget );
+	Texture* effectCurrentSourceTarget = effectScratchTarget; // Start these swapped since the first
+	Texture* effectCurrentDestTarget = defaultSourceTarget;   // thing we do in the loop is swap
+
+	m_effectCamera->SetColorTarget( effectCurrentDestTarget );
+	renderer->SetCamera(m_effectCamera);
+	renderer->CopyFrameBuffer( m_effectCamera->m_frameBuffer, camera->m_frameBuffer );
+
+	float halfWidth = Window::GetInstance()->GetWidth() * 0.5f;
+	float halfHeight = Window::GetInstance()->GetHeight() * 0.5f;
+
+	for (int effectIndex = 0; effectIndex < camera->cameraEffects.size(); effectIndex++) {
+		std::swap(effectCurrentSourceTarget, effectCurrentDestTarget);
+		m_effectCamera->SetColorTarget( effectCurrentDestTarget );
+		renderer->SetCamera(m_effectCamera);		
+		renderer->BindMaterial(camera->cameraEffects[effectIndex]);
+		renderer->DrawTexturedAABB(AABB2(halfWidth, -halfHeight, -halfWidth, halfHeight), *effectCurrentSourceTarget, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba());
+		std::swap(effectCurrentSourceTarget, effectCurrentDestTarget);
 	}
 
-	m_effectScratchTarget = Texture::CreateDuplicateTarget( m_effectCurrentTarget );
-	//m_effectCamera->SetColorTarget(  );
+
+	// We need to copy the effect camera's contents to the game camera
+	renderer->CopyFrameBuffer( camera->m_frameBuffer, m_effectCamera->m_frameBuffer );
+
+	// At the end, clean up
+	delete effectScratchTarget;
+	effectScratchTarget = nullptr;
+	delete defaultSourceTarget;
+	defaultSourceTarget = nullptr;
 }

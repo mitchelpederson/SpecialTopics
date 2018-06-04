@@ -36,7 +36,7 @@ bool FrameBuffer::BindTargets() {
 		m_colorTarget->GetTextureID(), 
 		0 ); 
 	// 0 to to attachment 0
-	targets[0] = GL_COLOR_ATTACHMENT0 + 0; 
+	targets[0] = GL_COLOR_ATTACHMENT0 + 0;
 
 	// Update target bindings
 	glDrawBuffers( 1, targets ); 
@@ -73,4 +73,9 @@ int FrameBuffer::GetHeight() {
 
 int FrameBuffer::GetWidth() {
 	return m_colorTarget->GetDimensions().x;
+}
+
+
+int FrameBuffer::GetHandle() {
+	return m_handle;
 }

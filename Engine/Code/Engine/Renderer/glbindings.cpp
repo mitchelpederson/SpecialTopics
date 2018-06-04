@@ -75,6 +75,7 @@ PFNGLTEXSUBIMAGE2DPROC				glTexSubImage2D				= nullptr;
 PFNGLCLEARBUFFERIVPROC				glClearBufferiv				= nullptr;
 PFNGLCLEARBUFFERFVPROC				glClearBufferfv				= nullptr;
 PFNGLREADPIXELSPROC					glReadPixels				= nullptr;
+PFNGLDELETETEXTURESPROC				glDeleteTextures			= nullptr;
 
 
 
@@ -154,4 +155,5 @@ void BindGLFunctions() {
 	GL_BIND_FUNCTION( glClearBufferiv );
 	GL_BIND_FUNCTION( glClearBufferfv );
 	GL_BIND_FUNCTION( glReadPixels );
+	GL_BIND_FUNCTION( glDeleteTextures );
 }

@@ -21,7 +21,7 @@ class ForwardRenderPath {
 
 public:
 
-	ForwardRenderPath( Renderer* r ) : renderer( r ) {};
+	ForwardRenderPath( Renderer* r );
 
 	void Render( RenderSceneGraph* scene );
 	void RenderSceneForCamera( Camera* camera, RenderSceneGraph* scene );
@@ -34,9 +34,6 @@ private:
 	void ApplyCameraEffects( Camera* camera );
 
 	Renderer* renderer;
-
-	Texture* m_effectScratchTarget = nullptr;
-	Texture* m_effectCurrentTarget = nullptr;
 	Camera* m_effectCamera = nullptr;
 
 };

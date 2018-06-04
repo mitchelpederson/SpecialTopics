@@ -17,4 +17,22 @@
 			<texture slot="0" path="Data/Images/white.png"/>
 		</textures>
 	</material>
+
+	<material name="passthrough" shader="passthrough">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="testPostProcessEffect" shader="testEffect">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="dashDistort" shader="burn">
+		<textures>
+		</textures>
+		<properties>
+			<float name="burnAmount" value="1.0"/>
+		</properties>
+	</material>
 </materials>

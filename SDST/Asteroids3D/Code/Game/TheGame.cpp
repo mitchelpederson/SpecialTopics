@@ -52,6 +52,8 @@ void TheGame::Initialize() {
 	m_camera->SetProjection(Matrix44::MakeProjection(45.f, 16.f / 9.f, 0.1f, 100.f));	
 	m_camera->SetColorTarget(g_theRenderer->GetDefaultColorTarget());
 	m_camera->SetDepthStencilTarget(g_theRenderer->GetDefaultDepthTarget());
+	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("testPostProcessEffect"));
+	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("dashDistort"));
 	m_cameraLight = new Light();
 	//m_cameraLight->SetAsPointLight(m_camera->position, Rgba(), 1.f, 0.f);
 
@@ -324,7 +326,6 @@ void TheGame::Render() {
 	g_theRenderer->SetSpecular(specularPower, specularAmount);
 
 	m_forwardRenderPath->RenderSceneForCamera( m_camera, m_scene );
-
 
 	g_theRenderer->SetCameraToUI();
 	DebugRenderSet3DCamera(m_camera);

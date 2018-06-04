@@ -15,6 +15,7 @@ public:
 	bool BindTargets();
 	int GetHeight();
 	int GetWidth();
+	int GetHandle();
 
 	// setups the the GL framebuffer - called before us. 
 	// TODO: Make sure this only does work if the targets

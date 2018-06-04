@@ -60,4 +60,34 @@
 		<depth write="false" compare="always" />
 	</shader>
 
+	<shader name="additive" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
+	<shader name="testEffect" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/ScreenEffects/effectTest.vs" />
+		<fragment file="Data/Shaders/ScreenEffects/effectTest.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
+	<shader name="burn" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/ScreenEffects/burn.vs" />
+		<fragment file="Data/Shaders/ScreenEffects/burn.fs" />
+		<blend>
+			<color op="multiply" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
 </shaders>

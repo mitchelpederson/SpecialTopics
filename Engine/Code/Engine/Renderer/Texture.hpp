@@ -15,6 +15,7 @@ class Texture {
 
 public:
 	Texture();
+	~Texture();
 
 	int GetTextureID() const;
 	bool CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );

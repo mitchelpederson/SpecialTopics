@@ -215,6 +215,7 @@ public:
 	Texture* GetDefaultColorTarget();
 	Texture* GetDefaultDepthTarget();
 
+
 	static GLenum ToGLCompare( DepthCompare compare );
 	static GLenum ToGLCullMode( CullMode mode );
 	static GLenum ToGLWindOrder( WindOrder order );
