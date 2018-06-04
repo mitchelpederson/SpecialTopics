@@ -11,11 +11,11 @@
     <Filter Include="Data\Definitions">
       <UniqueIdentifier>{aab7496a-62b0-4544-b3c9-a790682235d1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="General\Maps">
-      <UniqueIdentifier>{4aa092dd-5fb1-48f0-a89d-efb56af89f6c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{fe7891b5-0edd-46f7-8c2f-6d0ae07560c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Maps">
+      <UniqueIdentifier>{ff645dfa-97ee-49b0-8430-e26de1d19f59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,17 +31,11 @@
     <ClCompile Include="Entity.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="Map\GameMap.cpp">
+      <Filter>General\Maps</Filter>
     </ClCompile>
-    <ClCompile Include="Ship.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Asteroid.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>General</Filter>
+    <ClCompile Include="Map\TileDefinition.cpp">
+      <Filter>General\Maps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -60,20 +54,14 @@
     <ClInclude Include="Entity.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Ship.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Asteroid.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="GameDebug.hpp">
       <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\GameMap.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\TileDefinition.hpp">
+      <Filter>General\Maps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -299,12 +299,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
-    <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
-    <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="Map\GameMap.cpp" />
+    <ClCompile Include="Map\TileDefinition.cpp" />
     <ClCompile Include="TheGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -314,14 +312,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
-    <ClInclude Include="Asteroid.hpp" />
-    <ClInclude Include="Bullet.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameDebug.hpp" />
-    <ClInclude Include="GameObject.hpp" />
-    <ClInclude Include="Ship.hpp" />
+    <ClInclude Include="Map\GameMap.hpp" />
+    <ClInclude Include="Map\TileDefinition.hpp" />
     <ClInclude Include="TheGame.hpp" />
   </ItemGroup>
   <ItemGroup>

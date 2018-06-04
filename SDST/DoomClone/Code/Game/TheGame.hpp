@@ -15,10 +15,8 @@
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/RenderSceneGraph.hpp"
 #include "Engine/Renderer/CubeMap.hpp"
-#include "Game/GameObject.hpp"
-#include "Game/Ship.hpp"
-#include "Game/Asteroid.hpp"
-#include "Game/Bullet.hpp"
+#include "Engine/Renderer/SpriteSheet.hpp"
+
 
 
 
@@ -53,46 +51,32 @@ public:
 	void Update();
 	void Render();
 
-	void AddBullet(Bullet* bullet);
-	void AddAsteroid(Asteroid* asteroid);
-	void RemoveBullet(Bullet* bullet);
-	void RemoveAsteroid(Asteroid* asteroid);
-
 	float GetDeltaTime();
 	float GetElapsedTime();
-	Vector3 GetPlayerLocation();
-
+	
 public:
 	RenderSceneGraph* m_scene = nullptr;
 	Clock* m_gameClock;
 	Material* particleMaterial = nullptr;
+	SpriteSheet* terrain = nullptr;
 
 
 private:
+
 	SoundID music;
 	SoundPlaybackID musicPlaybackID;
 
 	void ProcessPlayerInput();
-	void SpawnAsteroidAtRandom();
-	void CheckBulletAsteroidCollisions();
-	void SpawnSparkEmitter( const Vector3& location );
 
-	Ship* m_playerShip = nullptr;
-	std::vector<Asteroid*> m_asteroids;
-	std::vector<Bullet*> m_bullets;
-	std::vector<ParticleEmitter*> m_sparkEmitters;
 	Light* m_directional = nullptr;
-
 
 	CubeMap* m_skyboxTexture = nullptr;
 	Shader* m_skyboxShader = nullptr;
-
 
 	// Constant stuff
 	void ProcessInput();
 	void ProcessDebugInput();
 	void CheckIfPauseStateChanged();
-	void SetShaderBasedOnDevMode();
 
 	static TheGame* m_instance;
 
