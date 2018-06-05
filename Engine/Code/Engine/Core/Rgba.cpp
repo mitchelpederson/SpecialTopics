@@ -165,42 +165,41 @@ Rgba Interpolate( const Rgba& start, const Rgba& end, float timeInto ) {
 void Rgba::SetFromHueDegrees( float degrees ) {
 	float c = 1.f;
 	float x = c * ( 1.f - abs( fmodf((degrees / 60.f), 2.f) - 1 ) );
-	float m = 1.f - c;
 	
 	if (degrees >= 0.f && degrees < 60.f) {
-		r = c * 255;
-		g = x * 255;
+		r = (unsigned char) (c * 255.f);
+		g = (unsigned char) (x * 255.f);
 		b = 0;
 		a = 255;
 	}
 	else if (degrees >= 60.f && degrees < 120.f) {
-		r = x * 255;
-		g = c * 255;
+		r = (unsigned char) (x * 255.f);
+		g = (unsigned char) (c * 255.f);
 		b = 0;
 		a = 255;
 	}
 	else if (degrees >= 120.f && degrees < 180.f) {
 		r = 0;
-		g = c * 255;
-		b = x * 255;
+		g = (unsigned char) (c * 255.f);
+		b = (unsigned char) (x * 255.f);
 		a = 255;
 	}
 	else if (degrees >= 180.f && degrees < 240.f) {
 		r = 0;
-		g = x * 255;
-		b = c * 255;
+		g = (unsigned char) (x * 255.f);
+		b = (unsigned char) (c * 255.f);
 		a = 255;
 	}
 	else if (degrees >= 240.f && degrees < 300.f) {
-		r = x * 255;
+		r = (unsigned char) (x * 255.f);
 		g = 0;
-		b = c * 255;
+		b = (unsigned char) (c * 255.f);
 		a = 255;
 	}
 	else if (degrees >= 300.f && degrees < 360.f) {
-		r = c * 255;
+		r = (unsigned char) (c * 255.f);
 		g = 0;
-		b = x * 255;
+		b = (unsigned char) (x * 255.f);
 		a = 255;
 	}
 }

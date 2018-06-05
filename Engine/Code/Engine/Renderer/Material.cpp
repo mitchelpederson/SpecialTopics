@@ -14,7 +14,7 @@ Material::Material( Material* mat ) {
 	properties.resize( mat->GetPropertyCount() );
 	shader = new Shader( mat->shader->GetProgram() );
 
-	for (int i = 0; i < mat->GetTextureCount(); i++) {
+	for (unsigned int i = 0; i < mat->GetTextureCount(); i++) {
 		if (mat->textures[i] != nullptr) {
 			textures[i] = mat->textures[i];
 		}
@@ -35,14 +35,14 @@ Material::Material( const tinyxml2::XMLElement& xml ) {
 	}
 	shader = g_theRenderer->GetShader(shaderName);
 
-	const tinyxml2::XMLElement* properties = xml.FirstChildElement("properties");
-	if (properties != nullptr) {
-		const tinyxml2::XMLElement* prop = properties->FirstChildElement();
+	const tinyxml2::XMLElement* propertiesNode = xml.FirstChildElement("properties");
+	if (propertiesNode != nullptr) {
+		const tinyxml2::XMLElement* prop = propertiesNode->FirstChildElement();
 
 		while(prop != nullptr) {
 			std::string propName = ParseXmlAttribute(*prop, "name", propName);
 
-			if (prop->Name() == "float") {
+			if (strcmp(prop->Name(), "float")) {
 				float value = -100.f;
 				value = ParseXmlAttribute(*prop, "value", value);
 				SetProperty(propName, value);
@@ -51,8 +51,8 @@ Material::Material( const tinyxml2::XMLElement& xml ) {
 		}
 	}
 
-	const tinyxml2::XMLElement* textures = xml.FirstChildElement("textures");
-	const tinyxml2::XMLElement* texture = textures->FirstChildElement("texture");
+	const tinyxml2::XMLElement* texturesNode = xml.FirstChildElement("textures");
+	const tinyxml2::XMLElement* texture = texturesNode->FirstChildElement("texture");
 	if (texture != nullptr) {
 		int slot = -1;
 		slot = ParseXmlAttribute(*texture, "slot", slot);
@@ -99,15 +99,15 @@ void Material::SetTexture( unsigned int bindPoint, Texture* tex, Sampler* sample
 
 
 unsigned int Material::GetTextureCount() const {
-	return textures.size();
+	return (unsigned int) textures.size();
 }
 
 unsigned int Material::GetSamplerCount() const {
-	return samplers.size();
+	return (unsigned int) samplers.size();
 }
 
 unsigned int Material::GetPropertyCount() const {
-	return properties.size();
+	return (unsigned int) properties.size();
 }
 
 

@@ -62,7 +62,7 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 
 
 void ForwardRenderPath::EnableLightsForDrawCall( const DrawCall& drawCall, RenderSceneGraph* scene ) {
-	int maxLights = min(drawCall.m_lightCount, scene->m_lights.size());
+	int maxLights = (int) min(drawCall.m_lightCount, scene->m_lights.size());
 	for (int i = 0; i < maxLights; i++) {
 		int lightIndexToUse = drawCall.m_lightIndices[i];
 		renderer->SetLight(i, *scene->m_lights[lightIndexToUse]);
@@ -82,19 +82,19 @@ void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCoun
 		DebugRenderWireSphere(0.f, scene->m_lights[i]->m_position, 0.2f, scene->m_lights[i]->m_color );
 	}*/
 
-	unsigned int numLights = scene->m_lights.size();
+	unsigned int numLights = (unsigned int) scene->m_lights.size();
 	LightComparisonData* lights = new LightComparisonData[numLights];
 
 	// Get the distance to each light
-	for (int sceneLightIndex = 0; sceneLightIndex < numLights; sceneLightIndex++) {
+	for (unsigned int sceneLightIndex = 0; sceneLightIndex < numLights; sceneLightIndex++) {
 		const Light& light = *scene->m_lights[sceneLightIndex];
 		lights[sceneLightIndex].index = sceneLightIndex;
 		lights[sceneLightIndex].weight = light.m_intensity / ( 1.f + (light.m_attenuation * light.m_position.DistanceFrom(position)) );
 	}
 	
 	// Sort by distance, i'm extremely lazy and am using a bubble sort for now. will improve when slow
-	for (int i = 0; i < numLights; i++) {
-		for (int j = 0; j < numLights - i - 1; j++) {
+	for (unsigned int i = 0; i < numLights; i++) {
+		for (unsigned int j = 0; j < numLights - i - 1; j++) {
 			if (lights[j].weight < lights[j+1].weight) {
 				LightComparisonData temp = lights[j];
 				lights[j] = lights[j+1];
@@ -104,7 +104,7 @@ void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCoun
 	}
 
 	// Copy the closest 8 or all lights if there is less than 8
-	for (int i = 0; i < numLights; i++) {
+	for (unsigned int i = 0; i < numLights; i++) {
 		m_lightIndices[i] = lights[i].index;
 		*m_lightCount = i + 1;
 		if (i == MAX_LIGHTS - 1) {

@@ -14,8 +14,7 @@
 //
 CubeMap::CubeMap( const std::string& imageFilePath ) : m_image( imageFilePath )
 {
-	int numComponents = 0;
-	int numComponentsRequested = 0; 
+ 
 	m_dimensions = m_image.GetDimensions();
 	m_isCubemap = true;
 	
@@ -35,9 +34,6 @@ CubeMap::CubeMap()
 void CubeMap::PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents )
 {
 
-	int bytesX = m_dimensions.x * numComponents;
-
-
 	GLenum error;
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;
@@ -53,9 +49,6 @@ void CubeMap::PopulateFromData( unsigned char* imageData, const IntVector2& texe
 	GLenum bufferFormat = GL_RGBA; // the format our source pixel data is in; any of: GL_RGB, GL_RGBA, GL_LUMINANCE, GL_LUMINANCE_ALPHA, ...
 	if( numComponents == 3 )
 		bufferFormat = GL_RGB;
-
-	GLenum internalFormat = bufferFormat; // the format we want the texture to be on the card; allows us to translate into a different texture format as we upload to OpenGL
-
 
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;

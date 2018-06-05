@@ -69,7 +69,7 @@ void ParticleEmitter::Update() {
 		p.Update(clock->frame.seconds);
 	}
 
-	for (int index = particles.size() - 1; index >= 0; index--) {
+	for (unsigned int index = (unsigned int) particles.size() - 1; index >= 0; index--) {
 		if (particles[index].IsDead( clock->total.seconds )) {
 			particles[index] = particles[particles.size() - 1];
 			particles.pop_back();

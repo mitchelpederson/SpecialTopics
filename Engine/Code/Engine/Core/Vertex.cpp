@@ -31,7 +31,7 @@ VertexLayout::VertexLayout( unsigned int vertStride, const VertexAttribute attri
 
 
 unsigned int VertexLayout::GetAttributeCount() const {
-	return m_attributes.size();
+	return (unsigned int) m_attributes.size();
 }
 
 const VertexAttribute& VertexLayout::GetAttribute(unsigned int index) const {

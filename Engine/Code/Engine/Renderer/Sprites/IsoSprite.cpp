@@ -55,10 +55,6 @@ Sprite* IsoSprite::GetSpriteForViewAngle( const Vector3& actorDirection, const V
 	float dotActorCameraForward = DotProduct(actorDirNormalized, cameraForward);
 	float dotActorCameraRight = DotProduct(actorDirNormalized, cameraRight);
 
-	if (g_theInputSystem->WasKeyJustPressed('L')) {
-		int i = 1;
-	}
-
 	if ( dotActorCameraForward >= 0.f) {
 		if ( dotActorCameraRight >= 0.f) {
 			return m_sprites[ISO_TOWARDS_RIGHT];

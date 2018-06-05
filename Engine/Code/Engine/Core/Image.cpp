@@ -73,9 +73,8 @@ unsigned char* Image::GetAsData() {
 unsigned char* Image::ExtractSquareAtOffset( unsigned int size, unsigned int xOffset, unsigned int yOffset ) {
 	std::vector<Rgba> square;
 
-	for (int y = yOffset; y < yOffset + size; y++) {	
-		for (int x = xOffset; x < xOffset + size; x++) {
-			int index = (y * size) + x;
+	for (unsigned int y = yOffset; y < yOffset + size; y++) {	
+		for (unsigned int x = xOffset; x < xOffset + size; x++) {
 			square.push_back(GetTexel(x, y));
 		}
 	}

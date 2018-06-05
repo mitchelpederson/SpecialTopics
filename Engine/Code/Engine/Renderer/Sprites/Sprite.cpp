@@ -18,7 +18,7 @@ Sprite::Sprite( const tinyxml2::XMLElement& xml ) {
 		const tinyxml2::XMLElement* uvElement = xml.FirstChildElement("uv");
 		const tinyxml2::XMLElement* pivotElement = xml.FirstChildElement("pivot");
 
-		float m_ppu = ppuElement->FloatText();
+		m_ppu = ppuElement->FloatText();
 		std::string spriteSheetName = "error";
 		spriteSheetName = ParseXmlAttribute(*diffuseElement, "src", spriteSheetName);
 		m_spriteSheet = g_theRenderer->CreateOrGetTexture(spriteSheetName);

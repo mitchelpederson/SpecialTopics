@@ -58,7 +58,6 @@ IsoSprite* IsoSpriteAnimDef::GetIsoSpriteForTime( float timeIntoAnim ) const {
 
 	// if we return nullptr something went wrong with the def
 	ERROR_AND_DIE("GetIsoSpriteForTime did not find a frame before it ran out of frames!");
-	return nullptr;
 }
 
 

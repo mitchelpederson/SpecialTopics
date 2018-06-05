@@ -232,8 +232,6 @@ void ShaderProgram::LogProgramError(GLuint program_id)
 	buffer[length] = NULL;
 	ERROR_AND_DIE(buffer);
 
-	// cleanup
-	delete buffer;
 
 }
 

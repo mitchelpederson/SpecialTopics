@@ -357,13 +357,9 @@ void Renderer::Draw( DrawCall& drawCall ) {
 void Renderer::DrawMesh( Mesh* mesh ) {
 
 	glUseProgram(m_currentShader->GetProgram()->GetHandle());
-	GLint positionBinding = glGetAttribLocation(m_currentShader->GetProgram()->GetHandle(), "POSITION");
-	GLint colorBinding = glGetAttribLocation(m_currentShader->GetProgram()->GetHandle(), "COLOR");
-	GLint uvBinding = glGetAttribLocation(m_currentShader->GetProgram()->GetHandle(), "UV");
-
+	
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferHandle());
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetIndexBufferHandle());
-
 	BindLayoutToProgram(mesh->GetVertexLayout());
 
 	BindRenderState();
@@ -1393,8 +1389,8 @@ void Renderer::SetUniform(const std::string& name, Rgba* color, unsigned int siz
 	if (uniformLocation >= 0) {
 		//float* c = new float[MAX_LIGHTS * size];
 		float c[32];
-		for (int i = 0; i < size; i++) {
-			int colorIndex = i * 4;
+		for (unsigned int i = 0; i < size; i++) {
+			unsigned int colorIndex = i * 4;
 			color[i].GetAsFloats(c[colorIndex], c[colorIndex+1], c[colorIndex+2], c[colorIndex+3]);
 		}
 		glUniform4fv(uniformLocation, size, c);
@@ -1472,7 +1468,7 @@ void Renderer::BindLayoutToProgram(VertexLayout const *layout) {
 				ToGLDataType(attrib.dataType), 
 				attrib.isNormalized, 
 				layout->stride, 
-				(GLvoid*)attrib.memberOffset);
+				(GLvoid*) (size_t) attrib.memberOffset);
 		}
 	}
 }

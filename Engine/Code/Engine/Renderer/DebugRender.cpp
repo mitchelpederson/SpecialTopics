@@ -40,8 +40,6 @@ void DebugRenderShutdown() {
 void DebugRenderAndUpdate() {
 
 	if (DebugRenderState::isActive) {
-		float halfWidth = Window::GetInstance()->GetWidth() / 2.f;
-		float halfHeight = Window::GetInstance()->GetHeight() / 2.f;
 
 		// Render section
 		Renderer* r = DebugRenderState::currentRenderer;

@@ -1,0 +1,93 @@
+<shaders>
+
+	<shader name="phong" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/dot3.vs" />
+		<fragment file="Data/Shaders/dot3.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+	<shader name="debug" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/debugRender.vs" />
+		<fragment file="Data/Shaders/debugRender.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+	<shader name="phong-normal-map" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/dot3-normal-map.vs" />
+		<fragment file="Data/Shaders/dot3-normal-map.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+	
+	<shader name="additive-no-tex" cull="back" fill="solid" frontface="ccw" lit="false" queue="alpha">
+		<vertex file="Data/Shaders/passthrough.vs" />
+		<fragment file="Data/Shaders/passthrough.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="one" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
+	<shader name="additive" cull="back" fill="solid" frontface="ccw" lit="false" queue="alpha">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="one" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
+	<shader name="skybox" cull="back" lit="false">
+		<vertex file="Data/Shaders/skybox.vs" />
+		<fragment file="Data/Shaders/skybox.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
+	<shader name="additive" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
+	<shader name="testEffect" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/ScreenEffects/effectTest.vs" />
+		<fragment file="Data/Shaders/ScreenEffects/effectTest.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
+	<shader name="burn" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/ScreenEffects/burn.vs" />
+		<fragment file="Data/Shaders/ScreenEffects/burn.fs" />
+		<blend>
+			<color op="multiply" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
+</shaders>

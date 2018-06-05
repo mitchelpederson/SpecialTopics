@@ -280,7 +280,6 @@ Matrix44 Matrix44::GetTranspose() const {
 
 
 Matrix44 Matrix44::GetInverseFast() const {
-	UNIMPLEMENTED();
 	Matrix44 inv;
 	Vector3 translation( Tx, Ty, Tz );
 

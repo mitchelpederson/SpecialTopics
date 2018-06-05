@@ -14,10 +14,10 @@ void MeshBuilder::Begin(DrawPrimitive primitive, bool useIndices) {
 	m_instructions.useIndices = useIndices;
 
 	if (useIndices) {
-		m_instructions.startIndex = m_indices.size();
+		m_instructions.startIndex = (unsigned int) m_indices.size();
 	}
 	else {
-		m_instructions.startIndex = m_vertices.size();
+		m_instructions.startIndex = (unsigned int) m_vertices.size();
 	}
 }
 
@@ -25,10 +25,10 @@ void MeshBuilder::Begin(DrawPrimitive primitive, bool useIndices) {
 void MeshBuilder::End() {
 	unsigned int endIndex;
 	if (m_instructions.useIndices) {
-		endIndex = m_indices.size();
+		endIndex = (unsigned int) m_indices.size();
 		m_instructions.indexCount = endIndex - m_instructions.startIndex;
 	} else {
-		endIndex = m_vertices.size();
+		endIndex = (unsigned int) m_vertices.size();
 		m_instructions.vertexCount = endIndex - m_instructions.startIndex;
 	}
 }
@@ -56,12 +56,12 @@ void MeshBuilder::SetTangent( const Vector3& tangent ) {
 unsigned int MeshBuilder::PushVertex( const Vector3& position ) {
 	m_stamp.position = position;
 	m_vertices.push_back(m_stamp);
-	return m_vertices.size() - 1;
+	return (unsigned int) m_vertices.size() - 1;
 }
 
 
 unsigned int MeshBuilder::PushQuad( const Vector3& bl, const Vector3& br, const Vector3& tr, const Vector3& tl) {
-	unsigned int firstIndex = m_vertices.size();
+	unsigned int firstIndex = (unsigned int) m_vertices.size();
 	
 	SetUV(Vector2(0.f, 0.f));
 	PushVertex(bl);
@@ -82,11 +82,11 @@ unsigned int MeshBuilder::PushQuad( const Vector3& bl, const Vector3& br, const 
 
 
 unsigned int MeshBuilder::GetVertexCount() const {
-	return m_vertices.size() - m_instructions.startIndex;
+	return (unsigned int) m_vertices.size() - m_instructions.startIndex;
 }
 
 unsigned int MeshBuilder::GetIndexCount() const {
-	return m_indices.size();
+	return (unsigned int) m_indices.size();
 }
 
 const std::vector<VertexMaster>& MeshBuilder::GetVertices() {
@@ -550,8 +550,6 @@ void MeshBuilder::BuildDeformedSphere( Mesh* mesh
 	, const Rgba& color /* = Rgba() */ ) {
 
 	Begin(TRIANGLES, true);
-
-	int seed = GetRandomIntInRange(0, 1000);
 
 	for (unsigned int slice = 0; slice <= slices; slice++) {
 		float v = (float) slice / (float) slices;
