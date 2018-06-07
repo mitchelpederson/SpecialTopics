@@ -214,6 +214,7 @@ public:
 
 	Texture* GetDefaultColorTarget();
 	Texture* GetDefaultDepthTarget();
+	FrameBuffer* GetDefaultFrameBuffer();
 
 
 	static GLenum ToGLCompare( DepthCompare compare );

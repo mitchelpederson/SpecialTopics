@@ -294,11 +294,12 @@ void Renderer::Initialize() {
 
 	m_defaultColorTarget = CreateRenderTarget( Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight() );
 	m_defaultDepthTarget = CreateRenderTarget( Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight(), TEXTURE_FORMAT_D24S8 );
-	m_defaultCamera->SetColorTarget(m_defaultColorTarget);
-	m_defaultCamera->SetDepthStencilTarget(m_defaultDepthTarget);
+	m_defaultFrameBuffer = new FrameBuffer();
+	m_defaultFrameBuffer->SetColorTarget(m_defaultColorTarget);
+	m_defaultFrameBuffer->SetDepthStencilTarget(m_defaultDepthTarget);
 
-	m_defaultUICamera->SetColorTarget(m_defaultColorTarget);
-	m_defaultUICamera->SetDepthStencilTarget(m_defaultDepthTarget);
+	m_defaultCamera->SetFrameBuffer(m_defaultFrameBuffer);
+	m_defaultUICamera->SetFrameBuffer(m_defaultFrameBuffer);
 	m_defaultUICamera->SetProjection(Matrix44::MakeOrtho2D(Vector2(0.f, 0.f), Vector2(100.f, 100.f)));
 
 	m_defaultCamera->Finalize();
@@ -524,7 +525,7 @@ void Renderer::DrawQuad(const Vector3& topLeft, const Vector3& bottomLeft, const
 void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 	const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint ) {
 	Vertex3D_PCU vertices[6];
-
+	SetShader(GetShader("passthroughTex"));
 	Vector2 topLeft(bounds.maxs.x, bounds.maxs.y);
 	Vector2 topRight(bounds.mins.x, bounds.maxs.y);
 	Vector2 bottomLeft(bounds.maxs.x, bounds.mins.y);
@@ -1013,7 +1014,7 @@ void Renderer::LoadBuiltInShaders() {
 
 
 void Renderer::SetProjection(const Matrix44& proj) {
-	m_defaultCamera->SetProjection(proj);
+	m_currentCamera->SetProjection(proj);
 }
 
 
@@ -1329,6 +1330,10 @@ Texture* Renderer::GetDefaultColorTarget() {
 
 Texture* Renderer::GetDefaultDepthTarget() {
 	return m_defaultDepthTarget;
+}
+
+FrameBuffer* Renderer::GetDefaultFrameBuffer() {
+	return m_defaultFrameBuffer;
 }
 
 void Renderer::EnableDepth( DepthCompare compare, bool shouldWrite ) {

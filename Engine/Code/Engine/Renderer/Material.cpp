@@ -53,12 +53,12 @@ Material::Material( const tinyxml2::XMLElement& xml ) {
 
 	const tinyxml2::XMLElement* texturesNode = xml.FirstChildElement("textures");
 	const tinyxml2::XMLElement* texture = texturesNode->FirstChildElement("texture");
-	if (texture != nullptr) {
+	while (texture != nullptr) {
 		int slot = -1;
 		slot = ParseXmlAttribute(*texture, "slot", slot);
 		std::string texPath = ParseXmlAttribute(*texture, "path", texPath);
 		SetTexture(slot, g_theRenderer->CreateOrGetTexture(texPath));
-		texture->NextSiblingElement("texture");
+		texture = texture->NextSiblingElement("texture");
 	}
 }
 

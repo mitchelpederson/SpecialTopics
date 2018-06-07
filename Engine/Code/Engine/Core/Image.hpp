@@ -15,6 +15,9 @@ public:
 	void	InvertY();
 	int		GetNumComponents();
 
+	void PushTexel( const Rgba& color );
+	void SetDimensions( int x, int y );
+
 	unsigned char* GetAsData();
 	unsigned char* ExtractSquareAtOffset( unsigned int size, unsigned int xOffset, unsigned int yOffset );
 

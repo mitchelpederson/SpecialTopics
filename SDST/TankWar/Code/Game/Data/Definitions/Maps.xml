@@ -1,0 +1,9 @@
+<MapDefinitions>
+  
+  <MapDefinition name="Island" defaultTile="Water" width="16~32" height="9~18">
+    <GenerationSteps>
+      <FillAndEdge fillTile="Grass" edgeTile="Water"/>
+    </GenerationSteps>
+  </MapDefinition>
+  
+</MapDefinitions>

@@ -2,6 +2,7 @@
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/SmoothNoise.hpp"
+#include "Engine/Math/IntVector2.hpp"
 #include "Engine/Core/Vertex.hpp"
 #include "Engine/Core/StringUtils.hpp"
 #include <vector>
@@ -662,3 +663,123 @@ void MeshBuilder::BuildWireSphere( Mesh* mesh
 	mesh->FromBuilderAsType<Vertex3D_Lit>(this);
 	mesh->SetDrawPrimitive(LINES);
 }
+
+
+void MeshBuilder::BuildTexturedGridFromPerlinParams( const IntVector2& facesInDimensions
+												   , const Vector2& faceDimensions
+												   , const Vector2& bottomLeftPosition
+												   , unsigned int seed
+												   , float perlinScale
+												   , unsigned int perlinNumOctaves
+												   , float perlinOctavePersistence
+												   , float perlinOctaveScale ) {
+
+	float uIncrement = 1.f / (float) facesInDimensions.x;
+	float vIncrement = 1.f / (float) facesInDimensions.y;
+	SetColor(Rgba());
+
+	for (int row = 0; row < facesInDimensions.x; row++) {
+		for (int col = 0; col < facesInDimensions.y; col++) {
+			Vector3 bottomLeft	( col,						0.f, row );
+			Vector3 bottomRight	( faceDimensions.x + col,	0.f, row );
+			Vector3 topLeft		( col,						0.f, row + faceDimensions.y );
+			Vector3 topRight	( faceDimensions.x + col,	0.f, row + faceDimensions.y );
+			bottomLeft.y	= 10.f * Compute2dPerlinNoise( bottomLeft.x + bottomLeftPosition.x, bottomLeft.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
+			bottomRight.y	= 10.f * Compute2dPerlinNoise( bottomRight.x + bottomLeftPosition.x, bottomRight.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
+			topLeft.y		= 10.f * Compute2dPerlinNoise( topLeft.x + bottomLeftPosition.x, topLeft.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
+			topRight.y		= 10.f * Compute2dPerlinNoise( topRight.x + bottomLeftPosition.x, topRight.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
+			
+			Vector3 bottomTangent = (bottomRight - bottomLeft).GetNormalized();
+			Vector3 bottomBitangent = (topLeft - bottomLeft).GetNormalized();
+			Vector3 bottomNormal = Vector3::CrossProduct(bottomBitangent, bottomTangent).GetNormalized();
+			Vector3 topTangent = (topRight - topLeft).GetNormalized();
+			Vector3 topBitangent = (topRight - bottomRight).GetNormalized();
+			Vector3 topNormal = Vector3::CrossProduct(topBitangent, topTangent).GetNormalized();
+
+/*			Vector2 bottomLeftUV  ( (float) col * uIncrement,		(float) row * vIncrement );
+			Vector2 bottomRightUV ( (float) (col + 1) * uIncrement, (float) row * vIncrement );
+			Vector2 topLeftUV	  ( (float) col * uIncrement,		(float) (row + 1) * vIncrement );
+			Vector2 topRightUV    ( (float) (col + 1) * uIncrement, (float) (row + 1) * vIncrement );
+*/
+
+			Vector2 bottomLeftUV  ( 0.f, 0.f );
+			Vector2 bottomRightUV ( 1.f, 0.f );
+			Vector2 topLeftUV	  ( 0.f, 1.f );
+			Vector2 topRightUV    ( 1.f, 1.f );
+
+			SetNormal(bottomNormal);
+			SetTangent(bottomTangent);
+
+			SetUV(bottomLeftUV);
+			PushVertex(bottomLeft);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+
+			SetNormal(topNormal);
+			SetTangent(topTangent);
+
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			SetUV(topRightUV);
+			PushVertex(topRight);
+		}
+	}
+}
+
+
+void MeshBuilder::BuildTexturedGridFromHeightMap( Image* heightMap, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight ) {
+
+	SetColor(Rgba());
+
+	IntVector2 endIndex( startIndex.x + chunkSize, startIndex.y + chunkSize );
+
+	for (int row = 0; row < chunkSize; row++) {
+		for (int col = 0; col < chunkSize; col++) {
+			Vector3 bottomLeft	( col,		0.f, row );
+			Vector3 bottomRight	( 1 + col,	0.f, row );
+			Vector3 topLeft		( col,		0.f, row + 1 );
+			Vector3 topRight	( 1 + col,	0.f, row + 1 );
+			bottomLeft.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col, startIndex.y + row).r, 0.f, 255.f, minHeight, maxHeight);
+			bottomRight.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col + 1, startIndex.y + row).r, 0.f, 255.f, minHeight, maxHeight);
+			topLeft.y		= RangeMapFloat(heightMap->GetTexel(startIndex.x + col, startIndex.y + row + 1).r, 0.f, 255.f, minHeight, maxHeight);
+			topRight.y		= RangeMapFloat(heightMap->GetTexel(startIndex.x + col + 1, startIndex.y + row + 1).r, 0.f, 255.f, minHeight, maxHeight);
+
+			Vector3 bottomTangent = (bottomRight - bottomLeft).GetNormalized();
+			Vector3 bottomBitangent = (topLeft - bottomLeft).GetNormalized();
+			Vector3 bottomNormal = Vector3::CrossProduct(bottomBitangent, bottomTangent).GetNormalized();
+			Vector3 topTangent = (topRight - topLeft).GetNormalized();
+			Vector3 topBitangent = (topRight - bottomRight).GetNormalized();
+			Vector3 topNormal = Vector3::CrossProduct(topBitangent, topTangent).GetNormalized();
+
+			Vector2 bottomLeftUV  ( 0.f, 0.f );
+			Vector2 bottomRightUV ( 1.f, 0.f );
+			Vector2 topLeftUV	  ( 0.f, 1.f );
+			Vector2 topRightUV    ( 1.f, 1.f );
+
+			SetNormal(bottomNormal);
+			SetTangent(bottomTangent);
+
+			SetUV(bottomLeftUV);
+			PushVertex(bottomLeft);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+
+			SetNormal(topNormal);
+			SetTangent(topTangent);
+
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			SetUV(topRightUV);
+			PushVertex(topRight);
+		}
+	}
+}
+

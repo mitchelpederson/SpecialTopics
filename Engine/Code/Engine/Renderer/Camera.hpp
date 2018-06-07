@@ -21,6 +21,7 @@ public:
 	// will be implemented later
 	void SetColorTarget( Texture* colorTarget );
 	void SetDepthStencilTarget( Texture* depthTarget );
+	void SetFrameBuffer( FrameBuffer* frameBuffer );
 
 	void SetSkybox( CubeMap* skyboxTexture );
 

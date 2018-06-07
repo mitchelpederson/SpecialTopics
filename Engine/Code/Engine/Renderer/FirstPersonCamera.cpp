@@ -43,5 +43,7 @@ void FirstPersonCamera::Update( float deltaSeconds ) {
 	m_cameraMatrix = transform.GetLocalToWorldMatrix();
 	m_viewMatrix = m_cameraMatrix.GetInverse();
 
-	skybox->SetModelMatrix(m_cameraMatrix);
+	if (skybox != nullptr) {
+		skybox->SetModelMatrix(m_cameraMatrix);
+	}
 }

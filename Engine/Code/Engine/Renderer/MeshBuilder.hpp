@@ -3,7 +3,9 @@
 #include "Engine/Math/Vector3.hpp"
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Math/Matrix44.hpp"
+#include "Engine/Math/IntVector2.hpp"
 #include "Engine/Core/Rgba.hpp"
+#include "Engine/Core/Image.hpp"
 #include "Engine/Renderer/Mesh.hpp"
 #include <vector>
 
@@ -35,7 +37,8 @@ public:
 	void BuildQuad( Mesh* mesh, const Vector3& position, const Vector3& up, const Vector3& right, const Rgba& color);
 	void BuildSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() ); 
 	void BuildDeformedSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, float deformAmount, const Rgba& color = Rgba() ); 
-
+	void BuildTexturedGridFromPerlinParams( const IntVector2& facesInDimensions, const Vector2& faceDimensions, const Vector2& bottomLeftPosition, unsigned int seed, float perlinScale = 1.f, unsigned int perlinNumOctaves = 1, float perlinOctavePersistence = 0.5f, float perlinOctaveScale = 2.f );
+	void BuildTexturedGridFromHeightMap( Image* heightMap, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight );
 	void BuildWireSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() );
 
 	void LoadMeshFromOBJ( const std::string& path );

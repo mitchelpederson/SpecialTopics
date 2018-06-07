@@ -265,7 +265,7 @@ void DevConsole::Render() const {
 		g_theRenderer->DisableDepth();
 		g_theRenderer->SetCameraToUI();
 		//g_theRenderer->SetAlphaBlending();
-		//g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 200) );		
+		g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 170) );		
 		
 		for (int messageIndex = 0; messageIndex < m_messages.size(); messageIndex++) {
 			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, 100.f, (m_messages.size() - messageIndex + 1.f) * m_fontSize);

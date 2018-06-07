@@ -88,6 +88,15 @@ void Camera::SetDepthStencilTarget( Texture* depthTarget ) {
 }
 
 
+void Camera::SetFrameBuffer( FrameBuffer* frameBuffer ) {
+	if (m_frameBuffer != nullptr) {
+		delete m_frameBuffer;
+		m_frameBuffer = nullptr;
+	}
+
+	m_frameBuffer = frameBuffer;
+}
+
 void Camera::Finalize() {
 	m_frameBuffer->BindTargets();
 }

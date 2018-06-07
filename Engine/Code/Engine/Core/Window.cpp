@@ -64,7 +64,7 @@ LRESULT CALLBACK GameWndProc( HWND hwnd,
 }
 
 
-Window::Window( int width, int height, void* hinstance) {
+Window::Window( int width, int height, void* hinstance, const char* appName ) {
 	HINSTANCE applicationInstanceHandle = (HINSTANCE) hinstance;
 
 	s_window = this;
@@ -116,7 +116,7 @@ Window::Window( int width, int height, void* hinstance) {
 	AdjustWindowRectEx( &windowRect, windowStyleFlags, FALSE, windowStyleExFlags );
 
 	WCHAR windowTitle[ 1024 ];
-	MultiByteToWideChar( GetACP(), 0, m_appName, -1, windowTitle, sizeof( windowTitle ) / sizeof( windowTitle[ 0 ] ) );
+	MultiByteToWideChar( GetACP(), 0, appName, -1, windowTitle, sizeof( windowTitle ) / sizeof( windowTitle[ 0 ] ) );
 	m_hwnd = (void*) CreateWindowEx(
 		windowStyleExFlags,
 		windowClassDescription.lpszClassName,

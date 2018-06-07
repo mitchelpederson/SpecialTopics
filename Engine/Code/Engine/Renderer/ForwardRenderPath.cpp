@@ -19,6 +19,8 @@ void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 	for ( Camera* cam : scene->m_cameras ) {
 		RenderSceneForCamera( cam, scene );
 	}
+
+
 }
 
 
@@ -189,7 +191,7 @@ void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 
 	// We need to copy the effect camera's contents to the game camera
 	renderer->CopyFrameBuffer( camera->m_frameBuffer, m_effectCamera->m_frameBuffer );
-
+	renderer->SetCamera(camera);
 	// At the end, clean up
 	delete effectScratchTarget;
 	effectScratchTarget = nullptr;

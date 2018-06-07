@@ -1,0 +1,41 @@
+<materials>
+
+	<material name="terrain" shader="phong-normal-map">
+		<textures>
+			<texture slot="0" path="Data/Images/grass/grass01.png"/>
+			<texture slot="1" path="Data/Images/grass/grass01_n.png"/>
+		</textures>
+	</material>
+
+	<material name="particle" shader="additive">
+		<textures>
+			<texture slot="0" path="Data/Images/particle.png"/>
+		</textures>
+	</material>
+
+	<material name="player" shader="phong-normal-map">
+		<textures>
+			<texture slot="0" path="Data/Images/test.png"/>
+			<texture slot="1" path="Data/Images/grass/grass01_n.png"/>
+		</textures>
+	</material>
+
+
+	<material name="passthrough" shader="passthrough">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="testPostProcessEffect" shader="testEffect">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="dashDistort" shader="burn">
+		<textures>
+		</textures>
+		<properties>
+			<float name="burnAmount" value="1.0"/>
+		</properties>
+	</material>
+</materials>

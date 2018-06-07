@@ -90,3 +90,13 @@ unsigned char* Image::ExtractSquareAtOffset( unsigned int size, unsigned int xOf
 int Image::GetNumComponents() {
 	return m_numComponents;
 }
+
+
+void Image::PushTexel( const Rgba& color ) {
+	m_texels.push_back(color);
+}
+
+
+void Image::SetDimensions( int x, int y ) {
+	m_dimensions = IntVector2(x, y);
+}

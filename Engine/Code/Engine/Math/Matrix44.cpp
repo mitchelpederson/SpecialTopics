@@ -170,7 +170,7 @@ Matrix44 Matrix44::MakeOrtho2D( const Vector2& mins, const Vector2& maxs ) {
 
 	ortho.Ix = 2.f / (maxs.x - mins.x);
 	ortho.Jy = 2.f / (maxs.y - mins.y);
-	ortho.Kz = 2.f;
+	ortho.Kz = 1.f;
 	ortho.Tx = - (maxs.x + mins.x) / (maxs.x - mins.x);
 	ortho.Ty = - (maxs.y + mins.y) / (maxs.y - mins.y);
 	ortho.Tz = -1.f;
@@ -241,6 +241,7 @@ Matrix44 Matrix44::MakeProjection( float fov, float aspect, float zNear, float z
 	projection.Jy = d;
 	projection.Kz = (zFar + zNear) / depth;
 	projection.Kw = 1.f;
+	projection.Tw = 0.f;
 	projection.Tz = -(2.f * zFar * zNear) / depth;
 
 	return projection;
