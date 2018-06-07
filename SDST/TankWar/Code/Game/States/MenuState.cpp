@@ -1,5 +1,6 @@
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Core/Rgba.hpp"
+#include "Engine/DevConsole/DevConsole.hpp"
 
 #include "Game/States/MenuState.hpp"
 #include "Game/GameCommon.hpp"
@@ -19,7 +20,7 @@ void MenuState::OnBeginExit() {
 
 
 void MenuState::Update() {
-	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading()) {
+	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
 		g_theGame->BeginTransitionToState(STATE_SETUP);
 	}
 	GameState::Update();

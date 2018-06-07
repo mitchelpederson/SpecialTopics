@@ -73,7 +73,7 @@ void PlayState::Initialize() {
 }
 
 void PlayState::OnEnter() {
-	BeginFadeIn(0.1f);
+	BeginFadeIn(0.5f);
 	Initialize();
 }
 
@@ -127,7 +127,7 @@ void PlayState::ProcessDebugInput() {
 
 
 void PlayState::Update() {
-	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading()) {
+	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
 		g_theGame->BeginTransitionToState(STATE_MENU);
 	}
 	GameState::Update();
@@ -170,6 +170,7 @@ void PlayState::Render() const {
 
 	g_theRenderer->SetCameraToUI();
 	DebugRenderSet3DCamera(m_camera);
+	GameState::Render();
 
 }
 
