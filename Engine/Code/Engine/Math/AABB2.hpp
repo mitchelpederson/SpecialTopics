@@ -11,6 +11,7 @@ public:
 			 AABB2();
 			 AABB2( const AABB2& copy );
 	explicit AABB2( float minX, float minY, float maxX, float maxY );
+	explicit AABB2( int minX, int minY, int maxX, int maxY );
 	explicit AABB2( const Vector2& mins, const Vector2& maxs );
 	explicit AABB2( const Vector2& center, float radiusX, float radiusY );
 			 ~AABB2();

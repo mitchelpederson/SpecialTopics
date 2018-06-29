@@ -16,7 +16,7 @@ public:
 	Camera();
 	~Camera();
 
-	virtual void Update(float deltaSeconds);
+	virtual void Update();
 
 	// will be implemented later
 	void SetColorTarget( Texture* colorTarget );
@@ -36,6 +36,7 @@ public:
 	Vector3 GetForward() const;
 	Vector3 GetRight() const;
 	Vector3 GetUp() const;
+	Matrix44 GetViewProjection() const;
 
 	void Finalize();
 

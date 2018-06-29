@@ -1,5 +1,15 @@
 <shaders>
 
+	<shader name="cutout" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/cutout.vs" />
+		<fragment file="Data/Shaders/cutout.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
 	<shader name="phong" cull="back" fill="solid" frontface="ccw" queue="opaque">
 		<vertex file="Data/Shaders/dot3.vs" />
 		<fragment file="Data/Shaders/dot3.fs" />
@@ -38,6 +48,34 @@
 			<alpha op="add" src="one" dest="one" />
 		</blend>
 		<depth write="false" compare="less" />
+	</shader>
+	<shader name="passthrough" cull="back" fill="solid" frontface="ccw" lit="false" queue="opaque">
+		<vertex file="Data/Shaders/passthrough.vs" />
+		<fragment file="Data/Shaders/passthrough.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+	<shader name="passthroughTex" cull="back" fill="solid" frontface="ccw" lit="false" queue="opaque">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+	<shader name="passthrough-no-depth" cull="back" fill="solid" frontface="ccw" lit="false" queue="opaque">
+		<vertex file="Data/Shaders/passthrough.vs" />
+		<fragment file="Data/Shaders/passthrough.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
 	</shader>
 
 	<shader name="additive" cull="back" fill="solid" frontface="ccw" lit="false" queue="alpha">

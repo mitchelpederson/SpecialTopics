@@ -15,7 +15,7 @@ public:
 	Matrix44 GetViewMatrix();
 	void TranslateRelative( const Vector3& translation );
 	void RotateRelative( float pitchDegrees, float yawDegrees );
-	void Update(float deltaSeconds) override;
+	void Update() override;
 
 public:
 	float aspectRatio = 1.6667f;

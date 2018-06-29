@@ -1,17 +1,49 @@
-<TileDefinitions>
-	<Tile name="wall" solid="true" texelColor="112,83,12,255">
-		<textures>
-			<ceiling sprite-coord="0,0" />
-			<wall sprite-coord="0,1" />
-			<floor sprite-coord="7,5" />
-		</textures>
-	</Tile>
+<tiles>
 
-	<Tile name="void" solid="true" texelColor="0,0,0,255">
+	<tile name="floor" isSolid="false" id="100" minimapColor="100,100,100,255">
 		<textures>
-			<ceiling sprite-coord="0,0" />
-			<wall sprite-coord="0,1" />
-			<floor sprite-coord="1,0" />
+			<ceiling spriteCoord="0,7" />
+			<floor spriteCoord="0,18" />
 		</textures>
-	</Tile>
-</TileDefinitions>
+	</tile>
+
+	<tile name="wall" isSolid="true" id="200" minimapColor="50,50,50,255">
+		<textures>
+			<wall spriteCoord="0,0" />
+		</textures>
+	</tile>
+
+	<tile name="wood-wall" isSolid="true" id="150" minimapColor="50,50,50,255">
+		<textures>
+			<wall spriteCoord="4,3" />
+		</textures>
+	</tile>
+
+	<tile name="wood-wall-hitler" isSolid="true" id="175" minimapColor="50,50,50,255">
+		<textures>
+			<wall spriteCoord="2,3" />
+		</textures>
+	</tile>
+
+	<tile name="void" isSolid="true" id="0" minimapColor="0,0,0,255">
+		<textures>
+			<ceiling spriteCoord="0,0" />
+			<wall spriteCoord="0,1" />
+			<floor spriteCoord="1,0" />
+		</textures>
+	</tile>
+
+	<tile name="door" isSolid="true" isLevelExit="true" id="255" minimapColor="0,255,255,255">
+		<textures>
+			<ceiling spriteCoord="0,0" />
+			<wall spriteCoord="1,6" />
+			<floor spriteCoord="1,0" />
+		</textures>		
+	</tile>
+
+	<tile name="error" isSolid="false" id="1" minimapColor="255,0,255,255"> 
+		<textures> 
+		</textures>
+	</tile>
+
+</tiles>

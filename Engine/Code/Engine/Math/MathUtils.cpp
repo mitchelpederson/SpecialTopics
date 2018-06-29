@@ -87,6 +87,10 @@ float AsinDegrees( float val ) {
 	return ConvertRadiansToDegrees( (float) asin( val ) );
 }
 
+float AcosDegrees( float val ) {
+	return ConvertRadiansToDegrees( (float) acos( val ) );
+}
+
 
 float GetDistance(const Vector2& a, const Vector2& b) {
 	float yDist = a.y - b.y;
@@ -459,4 +463,19 @@ Vector3 GetRandomDirectionInCone( float angle ) {
 
 		return PolarToCartesian3D(1.f, theta, phi);
 
+}
+
+
+Vector3 Average(const Vector3& a, const Vector3& b) {
+	return (a + b) * 0.5f;
+}
+
+
+float Min(float a, float b) {
+	if (a < b) {
+		return a;
+	}
+	else {
+		return b;
+	}
 }

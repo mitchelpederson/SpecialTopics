@@ -40,7 +40,7 @@ bool Stopwatch::Decrement() {
 
 unsigned int Stopwatch::DecrementAll() {
 	if (HasElapsed()) {
-		unsigned int timesElapsed = (m_reference->total.hpc - m_startHPC) / m_intervalHPC;
+		unsigned int timesElapsed = (unsigned int) (m_reference->total.hpc - m_startHPC) / (unsigned int) m_intervalHPC;
 		m_startHPC += m_intervalHPC * timesElapsed;
 		return timesElapsed;
 	}
@@ -57,9 +57,9 @@ bool Stopwatch::HasElapsed() const {
 }
 
 float Stopwatch::GetElapsedTime() const {
-	return m_reference->total.hpc - m_startHPC;
+	return PerformanceCountToSeconds( m_reference->total.hpc - m_startHPC );
 }
 
 float Stopwatch::GetNormalizedElapsedTime() const {
-	return (float) (m_reference->total.hpc - m_startHPC) / (float) m_intervalHPC;
+	return PerformanceCountToSeconds(m_reference->total.hpc - m_startHPC) / PerformanceCountToSeconds( m_intervalHPC );
 }

@@ -244,9 +244,11 @@ public:
 	void SetLight( unsigned int index, const Light& light );
 	void SetSpecular( float power, float amount );
 	void DisableAllLights();
+	void BindLightState();
+	void SetFog( float fogFactor, float maxFogDistance, Rgba const& fogColor );
 
 	void SetModelMatrix( const Matrix44& modelMatrix );
-
+	void SetViewport( int x, int y, int width, int height );
 	void SaveScreenshot();
 
 private:
@@ -275,6 +277,8 @@ private:
 	Shader* m_defaultShader = nullptr;
 	Shader* m_currentShader = nullptr;
 
+	Sampler* m_nearestSampler = nullptr;
+	Sampler* m_linearSampler = nullptr;
 	Sampler* m_defaultSampler = nullptr;
 	Texture* m_defaultColorTarget = nullptr;
 	Texture* m_defaultDepthTarget = nullptr;
@@ -287,6 +291,7 @@ private:
 	Camera* m_currentCamera = nullptr;
 
 
+	// Lighting state
 	Rgba m_ambientLightColor;
 	float m_ambientLightIntensity = 0.0f;
 
@@ -298,8 +303,14 @@ private:
 	float m_lightIntensities[MAX_LIGHTS];
 	float m_lightAttenuation[MAX_LIGHTS];
 	float m_isPointLight[MAX_LIGHTS];
+
+	float m_isShadowcasting[MAX_LIGHTS];
+	Matrix44 m_lightVP[MAX_LIGHTS];
+	Matrix44 m_inverseLightVP[MAX_LIGHTS];
 	float m_specularAmount = 0.3f;
 	float m_specularPower = 16.f;
-
+	float m_fogMaxDistance = 100.f;
+	float m_fogFactor = 1.f;
+	Rgba m_fogColor = Rgba(200, 200, 200, 255);
 
 };

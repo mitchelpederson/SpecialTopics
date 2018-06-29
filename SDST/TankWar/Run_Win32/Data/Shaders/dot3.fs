@@ -70,7 +70,7 @@ void main(void) {
 
 	// Get the normal and the diffuse color
 	vec3 surfaceNormal = normalize(passWorldNormal);
-	vec4 surfaceColor = texture(gTexDiffuse, passUV);
+	vec4 surfaceColor = texture(gTexDiffuse, passUV) * passColor;
 
 
 	// calculate ambient light

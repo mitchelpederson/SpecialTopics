@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Core/Stopwatch.hpp"
 
+
 class GameState {
 
 public:
@@ -16,6 +17,9 @@ public:
 
 	bool IsFading() const;
 
+	float GetDeltaTime() const;
+	float GetElapsedTime() const;
+
 
 protected:
 	void BeginFadeIn( float duration );
@@ -28,6 +32,7 @@ protected:
 private:
 	float m_fadeInLength = 0.2f;
 	float m_fadeOutLength = 0.2f;
+	Clock* m_stateClock = nullptr;
 
 	Stopwatch m_fadeStopwatch;
 

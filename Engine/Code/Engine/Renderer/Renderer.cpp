@@ -355,6 +355,27 @@ void Renderer::Draw( DrawCall& drawCall ) {
 }
 
 
+void Renderer::BindLightState() {
+	SetUniform("AMBIENT_COLOR", &m_ambientLightColor);
+	SetUniform("AMBIENT_INTENSITY", &m_ambientLightIntensity);
+	SetUniform("LIGHT_POSITION", m_lightPositions, MAX_LIGHTS);
+	SetUniform("LIGHT_DIRECTION", m_lightDirections, MAX_LIGHTS);
+	SetUniform("LIGHT_INNER_ANGLE", m_lightInnerAngles, MAX_LIGHTS);
+	SetUniform("LIGHT_OUTER_ANGLE", m_lightOuterAngles, MAX_LIGHTS);
+	SetUniform("LIGHT_COLOR", m_lightColors, MAX_LIGHTS);
+	SetUniform("LIGHT_INTENSITY", m_lightIntensities, MAX_LIGHTS);
+	SetUniform("LIGHT_ATTENUATION", m_lightAttenuation, MAX_LIGHTS);
+	SetUniform("LIGHT_IS_POINT", m_isPointLight, MAX_LIGHTS);
+	SetUniform("SPECULAR_POWER", &m_specularPower);
+	SetUniform("SPECULAR_AMOUNT", &m_specularAmount);
+	SetUniform("LIGHT_IS_SHADOWCASTING", m_isShadowcasting, MAX_LIGHTS);
+	GLint shadowVPUniform			= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "SHADOW_VP");
+	GLint shadowInverseVPUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "SHADOW_INVERSE_VP");
+	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowVPUniform,		  MAX_LIGHTS, GL_FALSE, &(m_lightVP[0].Ix));
+	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowInverseVPUniform, MAX_LIGHTS, GL_FALSE, &(m_inverseLightVP[0].Ix));
+}
+
+
 void Renderer::DrawMesh( Mesh* mesh ) {
 
 	glUseProgram(m_currentShader->GetProgram()->GetHandle());
@@ -382,18 +403,11 @@ void Renderer::DrawMesh( Mesh* mesh ) {
 	glUniform3f(cameraPosUniform, cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	glUniform3f(cameraDirUniform, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 
-	SetUniform("AMBIENT_COLOR", &m_ambientLightColor);
-	SetUniform("AMBIENT_INTENSITY", &m_ambientLightIntensity);
-	SetUniform("LIGHT_POSITION", m_lightPositions, MAX_LIGHTS);
-	SetUniform("LIGHT_DIRECTION", m_lightDirections, MAX_LIGHTS);
-	SetUniform("LIGHT_INNER_ANGLE", m_lightInnerAngles, MAX_LIGHTS);
-	SetUniform("LIGHT_OUTER_ANGLE", m_lightOuterAngles, MAX_LIGHTS);
-	SetUniform("LIGHT_COLOR", m_lightColors, MAX_LIGHTS);
-	SetUniform("LIGHT_INTENSITY", m_lightIntensities, MAX_LIGHTS);
-	SetUniform("LIGHT_ATTENUATION", m_lightAttenuation, MAX_LIGHTS);
-	SetUniform("LIGHT_IS_POINT", m_isPointLight, MAX_LIGHTS);
-	SetUniform("SPECULAR_POWER", &m_specularPower);
-	SetUniform("SPECULAR_AMOUNT", &m_specularAmount);
+	BindLightState();
+	SetUniform("MAX_FOG_DISTANCE", &m_fogMaxDistance);
+	SetUniform("FOG_FACTOR", &m_fogFactor);
+	SetUniform("FOG_COLOR", &m_fogColor);
+	SetUniform("TIME_IN_SECONDS", &g_masterClock->total.seconds);
 
 	DrawInstructions di = mesh->GetDrawInstructions();
 	if (di.useIndices) {
@@ -559,7 +573,7 @@ void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 //
 void Renderer::DrawRegularPolygon(const Vector2& center, float radius, float degreesToRotate, int sides, Rgba color) {
 
-	/*Vertex3D_PCU* vertices = new Vertex3D_PCU[2 * (sides - 1)];
+	Vertex3D_PCU* vertices = new Vertex3D_PCU[2 * sides];
 
 	float degreesPerVertex = 360.f / (float) sides;
 
@@ -576,16 +590,15 @@ void Renderer::DrawRegularPolygon(const Vector2& center, float radius, float deg
 		endX = center.x + ( radius * CosDegrees( degreesToRotate + (degreesPerVertex * (float) ( i + 1 )) ));
 		endY = center.y + ( radius * SinDegrees( degreesToRotate + (degreesPerVertex * (float) ( i + 1 )) ));
 
-
-		vertices[i * 2].position = Vector3(startX, startY, 0.f);
-		vertices[i * 2].color = color;
-		vertices[(i*2) + 1].position = Vector3(endX, endY, 0.f);
-		vertices[(i*2) + 1].color = color;
+		vertices[i*2].position = Vector3(startX, startY, 0.f);
+		vertices[i*2].color = color;
+		vertices[i*2 + 1].position = Vector3(endX, endY, 0.f);
+		vertices[i*2 + 1].color = color;
 
 	}
 
-	DrawMeshImmediate(vertices, 2 * (sides - 1), LINES);*/
-	UNIMPLEMENTED();
+	//SetShader(GetShader("passthrough"));
+	DrawMeshImmediate(vertices, 2 * sides, LINES);
 
 }
 
@@ -880,7 +893,7 @@ void Renderer::DrawText(const Vector3& position , const std::string& asciiText ,
 		char glyph = asciiText[character];
 		float cellWidth = cellHeight * aspectScale * font->GetGlyphAspect(/*glyph*/);
 
-		UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthroughTex"));
+		UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/font"));
 ;
 		float horizontalOffset = 0.5f * cellWidth;
 		float verticalOffset = 0.5f * cellHeight;
@@ -894,10 +907,6 @@ void Renderer::DrawText(const Vector3& position , const std::string& asciiText ,
 		UseTexture(0, *font->GetFontTexture());
 		
 		DrawQuad(topLeft, bottomLeft, topRight, bottomRight, glyphUVs, tint);
-
-		
-
-
 	}
 }
 
@@ -1226,6 +1235,12 @@ void Renderer::SetCamera(Camera* cam) {
 
 }
 
+
+void Renderer::SetViewport( int x, int y, int width, int height ) {
+	glViewport(x, y, width, height);
+
+}
+
 void Renderer::SetCameraToDefault() {
 	SetCamera(m_defaultCamera);
 
@@ -1509,6 +1524,7 @@ void Renderer::SetPointLight( const Vector3& position, const Rgba& color, float 
 	m_lightIntensities[0] = intensity;
 	m_lightAttenuation[0] = attenuation;
 	m_isPointLight[0] = 1.f;
+	m_isShadowcasting[0] = 0.f;
 }
 
 void Renderer::SetPointLight( unsigned int index, const Vector3& position, const Rgba& color, float intensity, float attenuation ) {
@@ -1522,6 +1538,7 @@ void Renderer::SetPointLight( unsigned int index, const Vector3& position, const
 	m_lightIntensities[index] = intensity;
 	m_lightAttenuation[index] = attenuation;
 	m_isPointLight[index] = 1.f;
+	m_isShadowcasting[index] = 0.f;
 }
 
 void Renderer::SetDirectionalLight( unsigned int index, const Vector3& position, const Vector3& direction, const Rgba& color, float intensity, float attenuation ) {
@@ -1536,6 +1553,7 @@ void Renderer::SetDirectionalLight( unsigned int index, const Vector3& position,
 	m_lightIntensities[index] = intensity;
 	m_lightAttenuation[index] = attenuation;
 	m_isPointLight[index] = 0.f;
+	m_isShadowcasting[index] = 0.f;
 }
 
 
@@ -1560,8 +1578,10 @@ void Renderer::SetSpotLight( unsigned int index
 	m_lightIntensities[index] = intensity;
 	m_lightAttenuation[index] = attenuation;
 	m_isPointLight[index] = 1.f;
+	m_isShadowcasting[index] = 0.f;
 
 }
+
 
 void Renderer::SetLight( unsigned int index, const Light& light ) {
 	m_lightPositions[index]		= light.m_position;
@@ -1572,6 +1592,13 @@ void Renderer::SetLight( unsigned int index, const Light& light ) {
 	m_lightIntensities[index]	= light.m_intensity;
 	m_lightAttenuation[index]	= light.m_attenuation;
 	m_isPointLight[index]		= light.m_isPointLight;
+
+	m_isShadowcasting[index]	= light.m_isShadowcasting;
+	if (light.m_isShadowcasting > 0.f) {
+		m_lightVP[index]		= light.m_viewProjection;
+		m_inverseLightVP[index]	= light.m_inverseViewProjection;
+		UseTexture(8, *light.m_depthTarget);
+	}
 }
 
 
@@ -1713,4 +1740,11 @@ void Renderer::SaveScreenshot() {
 	stbi_write_jpg(timeStamp.c_str(), width, height, 4, data, 80);
 
 	free(data);
+}
+
+
+void Renderer::SetFog( float fogFactor, float maxFogDistance, Rgba const& fogColor ) {
+	m_fogColor = fogColor;
+	m_fogFactor = fogFactor;
+	m_fogMaxDistance = maxFogDistance;
 }

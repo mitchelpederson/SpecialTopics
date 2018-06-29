@@ -57,7 +57,6 @@ public:
 	float GetDeltaTime();
 	float GetElapsedTime();
 
-
 	void BeginTransitionToState( eGameState next ); 
 
 	PlayState* GetCurrentPlayState();

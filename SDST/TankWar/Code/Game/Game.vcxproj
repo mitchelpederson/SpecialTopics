@@ -299,6 +299,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="Base.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
     <ClCompile Include="Map\GameMap.cpp" />
@@ -307,6 +309,8 @@
     <ClCompile Include="States\MenuState.cpp" />
     <ClCompile Include="States\PlayState.cpp" />
     <ClCompile Include="States\SetupState.cpp" />
+    <ClCompile Include="SwarmEnemy.cpp" />
+    <ClCompile Include="Tank.cpp" />
     <ClCompile Include="TheGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -316,6 +320,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="Base.hpp" />
+    <ClInclude Include="Bullet.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="GameCommon.hpp" />
     <ClInclude Include="GameDebug.hpp" />
@@ -326,6 +332,8 @@
     <ClInclude Include="States\MenuState.hpp" />
     <ClInclude Include="States\PlayState.hpp" />
     <ClInclude Include="States\SetupState.hpp" />
+    <ClInclude Include="SwarmEnemy.hpp" />
+    <ClInclude Include="Tank.hpp" />
     <ClInclude Include="TheGame.hpp" />
   </ItemGroup>
   <ItemGroup>

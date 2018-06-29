@@ -1,5 +1,6 @@
 #include "Engine/Math/Matrix44.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Math/Vector4.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 
 
@@ -163,6 +164,24 @@ Vector3 Matrix44::TransformPosition(const Vector3& point) const {
 	return Vector3(transformedX, transformedY, transformedZ);
 }
 
+Vector4 Matrix44::Transform(const Vector4& point) const {
+	float transformedX = (point.x * Ix) + (point.y * Jx) + (point.z * Kx) + (point.w * Tx);
+	float transformedY = (point.x * Iy) + (point.y * Jy) + (point.z * Ky) + (point.w * Ty);
+	float transformedZ = (point.x * Iz) + (point.y * Jz) + (point.z * Kz) + (point.w * Tz);
+	float transformedW = (point.x * Iw) + (point.y * Jw) + (point.z * Kw) + (point.w * Tw);
+
+	return Vector4(transformedX, transformedY, transformedZ, transformedW);
+}
+
+
+Vector3 Matrix44::TransformDirection(const Vector3& direction) const {
+	float transformedX = (direction.x * Ix) + (direction.y * Jx) + (direction.z * Kx);
+	float transformedY = (direction.x * Iy) + (direction.y * Jy) + (direction.z * Ky);
+	float transformedZ = (direction.x * Iz) + (direction.y * Jz) + (direction.z * Kz);
+
+	return Vector3(transformedX, transformedY, transformedZ);
+}
+
 
 Matrix44 Matrix44::MakeOrtho2D( const Vector2& mins, const Vector2& maxs ) {
 
@@ -175,6 +194,19 @@ Matrix44 Matrix44::MakeOrtho2D( const Vector2& mins, const Vector2& maxs ) {
 	ortho.Ty = - (maxs.y + mins.y) / (maxs.y - mins.y);
 	ortho.Tz = -1.f;
 
+	return ortho;
+}
+
+
+Matrix44 Matrix44::MakeOrthographic(float left, float right, float top, float bottom, float far, float near) {
+	Matrix44 ortho;
+	ortho.Ix = 2.f / (right - left);
+	ortho.Jy = 2.f / (top - bottom);
+	ortho.Kz = 2.f / (far - near);
+	ortho.Tx = -(right + left) / (right - left);
+	ortho.Ty = -(top + bottom) / (top - bottom);
+	ortho.Tz = -(far + near) / (far - near);
+	ortho.Tw = 1.f;
 	return ortho;
 }
 
@@ -338,15 +370,15 @@ Matrix44 Matrix44::MakeRotationDegrees( const Vector3& rotation ) {
 
 
 Vector3 Matrix44::GetRight() const {
-	return Vector3(Ix, Iy, Iz);
+	return Vector3(Ix, Iy, Iz).GetNormalized();
 }
 
 Vector3 Matrix44::GetUp() const {
-	return Vector3(Jx, Jy, Jz);
+	return Vector3(Jx, Jy, Jz).GetNormalized();
 }
 
 Vector3 Matrix44::GetForward() const {
-	return Vector3(Kx, Ky, Kz);
+	return Vector3(Kx, Ky, Kz).GetNormalized();
 }
 
 
@@ -678,3 +710,47 @@ Vector3 Matrix44::GetRotation() const {
 
 	return Vector3( xEuler, yEuler, zEuler );
 }
+
+
+float Matrix44::GetTrace3() const {
+	return Ix + Jy + Kz;
+}
+
+
+Matrix44 InterpolateRotation( const Matrix44& start, const Matrix44& end, float fractionTowards ) {
+
+	Vector3 translation = start.GetTranslation();
+
+	Vector3 startRight = start.GetRight();
+	Vector3 endRight = end.GetRight();
+	Vector3 startUp = start.GetUp();
+	Vector3 endUp = end.GetUp();
+	Vector3 startForward = start.GetForward();
+	Vector3 endForward = end.GetForward();
+
+	Vector3 right = SlerpUnitVectors(startRight, endRight, fractionTowards);
+	Vector3 up = SlerpUnitVectors(startUp, endUp, fractionTowards);
+	Vector3 forward = SlerpUnitVectors(startForward, endForward, fractionTowards);
+
+	return Matrix44(right, up, forward, translation);
+
+}
+
+
+Matrix44 LerpMatrix( const Matrix44& start, const Matrix44& end, float fractionToward ) {
+	Vector3 rightStart = start.GetRight();
+	Vector3 rightEnd = end.GetRight();
+	Vector3 forwardStart = start.GetForward();
+	Vector3 forwardEnd = end.GetForward();
+	Vector3 upStart = start.GetUp();
+	Vector3 upEnd = end.GetUp();
+	Vector3 translateStart = start.GetTranslation();
+	Vector3 translateEnd = end.GetTranslation();
+
+	Vector3 right = Slerp( rightStart, rightEnd, fractionToward );
+	Vector3 forward = Slerp( forwardStart, forwardEnd, fractionToward );
+	Vector3 up = Slerp( upStart, upEnd, fractionToward );
+	Vector3 translate = Interpolate( translateStart, translateEnd, fractionToward );
+
+	return Matrix44( right, up, forward, translate );
+} 

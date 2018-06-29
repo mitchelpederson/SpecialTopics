@@ -7,6 +7,8 @@
 #include "Engine/Renderer/DebugRender.hpp"
 #include "Engine/Renderer/FirstPersonCamera.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
+#include "Engine/Renderer/Sprites/IsoSprite.hpp"
+#include "Engine/Renderer/Sprites/IsoSpriteAnimDef.hpp"
 #include "Engine/DevConsole/Command.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/Core/Rgba.hpp"
@@ -14,6 +16,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Game/TheGame.hpp"
 #include "Game/GameCommon.hpp"
+#include "Game/EntityDefinition.hpp"
 
 
 TheGame* TheGame::m_instance = nullptr;
@@ -46,14 +49,18 @@ void TheGame::Initialize() {
 	CommandRegistration::RegisterCommand("quit", QuitGame);
 
 	g_theRenderer->CreateOrGetBitmapFont("Courier");
-	terrain = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/Terrain_8x8.png"), IntVector2(8,8));
+	g_theRenderer->CreateOrGetBitmapFont("Wolfenstein");
+	terrain = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/wolfenstein_textures.png"), IntVector2(6,19));
+	LoadSpriteDefinitions("Data/Definitions/sprites.xml");
+	LoadIsoSpriteDefinitions("Data/Definitions/isosprites.xml");
+	LoadIsoSpriteAnimDefinitions("Data/Definitions/isospriteanims.xml");
+	LoadTileDefinitions("Data/Definitions/tiles.xml");
+	LoadEntityDefinitions("Data/Definitions/entities.xml");
 
 	m_camera = new FirstPersonCamera();
 	m_camera->SetProjection(Matrix44::MakeProjection(45.f, 16.f / 9.f, 0.1f, 100.f));	
-	m_camera->SetColorTarget(g_theRenderer->GetDefaultColorTarget());
-	m_camera->SetDepthStencilTarget(g_theRenderer->GetDefaultDepthTarget());
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("testPostProcessEffect"));
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("dashDistort"));
+	m_camera->SetFrameBuffer(g_theRenderer->GetDefaultFrameBuffer());
+	m_camera->transform.position = Vector3(16.f, 16.f, -10.f);
 	m_cameraLight = new Light();
 
 	m_gameClock = new Clock(g_masterClock);
@@ -71,18 +78,8 @@ void TheGame::Initialize() {
 
 	DebugRenderSet3DCamera(m_camera);
 
-	m_forwardRenderPath = new ForwardRenderPath(g_theRenderer);
-	m_scene = new RenderSceneGraph();
-	particleMaterial = g_theRenderer->GetMaterial("additive");
-	m_scene->AddCamera(m_camera);
-
-	m_skyboxTexture = g_theRenderer->CreateCubeMap("Data/Images/galaxy2.png");
-	m_skyboxShader = g_theRenderer->GetShader("skybox");
-	//m_camera->SetSkybox(m_skyboxTexture);
-
-	//music = g_audioSystem->CreateOrGetSound("Data/Audio/asteroids.wav");
-	//musicPlaybackID = g_audioSystem->PlaySound(music, true);
-	//g_audioSystem->AddFFTToChannel(musicPlaybackID);
+	Image gameMapImage("Data/Maps/test4.png");
+	currentMap = new GameMap(gameMapImage);
 
 }
 
@@ -104,12 +101,6 @@ void TheGame::CheckIfPauseStateChanged() {
 //
 void TheGame::ProcessInput() {
 	ProcessDebugInput();
-	ProcessPlayerInput();
-}
-
-
-void TheGame::ProcessPlayerInput() {
-
 }
 
 
@@ -144,7 +135,9 @@ void TheGame::Update() {
 		ProcessInput();
 	}
 
-	m_camera->Update(m_gameClock->frame.seconds);
+
+	currentMap->Update();
+	//m_camera->Update();
 	
 }
 
@@ -164,9 +157,10 @@ void TheGame::Render() {
 	g_theRenderer->SetAmbientLight(ambientIntensity, ambientColor);
 	g_theRenderer->SetSpecular(specularPower, specularAmount);
 
-	m_forwardRenderPath->RenderSceneForCamera( m_camera, m_scene );
+	currentMap->Render();
 
 	g_theRenderer->SetCameraToUI();
+
 	DebugRenderSet3DCamera(m_camera);
 }
 
@@ -175,3 +169,77 @@ bool TheGame::IsDevModeActive() const {
 	return m_devModeActive;
 }
 
+
+void TheGame::LoadTileDefinitions(std::string filePath) {
+
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* tileDef = root->FirstChildElement();
+
+	while (tileDef != nullptr) {
+		new TileDefinition(*tileDef, terrain);
+		tileDef = tileDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+
+void TheGame::LoadEntityDefinitions(std::string filePath) {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* entityDef = root->FirstChildElement();
+
+	while (entityDef != nullptr) {
+		new EntityDefinition(*entityDef);
+		entityDef = entityDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+void TheGame::LoadSpriteDefinitions(std::string filePath) {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* spriteDef = root->FirstChildElement();
+
+	while (spriteDef != nullptr) {
+		new Sprite(*spriteDef);
+		spriteDef = spriteDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+
+void TheGame::LoadIsoSpriteDefinitions(std::string filePath) {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* isoSpriteDef = root->FirstChildElement();
+
+	while (isoSpriteDef != nullptr) {
+		new IsoSprite(*isoSpriteDef);
+		isoSpriteDef = isoSpriteDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+
+void TheGame::LoadIsoSpriteAnimDefinitions(std::string filePath) {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* isoSpriteAnimDef = root->FirstChildElement();
+
+	while (isoSpriteAnimDef != nullptr) {
+		new IsoSpriteAnimDef(*isoSpriteAnimDef);
+		isoSpriteAnimDef = isoSpriteAnimDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+
+Camera* TheGame::GetPlayerCamera() {
+	return currentMap->GetPlayerCamera();
+}

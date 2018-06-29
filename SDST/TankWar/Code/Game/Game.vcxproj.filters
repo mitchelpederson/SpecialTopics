@@ -20,6 +20,9 @@
     <Filter Include="General\States">
       <UniqueIdentifier>{83ba60c6-05d8-4f48-b01c-f688ad2ff332}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\GameObjects">
+      <UniqueIdentifier>{6e6e3d19-5615-40b2-8b4c-f348c6670d36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -51,6 +54,18 @@
     </ClCompile>
     <ClCompile Include="States\SetupState.cpp">
       <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="Tank.cpp">
+      <Filter>General\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>General\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="SwarmEnemy.cpp">
+      <Filter>General\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Base.cpp">
+      <Filter>General\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,6 +104,18 @@
     </ClInclude>
     <ClInclude Include="States\SetupState.hpp">
       <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="Tank.hpp">
+      <Filter>General\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Bullet.hpp">
+      <Filter>General\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="SwarmEnemy.hpp">
+      <Filter>General\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Base.hpp">
+      <Filter>General\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

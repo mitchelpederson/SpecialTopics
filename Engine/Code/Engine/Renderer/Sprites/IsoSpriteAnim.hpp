@@ -15,6 +15,7 @@ public:
 	void Reset();
 
 	IsoSprite* GetCurrentIsoSprite() const;
+	bool HasFinished() const;
 
 
 public:

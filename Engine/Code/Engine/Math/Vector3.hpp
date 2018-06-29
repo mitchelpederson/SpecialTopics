@@ -24,7 +24,9 @@ public:
 	const Vector3 operator*( float c ) const;
 	const Vector3 operator-(const Vector3& b) const;
 	const Vector3 operator+(const Vector3& b) const;
-	const Vector3& operator*=(float scale) ;
+	const Vector3& operator*=(float scale);
+	const Vector3& operator+=(const Vector3& b);
+	friend bool operator==(const Vector3& a, const Vector3& b);
 
 	static const Vector3 UP;
 	static const Vector3 FORWARD;
@@ -43,3 +45,5 @@ public:
 
 
 Vector3 Interpolate(const Vector3& start, const Vector3& end, float fractionToward);
+Vector3 Slerp(const Vector3& start, const Vector3& end, float fractionToward);
+Vector3 SlerpUnitVectors(const Vector3& start, const Vector3& end, float fractionToward);

@@ -1,0 +1,40 @@
+<isoanims>
+	<isoanim id="enemy.idle" loop="loop">
+   		<frame src="enemy.idle" time="1.0" />
+	</isoanim>
+	<isoanim id="enemy.walk" loop="loop">
+   		<frame src="enemy.walk1" time=".25" />
+   		<frame src="enemy.walk2" time=".25" />
+   		<frame src="enemy.walk3" time=".25" />
+   		<frame src="enemy.walk4" time=".25" />
+	</isoanim>
+	<isoanim id="enemy.shoot" loop="clamp">
+   		<frame src="enemy.shoot1" time=".25" />
+   		<frame src="enemy.shoot2" time=".25" />
+   		<frame src="enemy.shoot3" time=".25" />
+	</isoanim>
+	<isoanim id="enemy.death" loop="clamp">
+   		<frame src="enemy.death1" time=".15" />
+   		<frame src="enemy.death2" time=".15" />
+   		<frame src="enemy.death3" time=".15" />
+   		<frame src="enemy.death4" time=".15" />
+   		<frame src="enemy.death5" time=".15" />
+	</isoanim>
+
+   <!-- HUD -->
+
+   <isoanim id="hud.shoot" loop="clamp">
+         <frame src="hud.pistol2" time=".05" />
+         <frame src="hud.pistol3" time=".1" />
+         <frame src="hud.pistol4" time=".05" />
+         <frame src="hud.pistol5" time=".05" />
+   </isoanim>
+
+   <isoanim id="hud.walk" loop="loop">
+         <frame src="hud.pistol1" time=".05" />
+   </isoanim>
+
+   <isoanim id="hud.idle" loop="loop">
+         <frame src="hud.pistol1" time=".05" />
+   </isoanim>
+</isoanims>

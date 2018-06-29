@@ -16,6 +16,8 @@ ForwardRenderPath::ForwardRenderPath( Renderer* r ) : renderer( r ) {
 void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 	scene->SortCameras();
 
+	
+
 	for ( Camera* cam : scene->m_cameras ) {
 		RenderSceneForCamera( cam, scene );
 	}
@@ -25,6 +27,13 @@ void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 
 
 void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* scene ) {
+
+	for ( Light* light : scene->m_lights ) {
+		if (light->m_isShadowcasting > 0.f) {
+			RenderShadowCastingObjectsForLight( light, scene, camera );
+		}
+	}
+
 	renderer->SetCamera( camera );
 	ClearBasedOnCameraOptions( camera );
 
@@ -63,6 +72,44 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 }
 
 
+void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, RenderSceneGraph* scene, Camera* currentCamera ) {
+	Camera cam;
+
+	g_theRenderer->BindMaterial(g_theRenderer->GetMaterial("depth-only"));
+
+
+	Vector3 playerCamPos = currentCamera->transform.position;
+	Vector3 playerCamForward = currentCamera->m_cameraMatrix.GetForward();
+	Vector3 shadowCamPos = playerCamPos + (playerCamForward * 10.f);
+
+	cam.SetProjection(Matrix44::MakeOrthographic(32.f, -32.f, // left, right
+												 32.f, -32.f, // top, bottom
+												 50.f, -50.f)); // far, near
+
+	cam.transform.position = playerCamPos;
+	cam.transform.LookToward(light->m_direction.GetNormalized() * -1.f, Vector3::UP);
+	cam.m_viewMatrix = cam.transform.GetWorldToLocalMatrix();
+	cam.m_cameraMatrix = cam.transform.GetLocalToWorldMatrix();
+	
+	cam.SetColorTarget(nullptr);
+	cam.SetDepthStencilTarget(light->CreateOrGetShadowTexture());
+	g_theRenderer->SetCamera(&cam);
+	Matrix44 camVP = cam.m_projMatrix;
+	camVP.Append(cam.m_viewMatrix);
+	light->m_viewProjection = camVP;
+	light->m_inverseViewProjection = camVP.GetInverse();
+
+	g_theRenderer->SetViewport(0, 0, light->m_shadowMapResolution.x, light->m_shadowMapResolution.y);
+	g_theRenderer->ClearDepth();
+	for (Renderable* r : scene->m_renderables) {
+		g_theRenderer->SetModelMatrix(r->GetModelMatrix());
+		g_theRenderer->DrawMesh(r->GetMesh());
+	}
+	g_theRenderer->SetViewport(0, 0, Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight());
+
+}
+
+
 void ForwardRenderPath::EnableLightsForDrawCall( const DrawCall& drawCall, RenderSceneGraph* scene ) {
 	int maxLights = (int) min(drawCall.m_lightCount, scene->m_lights.size());
 	for (int i = 0; i < maxLights; i++) {
@@ -79,10 +126,6 @@ void ForwardRenderPath::ClearBasedOnCameraOptions( Camera* camera ){
 
 
 void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCount, unsigned int m_lightIndices[MAX_LIGHTS], const Vector3& position, RenderSceneGraph* scene ) {
-	
-	/*for (int i = 0; i < scene->GetLightCount(); i++) {
-		DebugRenderWireSphere(0.f, scene->m_lights[i]->m_position, 0.2f, scene->m_lights[i]->m_color );
-	}*/
 
 	unsigned int numLights = (unsigned int) scene->m_lights.size();
 	LightComparisonData* lights = new LightComparisonData[numLights];
@@ -91,7 +134,12 @@ void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCoun
 	for (unsigned int sceneLightIndex = 0; sceneLightIndex < numLights; sceneLightIndex++) {
 		const Light& light = *scene->m_lights[sceneLightIndex];
 		lights[sceneLightIndex].index = sceneLightIndex;
-		lights[sceneLightIndex].weight = light.m_intensity / ( 1.f + (light.m_attenuation * light.m_position.DistanceFrom(position)) );
+		if (light.m_isPointLight != 0.f) {
+			lights[sceneLightIndex].weight = light.m_intensity / ( 1.f + (light.m_attenuation * light.m_position.DistanceFrom(position)) );
+		}
+		else  {
+			lights[sceneLightIndex].weight = light.m_intensity;
+		}
 	}
 	
 	// Sort by distance, i'm extremely lazy and am using a bubble sort for now. will improve when slow
@@ -124,10 +172,15 @@ void ForwardRenderPath::SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera*
 	// Sort based on the queue, so we can draw opaque before transparent things
 	for (int i = 0; i < drawCalls.size(); i++) {
 		for (int j = 0; j < drawCalls.size() - 1; j++) {
+			bool wasSwapped = false;
 			if (drawCalls[j].m_queue > drawCalls[j+1].m_queue) {
 				DrawCall temp = drawCalls[j];
 				drawCalls[j] = drawCalls[j+1];
 				drawCalls[j+1] = temp;
+				wasSwapped = true;
+			}
+			if (wasSwapped == false) {
+				break;
 			}
 		}
 	}
@@ -175,6 +228,7 @@ void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 	m_effectCamera->SetColorTarget( effectCurrentDestTarget );
 	renderer->SetCamera(m_effectCamera);
 	renderer->CopyFrameBuffer( m_effectCamera->m_frameBuffer, camera->m_frameBuffer );
+	renderer->UseTexture(7, *camera->m_frameBuffer->m_depthStencilTarget);
 
 	float halfWidth = Window::GetInstance()->GetWidth() * 0.5f;
 	float halfHeight = Window::GetInstance()->GetHeight() * 0.5f;

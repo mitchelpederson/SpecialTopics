@@ -39,7 +39,7 @@ void FirstPersonCamera::RotateRelative( float pitchDegrees, float yawDegrees ) {
 }
 
 
-void FirstPersonCamera::Update( float deltaSeconds ) {
+void FirstPersonCamera::Update() {
 	m_cameraMatrix = transform.GetLocalToWorldMatrix();
 	m_viewMatrix = m_cameraMatrix.GetInverse();
 

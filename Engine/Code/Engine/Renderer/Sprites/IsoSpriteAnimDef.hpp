@@ -16,6 +16,7 @@ struct FrameDef {
 
 class IsoSpriteAnimDef {
 
+public:
 	enum eAnimMode {
 		ANIM_MODE_LOOP,
 		ANIM_MODE_CLAMP

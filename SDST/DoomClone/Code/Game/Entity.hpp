@@ -1,15 +1,23 @@
 #pragma once
+#include "Engine/Core/Stopwatch.hpp"
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/Disc2.hpp"
 #include "Engine/Math/AABB2.hpp"
+#include "Engine/Renderer/Sprites/IsoSpriteAnim.hpp"
+#include "Game/EntityDefinition.hpp"
 
 class Entity {
 
 public:
 	Entity();
+	Entity( unsigned char id );
 
-	void Update(float deltaSeconds);
-	void Render() const;
+	virtual void	Update();
+	virtual void	UpdateSpriteAnim();
+	virtual void	Render() const;
+	virtual void	RenderMinimap() const;
+	virtual void	Kill();
+	virtual void	Revive();
 
 	Vector2		GetPosition() const;
 	Vector2		GetVelocity() const;
@@ -22,13 +30,7 @@ public:
 	float		GetAge() const;	
 	float		GetHealth() const;
 	bool		IsAlive() const;
-
-	bool		CanFly() const;
-	bool		CanSwim() const;
-	bool		CanWalk() const;
-
-	//virtual void		Kill() = 0;
-	virtual void		Revive();
+	bool		IsSolid() const;
 
 	void		Damage(float damageAmount);
 	void		Heal(float healAmount);
@@ -39,24 +41,35 @@ public:
 	void		SetCosmeticRadius(float newRadius);
 	void		SetPhysicalRadius(float newRadius);
 
+	// Behaviors
+	void Shoot();
 
-private:
+
+public:
+	EntityDefinition* m_def = nullptr;
+	IsoSpriteAnim*	m_currentSpriteAnim = nullptr;
+	std::string	m_animSetName;
 	Vector2		m_position;
 	Vector2		m_velocity;
 
 	float		m_cosmeticRadius;
 	float		m_physicalRadius;
 
-	float		m_orientationDegrees;
-	float		m_spinSpeed;
+	float		m_orientationDegrees = 0.f;
+	float		m_spinSpeed = 0.f;
 
-	float		m_age;
-	float		m_health;
-	float		m_maxHealth;
-	bool		m_isAlive;
+	float		m_age = 0.f;
+	float		m_health = 1.f;
+	float		m_maxHealth = 1.f;
+	unsigned int m_maxAmmo = 999;
+	unsigned int m_currentAmmo = 99;
+	bool		m_isAlive = true;
+	bool		m_isDeleteable = false;
 	float		m_ageAtDeath;
 
-	bool		m_canFly;
-	bool		m_canWalk;
-	bool		m_canSwim;
+	bool		m_isSolid = true;
+
+	Stopwatch	m_firingDelayTimer;
+	Stopwatch	m_cantMoveTimer;
+	
 };

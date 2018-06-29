@@ -13,7 +13,7 @@ public:
 	Matrix44 GetProjectionMatrix();
 	Matrix44 GetCameraMatrix();
 	Matrix44 GetViewMatrix();
-	void Update(float deltaSeconds) override;
+	void Update() override;
 
 public:
 	float orthoSize;

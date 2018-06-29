@@ -76,7 +76,8 @@ PFNGLCLEARBUFFERIVPROC				glClearBufferiv				= nullptr;
 PFNGLCLEARBUFFERFVPROC				glClearBufferfv				= nullptr;
 PFNGLREADPIXELSPROC					glReadPixels				= nullptr;
 PFNGLDELETETEXTURESPROC				glDeleteTextures			= nullptr;
-
+PFNGLGENERATEMIPMAPPROC				glGenerateMipmap			= nullptr;
+PFNGLVIEWPORTPROC					glViewport					= nullptr;
 
 
 void BindGLFunctions() {
@@ -156,4 +157,6 @@ void BindGLFunctions() {
 	GL_BIND_FUNCTION( glClearBufferfv );
 	GL_BIND_FUNCTION( glReadPixels );
 	GL_BIND_FUNCTION( glDeleteTextures );
+	GL_BIND_FUNCTION( glGenerateMipmap );
+	GL_BIND_FUNCTION( glViewport );
 }

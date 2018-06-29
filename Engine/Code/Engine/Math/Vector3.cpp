@@ -53,6 +53,14 @@ const Vector3& Vector3::operator*=( float scale )  {
 	return *this;
 }
 
+const Vector3& Vector3::operator+=( const Vector3& b ) {
+	*this =  Vector3( x + b.x, y + b.y, z + b.z );
+	return *this;
+}
+bool operator==( const Vector3& a, const Vector3& b ) {
+	return (a.x == b.x && a.y == b.y && a.z == b.z);
+}
+
 Vector3 Vector3::GetNormalized() const {
 	float length = GetLength();
 	return Vector3(x / length, y / length, z / length);
@@ -106,4 +114,30 @@ Vector3 Interpolate(const Vector3& start, const Vector3& end, float fractionTowa
 	return Vector3(Interpolate(start.x, end.x, fractionToward)
 		, Interpolate(start.y, end.y, fractionToward)
 		, Interpolate(start.z, end.z, fractionToward));
+}
+
+
+Vector3 Slerp(const Vector3& start, const Vector3& end, float fractionToward) {
+	float startMagnitude = start.GetLength();
+	float endMagnitude = end.GetLength();
+
+	float lerpedMagnitude = Interpolate(startMagnitude, endMagnitude, fractionToward);
+	Vector3 slerpedDirection = SlerpUnitVectors(start.GetNormalized(), end.GetNormalized(), fractionToward);
+	return slerpedDirection * lerpedMagnitude;
+}
+
+
+Vector3 SlerpUnitVectors(const Vector3& start, const Vector3& end, float fractionToward) {
+	float cosAngle = ClampFloat( DotProduct( start, end ), -1.f, 1.f );
+	float angle = AcosDegrees(cosAngle);
+	if (angle < 0.5f) {
+		return Interpolate(start, end, fractionToward);
+	}
+	else {
+		float positiveNumber = SinDegrees(angle * fractionToward);
+		float negativeNumber = SinDegrees((1.f - fractionToward) * angle);
+		float denominator = SinDegrees(angle);
+
+		return (start * (negativeNumber / denominator)) + (end * (positiveNumber / denominator));
+	}
 }

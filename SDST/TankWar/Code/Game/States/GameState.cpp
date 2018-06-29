@@ -1,7 +1,9 @@
 #include "Game/States/GameState.hpp"
 #include "Game/GameCommon.hpp"
 
-GameState::GameState() : m_fadeStopwatch(g_masterClock) {
+GameState::GameState() 
+	: m_stateClock(g_masterClock)
+	, m_fadeStopwatch(m_stateClock) {
 
 }
 
@@ -76,4 +78,13 @@ void GameState::RenderFade() const {
 	g_theRenderer->SetShader(g_theRenderer->GetShader("ui"));
 	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, quadAlpha));
 	
+}
+
+
+float GameState::GetDeltaTime() const {
+	return m_stateClock->frame.seconds;
+}
+
+float GameState::GetElapsedTime() const {
+	return m_stateClock->total.seconds;
 }
