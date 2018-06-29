@@ -25,7 +25,7 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 	m_heightMap->SetDimensions(chunksX * chunkSize + 1, chunksY * chunkSize + 1);
 	m_normals.resize((chunksX * chunkSize + 1) * (chunksY * chunkSize + 1));
 	m_dimensions = IntVector2(chunksX * chunkSize + 1, chunksY * chunkSize + 1);
-	m_bounds = AABB3( Vector3(0.f, minHeight - 10.f, 0.f), Vector3(m_dimensions.x - 1, maxHeight + 10.f, m_dimensions.y - 1) );
+	m_bounds = AABB3( Vector3(0.f, minHeight - 10.f, 0.f), Vector3((float) m_dimensions.x - 1.f, maxHeight + 10.f, (float) m_dimensions.y - 1.f) );
 
 	m_maxHeight = maxHeight;
 	m_minHeight = minHeight;
@@ -35,7 +35,7 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 		for (unsigned int col = 0; col < chunksX * chunkSize + 1; col++) {
 			float noiseValue = Compute2dPerlinNoise( (float) col, (float) row, 60, 3, 0.5f, 2.f, true, seed );
 			float mappedNoiseValue = RangeMapFloat(noiseValue, -1.f, 1.f, 0.f, 255.f);
-			m_heightMap->PushTexel( Rgba(RoundToNearestInt(mappedNoiseValue), 0, 0, 0) );
+			m_heightMap->PushTexel( Rgba((unsigned char) RoundToNearestInt(mappedNoiseValue), 0, 0, 0) );
 		}
 	}
 
@@ -68,7 +68,7 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 		IntVector2 drCoord	= coord + IntVector2( 1,-1);
 
 		float cHeight	= GetHeightAtDiscretePoint(coord);
-		Vector3 c	= Vector3( coord.x, cHeight, coord.y); 
+		Vector3 c	= Vector3( (float) coord.x, cHeight, (float) coord.y); 
 
 		Vector3 averageNormal = Vector3::ZERO;
 		
@@ -77,9 +77,9 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 			float uHeight	= GetHeightAtDiscretePoint(uCoord);
 			float lHeight	= GetHeightAtDiscretePoint(lCoord);
 			float ulHeight	= GetHeightAtDiscretePoint(ulCoord);
-			Vector3 u	= Vector3( uCoord.x, uHeight, uCoord.y ); 
-			Vector3 l	= Vector3( lCoord.x, lHeight, lCoord.y ); 
-			Vector3 ul	= Vector3( ulCoord.x, ulHeight, ulCoord.y ); 
+			Vector3 u	= Vector3( (float) uCoord.x, uHeight, (float) uCoord.y ); 
+			Vector3 l	= Vector3( (float) lCoord.x, lHeight, (float) lCoord.y ); 
+			Vector3 ul	= Vector3( (float) ulCoord.x, ulHeight, (float) ulCoord.y ); 
 			
 			Vector3 tangent1 = c - l;
 			Vector3 bitangent1 = ul - l;
@@ -98,8 +98,8 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 		if (IsCoordValid(uCoord) && IsCoordValid(rCoord)) {
 			float uHeight	= GetHeightAtDiscretePoint(uCoord);
 			float rHeight	= GetHeightAtDiscretePoint(rCoord);
-			Vector3 u	= Vector3( uCoord.x, uHeight, uCoord.y ); 
-			Vector3 r	= Vector3( rCoord.x, rHeight, rCoord.y ); 
+			Vector3 u	= Vector3( (float) uCoord.x, uHeight, (float) uCoord.y ); 
+			Vector3 r	= Vector3( (float) rCoord.x, rHeight, (float) rCoord.y ); 
 
 			Vector3 tangent3 = r - c;
 			Vector3 bitangent3 = u - c;
@@ -114,9 +114,9 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 			float dHeight	= GetHeightAtDiscretePoint(dCoord);
 			float rHeight	= GetHeightAtDiscretePoint(rCoord);
 			float drHeight	= GetHeightAtDiscretePoint(drCoord);
-			Vector3 d	= Vector3( dCoord.x, dHeight, dCoord.y ); 
-			Vector3 r	= Vector3( rCoord.x, rHeight, rCoord.y );
-			Vector3 dr	= Vector3( drCoord.x, drHeight, drCoord.y );
+			Vector3 d	= Vector3( (float) dCoord.x, dHeight, (float) dCoord.y ); 
+			Vector3 r	= Vector3( (float) rCoord.x, rHeight, (float) rCoord.y );
+			Vector3 dr	= Vector3( (float) drCoord.x, drHeight, (float) drCoord.y );
 
 			Vector3 tangent4 = r - c;
 			Vector3 bitangent4 = r - dr;
@@ -135,8 +135,8 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 		if (IsCoordValid(dCoord) && IsCoordValid(lCoord)) {
 			float dHeight	= GetHeightAtDiscretePoint(dCoord);
 			float lHeight	= GetHeightAtDiscretePoint(lCoord);
-			Vector3 d	= Vector3( dCoord.x, dHeight, dCoord.y ); 
-			Vector3 l	= Vector3( lCoord.x, lHeight, lCoord.y ); 
+			Vector3 d	= Vector3( (float) dCoord.x, dHeight, (float) dCoord.y ); 
+			Vector3 l	= Vector3( (float) lCoord.x, lHeight, (float) lCoord.y ); 
 
 			Vector3 tangent6 = c - l;
 			Vector3 bitangent6 = c - d;
@@ -156,7 +156,6 @@ void GameMap::GenerateHeightMap( unsigned int seed, unsigned int chunksX, unsign
 
 
 void GameMap::GenerateNewChunks( unsigned int x, unsigned int y ) {
-	int mapSeed = GetRandomIntInRange(0, 10000);
 
 	Mesh* waterChunkMesh = new Mesh();
 	MeshBuilder waterBuilder;
@@ -165,8 +164,8 @@ void GameMap::GenerateNewChunks( unsigned int x, unsigned int y ) {
 	waterBuilder.End();
 	waterChunkMesh->FromBuilderAsType<Vertex3D_Lit>(&waterBuilder);
 
-	for (int row = 0; row < y; row++) {
-		for (int col = 0; col < x; col++) {
+	for (unsigned int row = 0; row < y; row++) {
+		for (unsigned int col = 0; col < x; col++) {
 
 			// Terrain chunks
 			Mesh* chunkMesh = new Mesh();

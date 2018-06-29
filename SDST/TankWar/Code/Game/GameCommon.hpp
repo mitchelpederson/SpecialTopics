@@ -22,7 +22,7 @@ extern bool g_devModeActive;
 
 const float MAP_MAX_HEIGHT = 18.f;
 const float MAP_MIN_HEIGHT = 0.f;
-const unsigned int MAP_CHUNK_SIZE = 16.f;
+const unsigned int MAP_CHUNK_SIZE = 16;
 const unsigned int MAP_CHUNKS_X = 12;
 const unsigned int MAP_CHUNKS_Y = 12;
 

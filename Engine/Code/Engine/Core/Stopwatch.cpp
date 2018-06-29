@@ -57,9 +57,9 @@ bool Stopwatch::HasElapsed() const {
 }
 
 float Stopwatch::GetElapsedTime() const {
-	return PerformanceCountToSeconds( m_reference->total.hpc - m_startHPC );
+	return (float) PerformanceCountToSeconds( m_reference->total.hpc - m_startHPC );
 }
 
 float Stopwatch::GetNormalizedElapsedTime() const {
-	return PerformanceCountToSeconds(m_reference->total.hpc - m_startHPC) / PerformanceCountToSeconds( m_intervalHPC );
+	return (float) PerformanceCountToSeconds(m_reference->total.hpc - m_startHPC) / (float) PerformanceCountToSeconds( m_intervalHPC );
 }

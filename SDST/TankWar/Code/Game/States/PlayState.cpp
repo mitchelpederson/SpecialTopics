@@ -167,10 +167,6 @@ void PlayState::Update() {
 	m_camera->Update();	
 	m_cameraLight->SetAsPointLight(m_camera->transform.position, Rgba(), 1.f, 0.04f);
 
-
-	if (g_theInputSystem->WasKeyJustPressed('P')) {
-		int a = 0;
-	}
 	for (unsigned int i = 0; i < m_sceneObjects.size(); i++) {
 		m_sceneObjects[i]->Update();
 	}
@@ -425,17 +421,17 @@ void PlayState::CheckForCombatCollisions() {
 
 
 void PlayState::ClearDeadGameObjects() {
-	for (int swarmerIndex = m_swarmers.size() - 1; swarmerIndex >= 0; swarmerIndex--) {
+	for (int swarmerIndex = (int) m_swarmers.size() - 1; swarmerIndex >= 0; swarmerIndex--) {
 		if (m_swarmers[swarmerIndex]->IsDeletable()) {
 			RemoveSwarmEnemy(m_swarmers[swarmerIndex]);
 		}
 	}
-	for (int baseIndex = m_bases.size() - 1; baseIndex >= 0; baseIndex--) {
+	for (int baseIndex = (int) m_bases.size() - 1; baseIndex >= 0; baseIndex--) {
 		if (m_bases[baseIndex]->IsDeletable()) {
 			RemoveBase(m_bases[baseIndex]);
 		}
 	}
-	for (int bulletIndex = m_bullets.size() - 1; bulletIndex >= 0; bulletIndex--) {
+	for (int bulletIndex = (int) m_bullets.size() - 1; bulletIndex >= 0; bulletIndex--) {
 		if (m_bullets[bulletIndex]->IsDeletable()) {
 			RemoveBullet(m_bullets[bulletIndex]);
 		}

@@ -15,5 +15,5 @@ void AudioCue::Play( float volume/* =1.f */, float balance/* =0.0f */, float spe
 
 void AudioCue::Stop() {
 	g_audioSystem->StopSound(m_currentlyPlayingSound);
-	m_currentlyPlayingSound = -1;
+	m_currentlyPlayingSound = (SoundPlaybackID) -1;
 }

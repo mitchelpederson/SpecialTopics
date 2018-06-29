@@ -26,6 +26,6 @@ AudioCueDefinition::AudioCueDefinition( const tinyxml2::XMLElement& xml ) {
 
 
 SoundID AudioCueDefinition::GetRandomSoundFromCue() const {
-	int soundIndex = GetRandomIntLessThan(m_sounds.size());
+	int soundIndex = GetRandomIntLessThan((int) m_sounds.size());
 	return m_sounds[soundIndex];
 }

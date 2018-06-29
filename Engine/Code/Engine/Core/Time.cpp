@@ -48,7 +48,7 @@ double PerformanceCountToSeconds( uint64_t hpc )
 
 
 uint64_t SecondsToPerformanceCount( double seconds ) {
-	return seconds * gLocalTimeData.m_HPCPerSecond;
+	return (uint64_t) (seconds * gLocalTimeData.m_HPCPerSecond);
 }
 
 

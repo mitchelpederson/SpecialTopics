@@ -851,7 +851,7 @@ void MeshBuilder::AddCube(
 	, const AABB2& sideUVs /* = Vector2::ZERO_TO_ONE */
 	, const AABB2& bottomUVs /* = Vector2::ZERO_TO_ONE */) {
 
-	unsigned int vertices = m_vertices.size();
+	unsigned int vertices = (unsigned int) m_vertices.size();
 	SetColor(color);
 
 	Vector3 halfSize = size * 0.5f;
@@ -992,7 +992,7 @@ void MeshBuilder::AddSphere(
 	, const Rgba& color /* = Rgba() */ ) {
 
 	SetColor(color);
-	unsigned int vertices = m_vertices.size();
+	unsigned int vertices = (unsigned int) m_vertices.size();
 
 	for (unsigned int slice = 0; slice <= slices; slice++) {
 		float v = (float) slice / (float) slices;

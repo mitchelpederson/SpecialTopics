@@ -13,6 +13,6 @@ public:
 
 
 private:
-	SoundPlaybackID m_currentlyPlayingSound = -1;
+	SoundPlaybackID m_currentlyPlayingSound = (SoundPlaybackID) -1;
 	AudioCueDefinition* m_def;
 };
