@@ -1,0 +1,11 @@
+<entities>
+	<entity name="player" id="100" physicalRadius="0.3" maxHealth="100" minimapColor="0,255,0,255" isHostile="false" shootingDelay="0.3" shotDamage="1.0">
+		<sprite name="hud" />
+		<physics maxMoveSpeed="4" maxTurnRate="180.f" isSolid="true" />
+	</entity>
+
+	<entity name="enemy" id="255" physicalRadius="0.3" maxHealth="5" minimapColor="255,0,0,255" isHostile="true" shootingDelay="2.0" shotDamage="1.0">
+		<sprite name="enemy" />
+		<physics maxMoveSpeed="1.0" maxTurnRate="100.0" isSolid="true" />
+	</entity>
+</entities>

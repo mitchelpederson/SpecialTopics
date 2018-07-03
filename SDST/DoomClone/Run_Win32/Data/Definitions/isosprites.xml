@@ -1,0 +1,123 @@
+<isosprites>
+
+	<!-- 
+		For DoomClone, 
+			LEFT = Away Left
+			BACK = Away Right
+			RIGHT = Toward Right
+			FRONT = Toward Left
+	-->
+
+	<isosprite id="enemy.idle">
+   		<facing dir="-1, 1" src="enemy.l.idle" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.f.idle" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.b.idle" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.r.idle" />  <!-- toward right -->
+	</isosprite>
+
+	<isosprite id="enemy.walk1">
+   		<facing dir="-1, 1" src="enemy.l.walk1" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.f.walk1" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.b.walk1" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.r.walk1" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.walk2">
+   		<facing dir="-1, 1" src="enemy.l.walk2" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.f.walk2" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.b.walk2" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.r.walk2" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.walk3">
+   		<facing dir="-1, 1" src="enemy.l.walk3" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.f.walk3" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.b.walk3" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.r.walk3" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.walk4">
+   		<facing dir="-1, 1" src="enemy.l.walk4" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.f.walk4" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.b.walk4" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.r.walk4" />  <!-- toward right -->
+	</isosprite>
+
+	<isosprite id="enemy.shoot1">
+   		<facing dir="-1, 1" src="enemy.shoot1" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.shoot1" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.shoot1" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.shoot1" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.shoot2">
+   		<facing dir="-1, 1" src="enemy.shoot2" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.shoot2" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.shoot2" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.shoot2" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.shoot3">
+   		<facing dir="-1, 1" src="enemy.shoot3" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.shoot3" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.shoot3" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.shoot3" />  <!-- toward right -->
+	</isosprite>
+
+	<isosprite id="enemy.death1">
+   		<facing dir="-1, 1" src="enemy.death1" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.death1" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.death1" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.death1" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.death2">
+   		<facing dir="-1, 1" src="enemy.death2" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.death2" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.death2" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.death2" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.death3">
+   		<facing dir="-1, 1" src="enemy.death3" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.death3" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.death3" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.death3" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.death4">
+   		<facing dir="-1, 1" src="enemy.death4" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.death4" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.death4" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.death4" />  <!-- toward right -->
+	</isosprite>
+	<isosprite id="enemy.death5">
+   		<facing dir="-1, 1" src="enemy.death5" />  <!-- away left -->
+   		<facing dir=" 1, 1" src="enemy.death5" />  <!-- away right -->
+   		<facing dir="-1,-1" src="enemy.death5" />  <!-- toward left -->
+   		<facing dir=" 1,-1" src="enemy.death5" />  <!-- toward right -->
+	</isosprite>
+
+   <isosprite id="hud.pistol1">
+         <facing dir="-1, 1" src="hud.pistol1" />  <!-- away left -->
+         <facing dir=" 1, 1" src="hud.pistol1" />  <!-- away right -->
+         <facing dir="-1,-1" src="hud.pistol1" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="hud.pistol1" />  <!-- toward right -->
+   </isosprite>
+   <isosprite id="hud.pistol2">
+         <facing dir="-1, 1" src="hud.pistol2" />  <!-- away left -->
+         <facing dir=" 1, 1" src="hud.pistol2" />  <!-- away right -->
+         <facing dir="-1,-1" src="hud.pistol2" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="hud.pistol2" />  <!-- toward right -->
+   </isosprite>
+   <isosprite id="hud.pistol3">
+         <facing dir="-1, 1" src="hud.pistol3" />  <!-- away left -->
+         <facing dir=" 1, 1" src="hud.pistol3" />  <!-- away right -->
+         <facing dir="-1,-1" src="hud.pistol3" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="hud.pistol3" />  <!-- toward right -->
+   </isosprite>
+   <isosprite id="hud.pistol4">
+         <facing dir="-1, 1" src="hud.pistol4" />  <!-- away left -->
+         <facing dir=" 1, 1" src="hud.pistol4" />  <!-- away right -->
+         <facing dir="-1,-1" src="hud.pistol4" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="hud.pistol4" />  <!-- toward right -->
+   </isosprite>
+   <isosprite id="hud.pistol5">
+         <facing dir="-1, 1" src="hud.pistol5" />  <!-- away left -->
+         <facing dir=" 1, 1" src="hud.pistol5" />  <!-- away right -->
+         <facing dir="-1,-1" src="hud.pistol5" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="hud.pistol5" />  <!-- toward right -->
+   </isosprite>
+</isosprites>

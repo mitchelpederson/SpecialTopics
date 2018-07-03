@@ -1,0 +1,9 @@
+<audiocues>
+
+	<audiocue name="tank-shot">
+		<soundfile src="Data/Audio/tank_shot1.wav" />
+		<soundfile src="Data/Audio/tank_shot2.wav" />
+		<soundfile src="Data/Audio/tank_shot3.wav" />
+	</audiocue>
+
+</audiocues>

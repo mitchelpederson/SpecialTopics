@@ -1,0 +1,215 @@
+<sprites>
+	<!-- FORWARD -->
+	<sprite id="enemy.f.idle">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,0,63,63</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.f.walk1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,65,63,128</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.f.walk2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,130,63,193</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.f.walk3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,195,63,258</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.f.walk4">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,260,63,323</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+	<!-- LEFT -->
+	<sprite id="enemy.l.idle">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,0,193,63</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.l.walk1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,65,193,128</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.l.walk2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,130,193,193</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.l.walk3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,195,193,258</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.l.walk4">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,260,193,323</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+	<!-- RIGHT -->
+	<sprite id="enemy.r.idle">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">390,0,453,63</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.r.walk1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">390,65,453,128</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.r.walk2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">390,130,453,193</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.r.walk3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">390,195,453,258</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.r.walk4">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">390,260,453,323</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+	<!-- BACK -->
+	<sprite id="enemy.b.idle">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,0,323,63</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.b.walk1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,65,323,128</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.b.walk2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,130,323,193</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.b.walk3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,195,323,258</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.b.walk4">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,260,323,323</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+	<!-- SHOOT -->
+	<sprite id="enemy.shoot1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,390,63,453</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.shoot2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">65,390,128,453</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.shoot3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,390,193,453</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+	<!-- DEATH -->
+	<sprite id="enemy.death1">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,325,63,388</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.death2">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">65,325,128,388</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.death3">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">130,325,193,388</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.death4">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">195,325,258,388</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+	<sprite id="enemy.death5">
+		<diffuse src="Data/Images/enemysheet.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">260,325,323,388</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
+
+
+	<!-- HUD -->
+	<!-- Pistol -->
+	<sprite id="hud.pistol1">
+		<diffuse src="Data/Images/weapons.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,64,63,127</uv>
+		<pivot>0.5,0.5</pivot>
+	</sprite>
+	<sprite id="hud.pistol2">
+		<diffuse src="Data/Images/weapons.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">64,64,127,127</uv>
+		<pivot>0.5,0.5</pivot>
+	</sprite>
+	<sprite id="hud.pistol3">
+		<diffuse src="Data/Images/weapons.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">128,64,191,127</uv>
+		<pivot>0.5,0.5</pivot>
+	</sprite>
+	<sprite id="hud.pistol4">
+		<diffuse src="Data/Images/weapons.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">192,64,255,127</uv>
+		<pivot>0.5,0.5</pivot>
+	</sprite>
+	<sprite id="hud.pistol5">
+		<diffuse src="Data/Images/weapons.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">256,64,319,127</uv>
+		<pivot>0.5,0.5</pivot>
+	</sprite>
+</sprites>
