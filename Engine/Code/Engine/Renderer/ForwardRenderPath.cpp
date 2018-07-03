@@ -1,5 +1,6 @@
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
+#include "Engine/Profiler/ProfilerScopedLog.hpp"
 
 struct LightComparisonData {
 	unsigned int index;
@@ -25,6 +26,7 @@ void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 
 
 void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* scene ) {
+	PROFILE_LOG_SCOPED();
 	renderer->SetCamera( camera );
 	ClearBasedOnCameraOptions( camera );
 

@@ -26,6 +26,9 @@
     <Filter Include="Renderer\Sprites">
       <UniqueIdentifier>{0c542621-7bce-441c-ae63-0fdcdd26c094}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Profiler">
+      <UniqueIdentifier>{9937b5c8-657b-461c-a38b-3b1e16d9f758}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector2.cpp">
@@ -228,6 +231,9 @@
     </ClCompile>
     <ClCompile Include="Core\Stopwatch.cpp">
       <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Profiler\ProfilerScopedLog.cpp">
+      <Filter>Profiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -473,6 +479,9 @@
     </ClInclude>
     <ClInclude Include="Core\Stopwatch.hpp">
       <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Profiler\ProfilerScopedLog.hpp">
+      <Filter>Profiler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
