@@ -13,6 +13,6 @@ ProfilerLogScoped::~ProfilerLogScoped( ) {
 
 	uint64_t length = GetPerformanceCount() - m_startHPC;
 
-	DevConsole::Printf( "%s: %d", m_tag, PerformanceCountToSeconds( length ) );
+	DevConsole::Printf( "%s: %f", m_tag, PerformanceCountToSeconds( length ) );
 
 }

@@ -32,6 +32,8 @@ private:
 	void SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera* camera );
 	void EnableLightsForDrawCall( const DrawCall& drawCall, RenderSceneGraph* scene );
 	void ApplyCameraEffects( Camera* camera );
+	void RenderShadowCastingObjectsForLight( Light* light, RenderSceneGraph* scene, Camera* currentCamera );
+
 
 	Renderer* renderer;
 	Camera* m_effectCamera = nullptr;

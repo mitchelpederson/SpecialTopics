@@ -49,19 +49,9 @@ void DebugRenderAndUpdate() {
 		else {
 			//		r->SetCameraToDefault();
 		}
-		r->SetShader(r->GetShader("debug"));
+		r->BindMaterial(r->GetMaterial("debugRender"));
 		std::vector<DebugRenderObject>& objects = *DebugRenderState::objects;
 
-		for (unsigned int index = 0; index < objects.size(); index++) {
-			const DebugRenderObject& current = objects.at(index);
-
-			float timeSinceSpawn = g_masterClock->total.seconds - current.spawnTime;
-			float fractionIntoObjectLife = timeSinceSpawn / current.lifetime;
-			Rgba color = Interpolate(current.startColor, current.endColor, fractionIntoObjectLife);
-			r->SetUniform("IN_COLOR", &color);
-			r->SetModelMatrix(Matrix44());
-			r->DrawMesh(current.mesh);
-		}
 
 		// Update section
 		for (unsigned int index = 0; index < objects.size(); index++) {
@@ -75,6 +65,19 @@ void DebugRenderAndUpdate() {
 				objects.pop_back();
 			}
 		}
+
+		for (unsigned int index = 0; index < objects.size(); index++) {
+			const DebugRenderObject& current = objects.at(index);
+
+			float timeSinceSpawn = g_masterClock->total.seconds - current.spawnTime;
+			float fractionIntoObjectLife = timeSinceSpawn / current.lifetime;
+			Rgba color = Interpolate(current.startColor, current.endColor, fractionIntoObjectLife);
+			r->SetUniform("IN_COLOR", &color);
+			r->SetModelMatrix(Matrix44());
+			r->DrawMesh(current.mesh);
+		}
+
+		
 	}
 }
 

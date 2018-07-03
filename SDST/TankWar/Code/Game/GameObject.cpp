@@ -4,12 +4,17 @@
 #include "Engine/Renderer/DebugRender.hpp"
 
 
-GameObject::GameObject() : m_breadcrumbInterval( g_theGame->GetCurrentPlayState()->m_sceneClock ) {
+GameObject::GameObject(PlayState* state, eTeam team) 
+	: currentState(state)
+	, m_breadcrumbInterval( g_theGame->GetCurrentPlayState()->m_sceneClock ) 
+	, m_team(team)
+{
 	m_breadcrumbInterval.SetTimer(1.f);
 }
 
 
 GameObject::~GameObject() {
+	currentState->m_scene->RemoveRenderable(m_renderable);
 	delete m_renderable;
 	m_renderable = nullptr;
 }
@@ -34,6 +39,13 @@ const Vector3& GameObject::GetPosition() {
 }
 
 
+void GameObject::Update() {
+
+	UpdatePhysics();
+	m_renderable->SetModelMatrix(transform.GetLocalToWorldMatrix());
+}
+
+
 void GameObject::UpdatePhysics() {
 
 	float dt = g_masterClock->frame.seconds;
@@ -52,10 +64,7 @@ void GameObject::UpdatePhysics() {
 	transform.Rotate(angularVelocity * dt);
 	frameTorque = Vector3();
 
-	Vector2 mapDimensions(g_theGame->GetCurrentPlayState()->testGameMap->GetDimensions().x, g_theGame->GetCurrentPlayState()->testGameMap->GetDimensions().y);
-	mapDimensions *= g_theGame->GetCurrentPlayState()->testGameMap->GetChunkSize() - 1;
-	mapDimensions.x -= 1.f;
-	mapDimensions.y -= 1.f;
+	Vector2 mapDimensions(g_theGame->GetCurrentPlayState()->testGameMap->GetDimensions().x - 2.f, g_theGame->GetCurrentPlayState()->testGameMap->GetDimensions().y - 2.f);
 	if (transform.position.x > mapDimensions.x) {
 		transform.position.x = mapDimensions.x;
 	}
@@ -69,11 +78,8 @@ void GameObject::UpdatePhysics() {
 		transform.position.z = 0.f;
 	}
 
-	transform.position.y = 1.f + g_theGame->GetCurrentPlayState()->testGameMap->GetHeightAtPoint(Vector2(transform.position.x, transform.position.z));
-
 	if (m_breadcrumbInterval.CheckAndReset()) {
 		m_breadcrumbs.push_back(transform.position);
-		DebugRenderPoint(3.f, transform.position);
 	}
 }
 
@@ -95,4 +101,27 @@ bool GameObject::IsDeletable() {
 void GameObject::Kill() {
 	m_isDeletable = true;
 	g_theGame->GetCurrentPlayState()->m_scene->RemoveRenderable(m_renderable);
+}
+
+
+void GameObject::SetForwardVelocity( float speed ) {
+	linearVelocity = transform.GetLocalToWorldMatrix().GetForward() * speed;
+}
+
+
+void GameObject::Damage( float amount ) {
+	m_currentHealth -= amount;
+	if (m_currentHealth <= 0.f) {
+		Kill();
+	}
+}
+
+
+float GameObject::GetCollisionRadius() const {
+	return m_collisionRadius;
+}
+
+
+float GameObject::GetNormalizedHealth() const {
+	return m_currentHealth / m_maxHealth;
 }

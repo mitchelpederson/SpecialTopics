@@ -21,7 +21,7 @@ Camera::~Camera() {
 }
 
 
-void Camera::Update(float deltaSeconds) {
+void Camera::Update() {
 
 }
 
@@ -37,6 +37,8 @@ void Camera::LookAt( const Vector3& position, const Vector3& target, const Vecto
 
 	m_cameraMatrix = Matrix44(newRight, newUp, newForward, position);
 
+	transform.position = m_cameraMatrix.GetTranslation();
+	transform.euler = m_cameraMatrix.GetRotation();
 	m_viewMatrix = m_cameraMatrix.GetInverse();
 
 }
@@ -117,6 +119,12 @@ Vector3 Camera::GetUp() const {
 	return iBasis.GetNormalized();
 }
 
+Matrix44 Camera::GetViewProjection() const {
+	Matrix44 vp = m_viewMatrix;
+	vp.Append(m_projMatrix);
+	return vp;
+}
+
 
 void Camera::SetSkybox( CubeMap* skyboxTexture ) {
 	// If there already is a skybox, delete it
@@ -140,7 +148,7 @@ void Camera::SetSkybox( CubeMap* skyboxTexture ) {
 
 		MeshBuilder mb;
 		Mesh* cube = new Mesh();
-		mb.BuildCube(cube, Vector3::ZERO, Vector3(20.f, 20.f, 20.f));
+		mb.BuildCube(cube, Vector3::ZERO, Vector3(10.f, 10.f, 10.f));
 		skybox->SetMesh(cube);
 	}
 }

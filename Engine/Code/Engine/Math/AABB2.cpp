@@ -30,6 +30,12 @@ AABB2::AABB2( float minX, float minY, float maxX, float maxY ) {
 } 
 
 
+AABB2::AABB2( int minX, int minY, int maxX, int maxY ) {
+	mins = Vector2((float) minX, (float) minY);
+	maxs = Vector2((float) maxX, (float) maxY);
+} 
+
+
 AABB2::AABB2( const Vector2& minsCopy, const Vector2& maxsCopy ) {
 	mins.x = minsCopy.x;
 	mins.y = minsCopy.y;

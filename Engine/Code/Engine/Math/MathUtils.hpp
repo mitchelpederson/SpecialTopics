@@ -21,6 +21,7 @@ float	CosDegrees( float degrees );
 float	SinDegrees( float degrees );
 float	Atan2Degrees( float opposite, float adjacent );
 float	AsinDegrees( float val );
+float	AcosDegrees( float val );
 float	TanDegrees( float degrees );
 float	GetDistance( const Vector2& a, const Vector2& b );
 float	GetDistanceSquared( const Vector2& a, const Vector2& b );
@@ -73,5 +74,9 @@ float	SmoothStep3( float t ); // 3rd-degree smooth start/stop (a.k.a. “smoothste
 
 	// Max/Min
 int		Max(float a, float b, float c, float d);
+float	Min(float a, float b);
 
 bool	Quadratic( float& out_one, float& out_two, float a, float b, float c );
+
+
+Vector3 Average(const Vector3& a, const Vector3& b);

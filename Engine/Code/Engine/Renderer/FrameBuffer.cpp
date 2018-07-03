@@ -31,10 +31,13 @@ bool FrameBuffer::BindTargets() {
 
 	// Bind a color target to an attachment point
 	// and keep track of which locations to to which attachments. 
-	glFramebufferTexture( GL_FRAMEBUFFER, 
-		GL_COLOR_ATTACHMENT0 + 0, 
-		m_colorTarget->GetTextureID(), 
-		0 ); 
+	if (m_colorTarget != nullptr) {
+		glFramebufferTexture( GL_FRAMEBUFFER, 
+			GL_COLOR_ATTACHMENT0 + 0, 
+			m_colorTarget->GetTextureID(), 
+			0 ); 
+	}
+	
 	// 0 to to attachment 0
 	targets[0] = GL_COLOR_ATTACHMENT0 + 0;
 

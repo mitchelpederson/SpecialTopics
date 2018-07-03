@@ -38,8 +38,14 @@ public:
 	void BuildSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() ); 
 	void BuildDeformedSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, float deformAmount, const Rgba& color = Rgba() ); 
 	void BuildTexturedGridFromPerlinParams( const IntVector2& facesInDimensions, const Vector2& faceDimensions, const Vector2& bottomLeftPosition, unsigned int seed, float perlinScale = 1.f, unsigned int perlinNumOctaves = 1, float perlinOctavePersistence = 0.5f, float perlinOctaveScale = 2.f );
-	void BuildTexturedGridFromHeightMap( Image* heightMap, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight );
+	void BuildTexturedGridFromHeightMap( Image* heightMap, const std::vector<Vector3>& normals, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight );
+	void BuildTexturedGridFlat( unsigned int quadsPerDimension, float height );
+
 	void BuildWireSphere( Mesh* mesh, const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() );
+
+	void AddCube( const Vector3& center, const Vector3& size, const Rgba& color = Rgba(255, 255, 255, 255), const AABB2& topUVs = AABB2::ZERO_TO_ONE, const AABB2& sideUVs = AABB2::ZERO_TO_ONE, const AABB2& bottomUVs = AABB2::ZERO_TO_ONE );
+	void AddSphere( const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() ); 
+
 
 	void LoadMeshFromOBJ( const std::string& path );
 

@@ -29,6 +29,7 @@ protected:
 	virtual void PopulateFromData( unsigned char* imageData, const IntVector2& texelSize, int numComponents );
 
 	unsigned int	m_textureID;
+	unsigned int	m_mipCount;
 	IntVector2		m_dimensions;
 	eTextureFormat  m_format = TEXTURE_FORMAT_RGBA8;
 	bool			m_isCubemap = false;

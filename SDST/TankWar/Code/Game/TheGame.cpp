@@ -12,6 +12,7 @@
 #include "Engine/Core/Rgba.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
+#include "Engine/InputSystem/InputSystem.hpp"
 #include "Game/TheGame.hpp"
 #include "Game/GameCommon.hpp"
 #include "Game/states/LoadState.hpp"
@@ -57,6 +58,10 @@ void TheGame::Update() {
 	m_state->Update();
 	if (nextState != STATE_NONE && m_state->IsReadyToExit()) {
 		GoToNextState();
+	}
+
+	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F1)) {
+		m_devModeActive = !m_devModeActive;
 	}
 }
 

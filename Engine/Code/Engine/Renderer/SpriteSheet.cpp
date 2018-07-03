@@ -38,8 +38,8 @@ AABB2 SpriteSheet::GetTexCoordsForSprteCoords(const IntVector2& spriteCoords) co
 
 	IntVector2 invertedCoords(spriteCoords.x, m_spriteLayout.y - spriteCoords.y - 1);
 
-	Vector2 mins(((float) invertedCoords.x / (float) m_spriteLayout.x) + 0.00001f, ((float) invertedCoords.y / (float) m_spriteLayout.y) + 0.00001f);
-	Vector2 maxs(((float) (invertedCoords.x + 1) / (float) m_spriteLayout.x) - 0.00001f, ((float) (invertedCoords.y + 1) / (float) m_spriteLayout.y) - 0.00001f);
+	Vector2 mins(((float) invertedCoords.x / (float) m_spriteLayout.x) + 0.001f, ((float) invertedCoords.y / (float) m_spriteLayout.y) + 0.001f);
+	Vector2 maxs(((float) (invertedCoords.x + 1) / (float) m_spriteLayout.x) - 0.001f, ((float) (invertedCoords.y + 1) / (float) m_spriteLayout.y) - 0.001f);
 	return AABB2(mins, maxs);
 }
 

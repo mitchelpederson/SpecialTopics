@@ -1,5 +1,6 @@
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Core/Rgba.hpp"
+#include "Engine/Audio/AudioCueDefinition.hpp"
 
 #include "Game/States/LoadState.hpp"
 #include "Game/GameCommon.hpp"
@@ -46,5 +47,24 @@ void LoadState::Render() const {
 
 void LoadState::LoadResources() {
 	g_theRenderer->CreateOrGetTexture("Data/Images/Terrain_8x8.png");
-	Sleep(1000);
+	LoadAudio();
+	//Sleep(1000);
+}
+
+
+void LoadState::LoadAudio() {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile("Data/Definitions/audiocues.xml");
+	const tinyxml2::XMLElement& root = *doc->FirstChildElement("audiocues");
+	const tinyxml2::XMLElement* audioCue = root.FirstChildElement("audiocue");
+
+	while ( audioCue != nullptr ) {
+		new AudioCueDefinition( *audioCue );
+		audioCue = audioCue->NextSiblingElement("audiocue");
+	}
+
+	delete doc;
+	doc = nullptr;
+
+	g_audioSystem->CreateOrGetSound("Data/Audio/tankwar.wav");
 }

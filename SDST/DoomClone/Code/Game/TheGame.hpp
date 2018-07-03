@@ -17,6 +17,8 @@
 #include "Engine/Renderer/CubeMap.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
 
+#include "Game/Map/GameMap.hpp"
+
 
 
 
@@ -53,12 +55,22 @@ public:
 
 	float GetDeltaTime();
 	float GetElapsedTime();
+	Camera* GetPlayerCamera();
 	
 public:
 	RenderSceneGraph* m_scene = nullptr;
 	Clock* m_gameClock;
 	Material* particleMaterial = nullptr;
 	SpriteSheet* terrain = nullptr;
+	GameMap* currentMap = nullptr;
+
+
+private:
+	void LoadTileDefinitions(std::string filePath);
+	void LoadEntityDefinitions(std::string filePath);
+	void LoadSpriteDefinitions(std::string filePath);
+	void LoadIsoSpriteDefinitions(std::string filePath);
+	void LoadIsoSpriteAnimDefinitions(std::string filePath);
 
 
 private:

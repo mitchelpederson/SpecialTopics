@@ -4,6 +4,7 @@
 #include "Engine/InputSystem/InputSystem.hpp"
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Core/Time.hpp"
+#include "Engine/Core/Transform.hpp"
 #include "Engine/Blackboard.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/Core/Time.hpp"
@@ -46,7 +47,6 @@ App::~App() {
 // Most basic loop of the game
 //
 void App::Run() {
-
 
 	while (!g_isQuitting) {
 

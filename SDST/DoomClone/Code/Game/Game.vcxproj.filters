@@ -17,6 +17,9 @@
     <Filter Include="General\Maps">
       <UniqueIdentifier>{ff645dfa-97ee-49b0-8430-e26de1d19f59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\Entities">
+      <UniqueIdentifier>{f5b51117-9e09-44be-818b-983ee906a3b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -28,14 +31,20 @@
     <ClCompile Include="App.cpp">
       <Filter>General</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="Map\GameMap.cpp">
       <Filter>General\Maps</Filter>
     </ClCompile>
     <ClCompile Include="Map\TileDefinition.cpp">
       <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>General\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>General\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityDefinition.cpp">
+      <Filter>General\Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -51,9 +60,6 @@
     <ClInclude Include="EngineBuildPreferences.hpp">
       <Filter>General</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="GameDebug.hpp">
       <Filter>General</Filter>
     </ClInclude>
@@ -62,6 +68,15 @@
     </ClInclude>
     <ClInclude Include="Map\TileDefinition.hpp">
       <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.hpp">
+      <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityDefinition.hpp">
+      <Filter>General\Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

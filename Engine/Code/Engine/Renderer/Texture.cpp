@@ -59,6 +59,14 @@ void Texture::PopulateFromData( unsigned char* imageData, const IntVector2& texe
 		}
 	}
 
+	// Get mip count
+	if (m_dimensions.x >= m_dimensions.y) {
+		m_mipCount = (unsigned int) log2f((float) m_dimensions.x);
+	}
+	else {
+		m_mipCount = (unsigned int) log2f((float) m_dimensions.y);
+	}
+
 	GLenum error;
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;
@@ -67,20 +75,14 @@ void Texture::PopulateFromData( unsigned char* imageData, const IntVector2& texe
 	// Enable texturing
 	//glEnable( GL_TEXTURE_2D );
 
-	while ((error = glGetError()) != GL_NO_ERROR) {
-		std::cout << "GL Error: " << error << std::endl;
-	}
-
 	// Tell OpenGL that our pixel data is single-byte aligned
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;
 	}
 
 	// Ask OpenGL for an unused texName (ID number) to use for this texture
 	glGenTextures( 1, (GLuint*) &m_textureID );
-
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;
 	}
@@ -120,6 +122,12 @@ void Texture::PopulateFromData( unsigned char* imageData, const IntVector2& texe
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		std::cout << "GL Error: " << error << std::endl;
 	}
+
+	glActiveTexture( GL_TEXTURE0 );
+	glBindTexture( GL_TEXTURE_2D, m_textureID );
+	glGenerateMipmap( GL_TEXTURE_2D );
+
+	glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
 

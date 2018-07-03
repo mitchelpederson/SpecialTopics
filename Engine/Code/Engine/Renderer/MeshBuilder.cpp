@@ -182,6 +182,7 @@ void MeshBuilder::BuildCube(Mesh* mesh
 	, const AABB2& bottomUVs /* = Vector2::ZERO_TO_ONE */) {
 
 	Begin(TRIANGLES, false);
+	SetColor(color);
 
 	Vector3 halfSize = size * 0.5f;
 
@@ -189,8 +190,8 @@ void MeshBuilder::BuildCube(Mesh* mesh
 	float right = center.x + halfSize.x;
 	float top = center.y + halfSize.y;
 	float bottom = center.y - halfSize.y;
-	float front = center.z - halfSize.z;
-	float back = center.z + halfSize.z;
+	float front = center.z + halfSize.z;
+	float back = center.z - halfSize.z;
 
 	Vector3 leftTopFront(left, top, front);
 	Vector3 rightTopFront(right, top, front);
@@ -202,7 +203,7 @@ void MeshBuilder::BuildCube(Mesh* mesh
 	Vector3 rightBottomBack(right, bottom, back);
 
 	// front face
-	SetNormal(Vector3::FORWARD * -1.f);
+	SetNormal(Vector3::FORWARD);
 	SetTangent(Vector3::RIGHT);
 	SetUV(Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
 	PushVertex(leftTopFront);
@@ -218,7 +219,7 @@ void MeshBuilder::BuildCube(Mesh* mesh
 	PushVertex(leftBottomFront);
 
 	// back face
-	SetNormal(Vector3::FORWARD);
+	SetNormal(Vector3::FORWARD * -1.f);
 	SetTangent(Vector3::RIGHT * -1.f);
 	SetUV( Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
 	PushVertex( rightTopBack );
@@ -674,16 +675,14 @@ void MeshBuilder::BuildTexturedGridFromPerlinParams( const IntVector2& facesInDi
 												   , float perlinOctavePersistence
 												   , float perlinOctaveScale ) {
 
-	float uIncrement = 1.f / (float) facesInDimensions.x;
-	float vIncrement = 1.f / (float) facesInDimensions.y;
 	SetColor(Rgba());
 
 	for (int row = 0; row < facesInDimensions.x; row++) {
 		for (int col = 0; col < facesInDimensions.y; col++) {
-			Vector3 bottomLeft	( col,						0.f, row );
-			Vector3 bottomRight	( faceDimensions.x + col,	0.f, row );
-			Vector3 topLeft		( col,						0.f, row + faceDimensions.y );
-			Vector3 topRight	( faceDimensions.x + col,	0.f, row + faceDimensions.y );
+			Vector3 bottomLeft	( (float) col,						0.f, (float) row );
+			Vector3 bottomRight	( (float) faceDimensions.x + col,	0.f, (float) row );
+			Vector3 topLeft		( (float) col,						0.f, (float) row + faceDimensions.y );
+			Vector3 topRight	( (float) faceDimensions.x + col,	0.f, (float) row + faceDimensions.y );
 			bottomLeft.y	= 10.f * Compute2dPerlinNoise( bottomLeft.x + bottomLeftPosition.x, bottomLeft.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
 			bottomRight.y	= 10.f * Compute2dPerlinNoise( bottomRight.x + bottomLeftPosition.x, bottomRight.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
 			topLeft.y		= 10.f * Compute2dPerlinNoise( topLeft.x + bottomLeftPosition.x, topLeft.z + bottomLeftPosition.y, perlinScale, perlinNumOctaves, perlinOctavePersistence, perlinOctaveScale, true, seed );
@@ -731,55 +730,309 @@ void MeshBuilder::BuildTexturedGridFromPerlinParams( const IntVector2& facesInDi
 }
 
 
-void MeshBuilder::BuildTexturedGridFromHeightMap( Image* heightMap, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight ) {
+void MeshBuilder::BuildTexturedGridFromHeightMap( Image* heightMap, const std::vector<Vector3>& normals, const IntVector2& startIndex, unsigned int chunkSize, float minHeight, float maxHeight ) {
 
 	SetColor(Rgba());
 
 	IntVector2 endIndex( startIndex.x + chunkSize, startIndex.y + chunkSize );
 
-	for (int row = 0; row < chunkSize; row++) {
-		for (int col = 0; col < chunkSize; col++) {
-			Vector3 bottomLeft	( col,		0.f, row );
-			Vector3 bottomRight	( 1 + col,	0.f, row );
-			Vector3 topLeft		( col,		0.f, row + 1 );
-			Vector3 topRight	( 1 + col,	0.f, row + 1 );
-			bottomLeft.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col, startIndex.y + row).r, 0.f, 255.f, minHeight, maxHeight);
-			bottomRight.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col + 1, startIndex.y + row).r, 0.f, 255.f, minHeight, maxHeight);
-			topLeft.y		= RangeMapFloat(heightMap->GetTexel(startIndex.x + col, startIndex.y + row + 1).r, 0.f, 255.f, minHeight, maxHeight);
+	for ( unsigned int row = 0; row < chunkSize; row++) {
+		for ( unsigned int col = 0; col < chunkSize; col++) {
+			Vector3 bottomLeft	( (float) col,		0.f, (float) row );
+			Vector3 bottomRight	( (float) 1 + col,	0.f, (float) row );
+			Vector3 topLeft		( (float) col,		0.f, (float) row + 1 );
+			Vector3 topRight	( (float) 1 + col,	0.f, (float) row + 1 );
+			bottomLeft.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col,		startIndex.y + row	).r, 0.f, 255.f, minHeight, maxHeight);
+			bottomRight.y	= RangeMapFloat(heightMap->GetTexel(startIndex.x + col + 1, startIndex.y + row	).r, 0.f, 255.f, minHeight, maxHeight);
+			topLeft.y		= RangeMapFloat(heightMap->GetTexel(startIndex.x + col,		startIndex.y + row + 1).r, 0.f, 255.f, minHeight, maxHeight);
 			topRight.y		= RangeMapFloat(heightMap->GetTexel(startIndex.x + col + 1, startIndex.y + row + 1).r, 0.f, 255.f, minHeight, maxHeight);
 
-			Vector3 bottomTangent = (bottomRight - bottomLeft).GetNormalized();
+			// Get normals from the passed in normal map
+			unsigned int bottomLeftIndex = (startIndex.y + row) * heightMap->GetDimensions().x + (startIndex.x + col);
+			unsigned int bottomRightIndex = (startIndex.y + row) * heightMap->GetDimensions().x + (startIndex.x + col + 1);
+			unsigned int topLeftIndex = (startIndex.y + row + 1) * heightMap->GetDimensions().x + (startIndex.x + col);
+			unsigned int topRightIndex = (startIndex.y + row + 1) * heightMap->GetDimensions().x + (startIndex.x + col + 1);
+			Vector3 bottomLeftNormal( normals[bottomLeftIndex] );
+			Vector3 bottomRightNormal( normals[bottomRightIndex] );
+			Vector3 topLeftNormal( normals[topLeftIndex] );
+			Vector3 topRightNormal( normals[topRightIndex] );
+
+			// Generate tangents using that normal and the bitangent
 			Vector3 bottomBitangent = (topLeft - bottomLeft).GetNormalized();
-			Vector3 bottomNormal = Vector3::CrossProduct(bottomBitangent, bottomTangent).GetNormalized();
-			Vector3 topTangent = (topRight - topLeft).GetNormalized();
 			Vector3 topBitangent = (topRight - bottomRight).GetNormalized();
-			Vector3 topNormal = Vector3::CrossProduct(topBitangent, topTangent).GetNormalized();
+			Vector3 bottomLeftTangent = Vector3::CrossProduct(bottomLeftNormal, bottomBitangent);
+			Vector3 bottomRightTangent = Vector3::CrossProduct(bottomRightNormal, topBitangent);
+			Vector3 topLeftTangent = Vector3::CrossProduct(topLeftNormal, bottomBitangent);
+			Vector3 topRightTangent = Vector3::CrossProduct(topRightNormal, topBitangent);
 
 			Vector2 bottomLeftUV  ( 0.f, 0.f );
 			Vector2 bottomRightUV ( 1.f, 0.f );
 			Vector2 topLeftUV	  ( 0.f, 1.f );
 			Vector2 topRightUV    ( 1.f, 1.f );
 
-			SetNormal(bottomNormal);
-			SetTangent(bottomTangent);
-
+			SetNormal(bottomLeftNormal);
+			SetTangent(bottomLeftTangent);
 			SetUV(bottomLeftUV);
 			PushVertex(bottomLeft);
-			SetUV(topLeftUV);
-			PushVertex(topLeft);
+
+			SetNormal(bottomRightNormal);
+			SetTangent(bottomRightTangent);
 			SetUV(bottomRightUV);
 			PushVertex(bottomRight);
 
-			SetNormal(topNormal);
-			SetTangent(topTangent);
-
-			SetUV(bottomRightUV);
-			PushVertex(bottomRight);
+			SetNormal(topLeftNormal);
+			SetTangent(topLeftTangent);
 			SetUV(topLeftUV);
 			PushVertex(topLeft);
+
+			SetNormal(bottomRightNormal);
+			SetTangent(bottomRightTangent);
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+
+			SetNormal(topRightNormal);
+			SetTangent(topRightTangent);
 			SetUV(topRightUV);
 			PushVertex(topRight);
+
+			SetNormal(topLeftNormal);
+			SetTangent(topLeftTangent);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			
 		}
 	}
 }
 
+
+void MeshBuilder::BuildTexturedGridFlat( unsigned int chunkSize, float height ) {
+
+	SetColor(Rgba());
+
+	for ( unsigned int row = 0; row < chunkSize; row++) {
+		for ( unsigned int col = 0; col < chunkSize; col++) {
+			Vector3 bottomLeft	( (float) col,		height, (float) row );
+			Vector3 bottomRight	( (float) 1 + col,	height, (float) row );
+			Vector3 topLeft		( (float) col,		height, (float) row + 1 );
+			Vector3 topRight	( (float) 1 + col,	height, (float) row + 1 );
+
+			Vector2 bottomLeftUV  ( 0.f, 0.f );
+			Vector2 bottomRightUV ( 1.f, 0.f );
+			Vector2 topLeftUV	  ( 0.f, 1.f );
+			Vector2 topRightUV    ( 1.f, 1.f );
+
+			SetNormal(Vector3::UP);
+			SetTangent(Vector3::RIGHT);
+			SetUV(bottomLeftUV);
+			PushVertex(bottomLeft);
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+			SetUV(bottomRightUV);
+			PushVertex(bottomRight);
+			SetUV(topRightUV);
+			PushVertex(topRight);
+			SetUV(topLeftUV);
+			PushVertex(topLeft);
+
+		}
+	}
+}
+
+
+
+//-------------------------------------------------------------------
+void MeshBuilder::AddCube(
+	  const Vector3& center
+	, const Vector3& size
+	, const Rgba& color /* = Rgba(255, 255, 255, 255) */
+	, const AABB2& topUVs /* = Vector2::ZERO_TO_ONE */
+	, const AABB2& sideUVs /* = Vector2::ZERO_TO_ONE */
+	, const AABB2& bottomUVs /* = Vector2::ZERO_TO_ONE */) {
+
+	unsigned int vertices = (unsigned int) m_vertices.size();
+	SetColor(color);
+
+	Vector3 halfSize = size * 0.5f;
+
+	float left = center.x - halfSize.x;
+	float right = center.x + halfSize.x;
+	float top = center.y + halfSize.y;
+	float bottom = center.y - halfSize.y;
+	float front = center.z + halfSize.z;
+	float back = center.z - halfSize.z;
+
+	Vector3 leftTopFront(left, top, front);
+	Vector3 rightTopFront(right, top, front);
+	Vector3 leftBottomFront(left, bottom, front);
+	Vector3 rightBottomFront(right, bottom, front);
+	Vector3 leftTopBack(left, top, back);
+	Vector3 rightTopBack(right, top, back);
+	Vector3 leftBottomBack(left, bottom, back);
+	Vector3 rightBottomBack(right, bottom, back);
+
+	// front face
+	SetNormal(Vector3::FORWARD);
+	SetTangent(Vector3::RIGHT);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
+	PushVertex(leftTopFront);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	PushVertex(rightTopFront);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.mins.y ));
+	PushVertex(leftBottomFront);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	PushVertex(rightBottomFront);
+	m_indices.push_back(vertices + 0);
+	m_indices.push_back(vertices + 1);
+	m_indices.push_back(vertices + 2);
+	m_indices.push_back(vertices + 1);
+	m_indices.push_back(vertices + 3);
+	m_indices.push_back(vertices + 2);
+
+	// back face
+	SetNormal(Vector3::FORWARD * -1.f);
+	SetTangent(Vector3::RIGHT * -1.f);
+	SetUV( Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
+	PushVertex( rightTopBack );
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	PushVertex( leftTopBack );
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.mins.y ));
+	PushVertex( rightBottomBack );
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.mins.y ));
+	PushVertex( leftBottomBack );
+	m_indices.push_back(vertices + 4);
+	m_indices.push_back(vertices + 5);
+	m_indices.push_back(vertices + 6);
+	m_indices.push_back(vertices + 5);
+	m_indices.push_back(vertices + 7);
+	m_indices.push_back(vertices + 6);
+
+	// left face
+	SetNormal(Vector3::RIGHT * -1.f);
+	SetTangent(Vector3::FORWARD * -1.f);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
+	PushVertex(leftTopBack);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	PushVertex(leftTopFront);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.mins.y ));
+	PushVertex(leftBottomBack);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.mins.y ));
+	PushVertex(leftBottomFront);
+	m_indices.push_back(vertices + 8);
+	m_indices.push_back(vertices + 9);
+	m_indices.push_back(vertices + 10);
+	m_indices.push_back(vertices + 9);
+	m_indices.push_back(vertices + 11);
+	m_indices.push_back(vertices + 10);
+
+	// right face
+	SetNormal(Vector3::RIGHT);
+	SetTangent(Vector3::FORWARD);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.maxs.y ));
+	PushVertex(rightTopFront);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	PushVertex(rightTopBack);
+	SetUV(Vector2( sideUVs.mins.x, sideUVs.mins.y ));
+	PushVertex(rightBottomFront);
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.mins.y ));
+	PushVertex(rightBottomBack);	
+	m_indices.push_back(vertices + 12);
+	m_indices.push_back(vertices + 13);
+	m_indices.push_back(vertices + 14);
+	m_indices.push_back(vertices + 13);
+	m_indices.push_back(vertices + 15);
+	m_indices.push_back(vertices + 14);
+
+	// top face
+	SetNormal(Vector3::UP);
+	SetTangent(Vector3::RIGHT);
+	SetUV(Vector2( topUVs.mins.x, topUVs.maxs.y ));
+	PushVertex(leftTopBack);
+	SetUV(Vector2( topUVs.maxs.x, topUVs.maxs.y ));
+	PushVertex(rightTopBack);
+	SetUV(Vector2( topUVs.mins.x, topUVs.mins.y ));
+	PushVertex(leftTopFront);
+	SetUV(Vector2( topUVs.maxs.x, topUVs.mins.y ));
+	PushVertex(rightTopFront);
+
+	m_indices.push_back(vertices + 16);
+	m_indices.push_back(vertices + 17);
+	m_indices.push_back(vertices + 18);
+	m_indices.push_back(vertices + 17);
+	m_indices.push_back(vertices + 19);
+	m_indices.push_back(vertices + 18);
+
+	// bottom face
+	SetNormal(Vector3::UP * -1.f);
+	SetTangent(Vector3::RIGHT * -1.f);
+	SetUV(Vector2( bottomUVs.mins.x, bottomUVs.maxs.y ));
+	PushVertex(leftBottomFront);
+	SetUV(Vector2( bottomUVs.maxs.x, bottomUVs.maxs.y ));
+	PushVertex(rightBottomFront);
+	SetUV(Vector2( bottomUVs.mins.x, bottomUVs.mins.y ));
+	PushVertex(leftBottomBack);
+	SetUV(Vector2( bottomUVs.maxs.x, bottomUVs.mins.y ));
+	PushVertex(rightBottomBack);
+	m_indices.push_back(vertices + 20);
+	m_indices.push_back(vertices + 21);
+	m_indices.push_back(vertices + 22);
+	m_indices.push_back(vertices + 21);
+	m_indices.push_back(vertices + 23);
+	m_indices.push_back(vertices + 22);
+
+}
+
+
+void MeshBuilder::AddSphere(
+	  const Vector3& position
+	, float radius
+	, unsigned int wedges
+	, unsigned int slices
+	, const Rgba& color /* = Rgba() */ ) {
+
+	SetColor(color);
+	unsigned int vertices = (unsigned int) m_vertices.size();
+
+	for (unsigned int slice = 0; slice <= slices; slice++) {
+		float v = (float) slice / (float) slices;
+		float verticalDegrees = RangeMapFloat(v, 0.f, 1.f, -90.f, 90.f);
+
+		for (unsigned int wedge = 0; wedge <= wedges; wedge++) {
+			float u = (float) wedge / (float) wedges;
+			float horizontalDegrees = u * 360.f;
+
+			Vector2 uv(u, v);
+			Vector3 vertPos = position + PolarToCartesian3D(radius, horizontalDegrees, verticalDegrees);
+			SetNormal(PolarToCartesian3D(radius, horizontalDegrees, verticalDegrees));
+			SetUV(uv);
+			PushVertex(vertPos);
+		}
+	}
+
+	for (unsigned int wedgeIndex = 0; wedgeIndex < wedges; ++wedgeIndex) {
+		for (unsigned int sliceIndex = 0; sliceIndex < slices; ++sliceIndex) {
+			unsigned int bottomLeft = (sliceIndex * (wedges + 1)) + wedgeIndex;
+			unsigned int bottomRight = bottomLeft + 1;
+			unsigned int topLeft = bottomLeft + wedges + 1;
+			unsigned int topRight = topLeft + 1;
+
+			Vector3 bottomRightVertex = m_vertices[bottomRight].position;
+			Vector3 bottomLeftVertex = m_vertices[bottomLeft].position;
+			Vector3 displacement = bottomRightVertex - bottomLeftVertex;
+			Vector3 tangent = displacement.GetNormalized();
+
+			m_vertices[bottomRight].tangent = tangent;
+			m_vertices[bottomLeft].tangent = tangent;
+			m_vertices[topRight].tangent = tangent;
+			m_vertices[topLeft].tangent = tangent;
+
+			m_indices.push_back(vertices + bottomLeft);
+			m_indices.push_back(vertices + bottomRight);
+			m_indices.push_back(vertices + topRight);
+			m_indices.push_back(vertices + bottomLeft);
+			m_indices.push_back(vertices + topRight);
+			m_indices.push_back(vertices + topLeft);
+		}
+	}
+}

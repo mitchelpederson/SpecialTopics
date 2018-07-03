@@ -31,6 +31,7 @@ void Image::PopulateFromData( unsigned char* data ) {
 		index += 3;
 
 	}
+	InvertY();
 }
 
 void Image::SetTexel(int x, int y, const Rgba& color) {

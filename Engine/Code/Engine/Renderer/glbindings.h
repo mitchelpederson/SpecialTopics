@@ -100,6 +100,8 @@ extern PFNGLCLEARBUFFERIVPROC				glClearBufferiv;
 extern PFNGLCLEARBUFFERFVPROC				glClearBufferfv;
 extern PFNGLREADPIXELSPROC					glReadPixels;
 extern PFNGLDELETETEXTURESPROC				glDeleteTextures;
+extern PFNGLGENERATEMIPMAPPROC				glGenerateMipmap;
+extern PFNGLVIEWPORTPROC					glViewport;
 
 
 void BindGLFunctions();

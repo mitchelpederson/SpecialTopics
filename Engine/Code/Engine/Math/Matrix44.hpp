@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/Vector3.hpp"
+#include "Engine/Math/Vector4.hpp"
 #include "Engine/Math/AABB2.hpp"
 
 class Matrix44 {
@@ -18,7 +19,9 @@ public:
 	Vector2 TransformDisplacement2D( const Vector2& displacement );
 	Vector2 TransformPosition2D( const Vector2& point );
 	Vector3 TransformPosition( const Vector3& point) const;
-
+	Vector3 TransformDirection( const Vector3& direction) const;
+	Vector4 Transform( const Vector4& coord ) const;
+	
 	void Append( const Matrix44& rightSide );
 	void RotateDegrees2D( float degreesToRotate );
 	void Scale2D( float scaleX, float scaleY );
@@ -29,6 +32,7 @@ public:
 	void Invert();
 
 	static Matrix44 MakeOrtho2D( const Vector2& mins, const Vector2& maxs );
+	static Matrix44 MakeOrthographic( float left, float right, float top, float bottom, float far, float near);
 	static Matrix44 MakeRotationDegrees2D( float degreesToRotate );
 	static Matrix44 MakeScale2D( float scaleX, float scaleY );
 	static Matrix44 MakeScaleUniform2D( float scale );
@@ -44,6 +48,7 @@ public:
 	Vector3 GetForward() const;
 	Vector3 GetTranslation() const;
 	Vector3 GetRotation() const;
+	float GetTrace3() const;
 	
 	float Ix = 1.f;
 	float Iy = 0.f;
@@ -63,3 +68,7 @@ public:
 	float Tw = 1.f;
 
 };
+
+
+Matrix44 InterpolateRotation( const Matrix44& start, const Matrix44& end, float fractionTowards );
+Matrix44 LerpMatrix( const Matrix44& start, const Matrix44& end, float fractionTowards);

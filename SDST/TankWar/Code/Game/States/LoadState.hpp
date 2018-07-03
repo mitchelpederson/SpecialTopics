@@ -14,6 +14,7 @@ public:
 private:
 
 	void LoadResources();
+	void LoadAudio();
 
 	bool m_isFirstFrame = true;
 	bool m_isSecondFrame = false;
