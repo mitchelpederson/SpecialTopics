@@ -11,7 +11,7 @@ void main(void) {
 
 	vec4 diffuse = texture(gTexDiffuse, passUV);
 
-	if (diffuse.a < 0.2) {
+	if (diffuse.a < 0.4) {
 		discard;
 	}
 	outColor = diffuse * passColor;

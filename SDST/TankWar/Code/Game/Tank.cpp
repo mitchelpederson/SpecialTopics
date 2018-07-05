@@ -3,6 +3,8 @@
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/Math/Ray.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
+#include "Engine/Profiler/Profiler.hpp"
+
 
 Tank::Tank(PlayState* state, eTeam team) 
 	: GameObject(state, team)
@@ -56,6 +58,7 @@ Tank::~Tank() {
 
 
 void Tank::ProcessPlayerInput() {
+	PROFILER_SCOPED_PUSH();
 	Vector3 playerForward = transform.GetLocalToWorldMatrix().GetForward();
 	Vector3 playerRight = transform.GetLocalToWorldMatrix().GetRight();
 	Vector3 forwardMoveForce = Vector3(PLAYER_MOVE_FORCE, 0.f, 0.f);
@@ -86,6 +89,7 @@ void Tank::ProcessPlayerInput() {
 
 
 void Tank::Update() {
+	PROFILER_SCOPED_PUSH();
 	if (!DevConsole::GetInstance()->IsOpen() && currentState->currentSubstate == STATE_PLAYING) {
 		ProcessPlayerInput();
 	}
@@ -99,6 +103,7 @@ void Tank::Update() {
 
 
 void Tank::UpdateTurret() {
+	PROFILER_SCOPED_PUSH();
 	Camera* camera = currentState->m_camera;
 	Ray3 ray(camera->transform.position + (camera->m_cameraMatrix.GetForward() * 3.5f), camera->m_cameraMatrix.GetForward());
 

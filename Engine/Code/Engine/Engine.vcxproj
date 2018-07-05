@@ -309,7 +309,10 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Profiler\Profiler.cpp" />
+    <ClCompile Include="Profiler\ProfilerReport.cpp" />
+    <ClCompile Include="Profiler\ProfilerReportEntry.cpp" />
     <ClCompile Include="Profiler\ProfilerScopedLog.cpp" />
+    <ClCompile Include="Profiler\ProfilerWindow.cpp" />
     <ClCompile Include="Renderer\BitmapFont.cpp" />
     <ClCompile Include="Renderer\Camera.cpp" />
     <ClCompile Include="Renderer\CubeMap.cpp" />
@@ -389,8 +392,11 @@
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Math\Vector4.hpp" />
     <ClInclude Include="Profiler\Profiler.hpp" />
+    <ClInclude Include="Profiler\ProfilerReport.hpp" />
+    <ClInclude Include="Profiler\ProfilerReportEntry.hpp" />
     <ClInclude Include="Profiler\ProfilerScopedLog.hpp" />
     <ClInclude Include="Physics\Contacts.hpp" />
+    <ClInclude Include="Profiler\ProfilerWindow.hpp" />
     <ClInclude Include="Renderer\BitmapFont.hpp" />
     <ClInclude Include="Renderer\Camera.hpp" />
     <ClInclude Include="Renderer\CubeMap.hpp" />

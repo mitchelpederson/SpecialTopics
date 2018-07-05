@@ -10,6 +10,8 @@
 #include "Engine/Core/Time.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
+#include "Engine/Profiler/Profiler.hpp"
+#include "Engine/Profiler/ProfilerWindow.hpp"
 #include "Game/GameDebug.hpp"
 
 typedef void (*windows_message_handler_cb)( unsigned int msg, size_t wparam, size_t lparam ); 
@@ -51,13 +53,16 @@ void App::Run() {
 	while (!g_isQuitting) {
 
 		g_masterClock->BeginFrame();
+		Profiler::MarkFrame();
 		g_theRenderer->BeginFrame();
 		g_theInputSystem->BeginFrame();
 		g_audioSystem->BeginFrame();
 		DevConsole::GetInstance()->Update();
+		ProfilerWindow::GetInstance()->Update();
 		g_theGame->Update();
 		g_theGame->Render();
 		DebugRenderAndUpdate();
+		ProfilerWindow::GetInstance()->Render();
 		DevConsole::GetInstance()->Render();
 		g_audioSystem->EndFrame();
 		g_theInputSystem->EndFrame();
@@ -82,6 +87,8 @@ void App::Initialize() {
 	g_theGame = new TheGame();
 	g_theRenderer->Initialize();
 	g_theGame->Initialize();
+	Profiler::Initialize();
+	ProfilerWindow::Initialize();
 
 	DebugRenderStartup(g_theRenderer);
 	RegisterDebugTimeCommands();

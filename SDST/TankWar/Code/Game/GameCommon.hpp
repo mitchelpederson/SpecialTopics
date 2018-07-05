@@ -33,7 +33,7 @@ const float PLAYER_MOVE_FORCE = 50.f;
 const int NUM_ENEMY_BASES = 2;
 const float BASE_SPAWN_RATE = 2.f;
 const float BASE_HEALTH = 10.f;
-const int BASE_MAX_SPAWNS = 100;
+const int BASE_MAX_SPAWNS = 10;
 
 const float SWARMER_SEPARATION_FACTOR = 10.f;
 const float SWARMER_COHESION_FACTOR = 3.f;

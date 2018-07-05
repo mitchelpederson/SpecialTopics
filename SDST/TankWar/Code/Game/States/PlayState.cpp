@@ -3,6 +3,7 @@
 #include "Engine/DevConsole/Command.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
+#include "Engine/Profiler/Profiler.hpp"
 
 #include "Game/States/PlayState.hpp"
 #include "Game/GameCommon.hpp"
@@ -93,6 +94,7 @@ void PlayState::ProcessInput() {
 
 
 void PlayState::ProcessPlayerInput() {
+	PROFILER_SCOPED_PUSH();
 	if (currentSubstate == STATE_PLAYING) {
 		if (g_theInputSystem->IsKeyPressed(InputSystem::KEYBOARD_LEFT)) {
 			m_camera->rotation += 120.f * m_sceneClock->frame.seconds;
@@ -142,7 +144,7 @@ void PlayState::CheckForPlayerVictory() {
 }
 
 void PlayState::Update() {
-
+	PROFILER_SCOPED_PUSH();
 	CheckForPlayerVictory();
 
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
@@ -176,6 +178,7 @@ void PlayState::Update() {
 
 
 void PlayState::Render() const {
+	PROFILER_SCOPED_PUSH();
 	g_theRenderer->SetCameraToUI();
 	g_theRenderer->SetShader(g_theRenderer->GetShader("passthrough"));
 	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(200, 140, 255, 255));
@@ -233,10 +236,8 @@ void PlayState::Render() const {
 
 
 void PlayState::RenderUI() const {
-
+	PROFILER_SCOPED_PUSH();
 	Renderer* r = g_theRenderer;
-
-
 
 	r->DrawAABB(AABB2(2.f, 90.f, 25.f, 100.f), Rgba(0, 0, 0, 255));
 	r->DrawAABB(AABB2(3.f, 91.f, 24.f, 99.f), Rgba(160, 0, 0, 255));
@@ -259,6 +260,7 @@ void PlayState::CheckIfPauseStateChanged() {
 
 
 void PlayState::SpawnBullet( const Vector3& position, const Vector3& forward, float speed, eTeam team ) {
+	PROFILER_SCOPED_PUSH();
 	Bullet* bullet = new Bullet(this, team);
 	bullet->transform.position = position;
 	bullet->transform.LookToward(forward, Vector3::UP);
@@ -362,11 +364,13 @@ void PlayState::RemoveSwarmEnemy( SwarmEnemy* enemy ) {
 
 
 RaycastHit3 PlayState::Raycast( unsigned int maxContacts, const Ray3& ray ) {
+	PROFILER_SCOPED_PUSH();
 	return testGameMap->Raycast(maxContacts, ray);
 }
 
  
 void PlayState::CheckForCombatCollisions() {
+	PROFILER_SCOPED_PUSH();
 	// Check if player bullets hit a swarmer
 
 	for ( unsigned int bulletIndex = 0; bulletIndex < m_bullets.size(); bulletIndex++ ) {
@@ -421,6 +425,7 @@ void PlayState::CheckForCombatCollisions() {
 
 
 void PlayState::ClearDeadGameObjects() {
+	PROFILER_SCOPED_PUSH();
 	for (int swarmerIndex = (int) m_swarmers.size() - 1; swarmerIndex >= 0; swarmerIndex--) {
 		if (m_swarmers[swarmerIndex]->IsDeletable()) {
 			RemoveSwarmEnemy(m_swarmers[swarmerIndex]);
@@ -446,6 +451,7 @@ void PlayState::SignalPlayerDied() {
 
 
 std::vector<SwarmEnemy*> PlayState::GetSwarmersInRadius( const Vector3& point, float radius ) {
+	PROFILER_SCOPED_PUSH();
 	std::vector<SwarmEnemy*> swarmersInRange;
 
 	for (unsigned int swarmerIndex = 0; swarmerIndex < m_swarmers.size(); swarmerIndex++) {

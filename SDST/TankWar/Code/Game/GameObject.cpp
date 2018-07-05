@@ -2,6 +2,8 @@
 #include "Game/GameCommon.hpp"
 
 #include "Engine/Renderer/DebugRender.hpp"
+#include "Engine/Profiler/Profiler.hpp"
+
 
 
 GameObject::GameObject(PlayState* state, eTeam team) 
@@ -40,6 +42,7 @@ const Vector3& GameObject::GetPosition() {
 
 
 void GameObject::Update() {
+	PROFILER_SCOPED_PUSH();
 
 	UpdatePhysics();
 	m_renderable->SetModelMatrix(transform.GetLocalToWorldMatrix());
@@ -47,7 +50,7 @@ void GameObject::Update() {
 
 
 void GameObject::UpdatePhysics() {
-
+	PROFILER_SCOPED_PUSH();
 	float dt = g_masterClock->frame.seconds;
 	Vector3 linearAcceleration = frameLinearForce * (1.f / mass);
 	Vector3 angularAcceleration = frameTorque * (1.f / mass);

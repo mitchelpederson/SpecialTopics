@@ -267,7 +267,7 @@ void DevConsole::Render() const {
 		//g_theRenderer->SetAlphaBlending();
 		g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 170) );		
 		
-		for (int messageIndex = 0; messageIndex < m_messages.size(); messageIndex++) {
+		for (int messageIndex = m_messages.size() - 1; messageIndex > m_messages.size() - 50 && messageIndex >= 0; messageIndex--) {
 			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, 100.f, (m_messages.size() - messageIndex + 1.f) * m_fontSize);
 			g_theRenderer->DrawTextInBox2D( messageBoxBounds, Vector2(0.f, 0.5f), m_messages[messageIndex].message, m_fontSize, m_messages[messageIndex].color, 0.4f, m_currentFont, TEXT_DRAW_OVERRUN );
 		}

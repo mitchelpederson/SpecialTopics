@@ -1,6 +1,7 @@
 #include "Game/GameCommon.hpp"
 #include "Game/SwarmEnemy.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
+#include "Engine/Profiler/Profiler.hpp"
 
 SwarmEnemy::SwarmEnemy(PlayState* state, Base* parent, eTeam team /* = TEAM_ENEMY */)
 	: GameObject(state, team)
@@ -17,6 +18,7 @@ SwarmEnemy::~SwarmEnemy() {
 
 
 void SwarmEnemy::BuildEnemyMesh() {
+	PROFILER_SCOPED_PUSH();
 	MeshBuilder mb;
 	mb.Begin(TRIANGLES, true);
 	mb.AddSphere(Vector3(0.f, 0.25f, 0.f), m_collisionRadius, 6, 6, Rgba(255, 100, 0, 255));
@@ -32,6 +34,7 @@ void SwarmEnemy::BuildEnemyMesh() {
 
 
 void SwarmEnemy::Update() {
+	PROFILER_SCOPED_PUSH();
 	GameObject::Update();
 
 	SwarmPlayer();
@@ -50,7 +53,7 @@ void SwarmEnemy::Kill() {
 
 
 void SwarmEnemy::SwarmPlayer() {
-
+	PROFILER_SCOPED_PUSH();
 	// Follow player
 	Vector3 playerLocation = currentState->player->transform.position;
 	Vector3 direction = playerLocation - transform.position;

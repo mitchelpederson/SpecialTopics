@@ -13,6 +13,7 @@
 #include "Engine/Core/Image.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/InputSystem/InputSystem.hpp"
+#include "Engine/Profiler/Profiler.hpp"
 #include "Game/TheGame.hpp"
 #include "Game/GameCommon.hpp"
 #include "Game/states/LoadState.hpp"
@@ -55,6 +56,7 @@ void TheGame::Initialize() {
 
 
 void TheGame::Update() {
+	PROFILER_SCOPED_PUSH();
 	m_state->Update();
 	if (nextState != STATE_NONE && m_state->IsReadyToExit()) {
 		GoToNextState();
@@ -67,6 +69,7 @@ void TheGame::Update() {
 
 
 void TheGame::Render() {
+	PROFILER_SCOPED_PUSH();
 	m_state->Render();
 }
 
