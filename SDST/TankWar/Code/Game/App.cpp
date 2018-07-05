@@ -69,7 +69,7 @@ void App::Run() {
 		g_theRenderer->EndFrame();
 
 	}
-	DebugRenderShutdown();
+	EngineShutdown();
 	void (*fncptr)( unsigned int msg, size_t wparam, size_t lparam ) = GetMessages;
 	Window::GetInstance()->UnregisterHandler(fncptr);
 }
@@ -79,25 +79,17 @@ void App::Run() {
 // Sets up the engine systems
 //
 void App::Initialize() {
-	g_masterClock = new Clock();
-	g_theBlackboard = new Blackboard("Data/GameConfig.xml");
-	g_theRenderer = new Renderer();
-	g_theInputSystem = new InputSystem();
-	g_audioSystem = new AudioSystem();
+	
+	EngineStartup();
 	g_theGame = new TheGame();
-	g_theRenderer->Initialize();
 	g_theGame->Initialize();
-	Profiler::Initialize();
-	ProfilerWindow::Initialize();
 
-	DebugRenderStartup(g_theRenderer);
+
 	RegisterDebugTimeCommands();
 
 	void (*fncptr)( unsigned int msg, size_t wparam, size_t lparam ) = GetMessages;
 	Window::GetInstance()->RegisterHandler(fncptr);
 
-	new DevConsole();
-	
 	m_timeAtStartup = GetCurrentTimeSeconds();
 }
 

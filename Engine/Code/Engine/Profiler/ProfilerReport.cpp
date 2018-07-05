@@ -7,6 +7,8 @@ void ProfilerReport::GenerateFlatReportFromFrame( ProfilerMeasurement* rootMeasu
 	root->AccumulateData(rootMeasurement);
 	root->PopulateFlat( rootMeasurement, root );
 	Finish();
+
+
 }
 
 

@@ -274,6 +274,7 @@
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Blackboard.cpp" />
     <ClCompile Include="Core\Clock.cpp" />
+    <ClCompile Include="Core\EngineCommon.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\Rgba.cpp" />

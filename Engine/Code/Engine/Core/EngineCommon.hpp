@@ -17,3 +17,7 @@ extern AudioSystem* g_audioSystem;
 #define MAX_LIGHTS 8
 #define PROFILER_ENABLED
 #define PROFILER_MAX_FRAME_HISTORY 128
+
+
+void EngineStartup();
+void EngineShutdown();
