@@ -288,6 +288,14 @@ void Renderer::Initialize() {
 	m_defaultShader->SetProgram( CreateOrGetShaderProgram("Data/Shaders/passthroughTex") );
 	m_defaultSampler = new Sampler();
 	m_defaultSampler->Create();
+	m_nearestSampler = new Sampler();
+	m_nearestSampler->Create( SAMPLER_NEAREST );
+	m_linearSampler = new Sampler();
+	m_linearSampler->Create( SAMPLER_LINEAR );
+	m_linearMipmapSampler = new Sampler();
+	m_linearMipmapSampler->Create( SAMPLER_LINEAR_MIPMAP_LINEAR );
+	m_shadowSampler = new Sampler();
+	m_shadowSampler->Create( SAMPLER_SHADOW );
 
 	m_defaultCamera = new Camera();
 	m_defaultUICamera = new Camera();
@@ -373,6 +381,7 @@ void Renderer::BindLightState() {
 	GLint shadowInverseVPUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "SHADOW_INVERSE_VP");
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowVPUniform,		  MAX_LIGHTS, GL_FALSE, &(m_lightVP[0].Ix));
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowInverseVPUniform, MAX_LIGHTS, GL_FALSE, &(m_inverseLightVP[0].Ix));
+	
 }
 
 
@@ -1253,12 +1262,8 @@ void Renderer::SetCameraToUI() {
 
 void Renderer::UseTexture( unsigned int slot, const Texture& tex, Sampler* sampler ) {
 	glActiveTexture(GL_TEXTURE0 + slot);
-	if (sampler == nullptr) {
-		glBindSampler(slot, m_defaultSampler->GetHandle());
-	}
-	else {
-		glBindSampler(slot, sampler->GetHandle());
-	}
+	glBindSampler(slot, GetSamplerForMode( tex.GetSamplerMode() )->GetHandle());
+	
 	if (tex.IsCubemap()) {
 		glBindTexture(GL_TEXTURE_CUBE_MAP, tex.GetTextureID());
 	}
@@ -1747,4 +1752,21 @@ void Renderer::SetFog( float fogFactor, float maxFogDistance, Rgba const& fogCol
 	m_fogColor = fogColor;
 	m_fogFactor = fogFactor;
 	m_fogMaxDistance = maxFogDistance;
+}
+
+Sampler* Renderer::GetSamplerForMode( eSamplerModes mode ) {
+	switch ( mode ) {
+		case SAMPLER_NEAREST:
+			return m_nearestSampler;
+		case SAMPLER_LINEAR:
+			return m_linearSampler;
+		case SAMPLER_NEAREST_MIPMAP_LINEAR:
+			return m_linearMipmapSampler;
+		case SAMPLER_LINEAR_MIPMAP_LINEAR:
+			return m_linearMipmapSampler;
+		case SAMPLER_SHADOW:
+			return m_shadowSampler;
+		default: 
+			return m_defaultSampler;
+	}
 }

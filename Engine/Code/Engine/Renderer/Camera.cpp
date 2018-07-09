@@ -120,8 +120,8 @@ Vector3 Camera::GetUp() const {
 }
 
 Matrix44 Camera::GetViewProjection() const {
-	Matrix44 vp = m_viewMatrix;
-	vp.Append(m_projMatrix);
+	Matrix44 vp = m_projMatrix;
+	vp.Append(m_viewMatrix);
 	return vp;
 }
 

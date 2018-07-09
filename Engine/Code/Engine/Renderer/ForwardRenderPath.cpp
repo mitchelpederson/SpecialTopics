@@ -81,14 +81,14 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 
 	Vector3 playerCamPos = currentCamera->transform.position;
 	Vector3 playerCamForward = currentCamera->m_cameraMatrix.GetForward();
-	Vector3 shadowCamPos = playerCamPos + (playerCamForward * 10.f);
+	Vector3 shadowCamPos = playerCamPos;
 
-	cam.SetProjection(Matrix44::MakeOrthographic(32.f, -32.f, // left, right
+	cam.SetProjection(Matrix44::MakeOrthographic(-32.f, 32.f, // left, right
 												 32.f, -32.f, // top, bottom
 												 50.f, -50.f)); // far, near
 
 	cam.transform.position = playerCamPos;
-	cam.transform.LookToward(light->m_direction.GetNormalized() * -1.f, Vector3::UP);
+	cam.transform.LookToward(light->m_direction.GetNormalized() * 1.f, Vector3::UP);
 	cam.m_viewMatrix = cam.transform.GetWorldToLocalMatrix();
 	cam.m_cameraMatrix = cam.transform.GetLocalToWorldMatrix();
 	
@@ -97,8 +97,8 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 	g_theRenderer->SetCamera(&cam);
 	Matrix44 camVP = cam.m_projMatrix;
 	camVP.Append(cam.m_viewMatrix);
-	light->m_viewProjection = camVP;
-	light->m_inverseViewProjection = camVP.GetInverse();
+	light->m_viewProjection = cam.GetViewProjection();
+	light->m_inverseViewProjection = cam.GetViewProjection().GetInverse();
 
 	g_theRenderer->SetViewport(0, 0, light->m_shadowMapResolution.x, light->m_shadowMapResolution.y);
 	g_theRenderer->ClearDepth();
@@ -107,6 +107,7 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 		g_theRenderer->DrawMesh(r->GetMesh());
 	}
 	g_theRenderer->SetViewport(0, 0, Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight());
+	g_theRenderer->UseTexture(8, *light->CreateOrGetShadowTexture());
 
 }
 

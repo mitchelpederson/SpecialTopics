@@ -32,7 +32,7 @@ uniform vec4 FOG_COLOR;
 
 layout(binding = 0) uniform sampler2D gTexDiffuse;
 layout(binding = 1) uniform sampler2D gTexNormal;
-layout(binding = 8) uniform sampler2D gTexShadow;
+layout(binding = 8) uniform sampler2DShadow gTexShadow;
 
 in vec2 passUV;
 in vec3 passNormal;
@@ -67,24 +67,22 @@ void main(void) {
 	vec3 ambientLight = vec3(AMBIENT_COLOR.xyz) * AMBIENT_INTENSITY;
 
 	vec3 diffuseLight = vec3(texColor.xyz) * ambientLight;
-	vec3 specularLight = vec3(0.0);
+	vec3 specularLight = vec3(0.0f);
 
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 
-		float isLit = 1.0;
-		if (LIGHT_IS_SHADOWCASTING[i] > 0.0) {
+		float isLit = 1.0f;
+		if (LIGHT_IS_SHADOWCASTING[i] > 0.1f) {
 			vec4 clip = SHADOW_VP[i] * passWorldPos;
 			vec3 ndc = clip.xyz / clip.w;
-			ndc = (ndc + vec3(1.0)) * 0.5;
+			ndc = (ndc + vec3(1.0f)) * 0.5f;
 
-			float depthShadow = texture( gTexShadow, ndc.xy ).z;
+			float bias = 0.0005f * tan( acos( dot( surfaceNormal, LIGHT_DIRECTION[i] * -1.0f ) ) );
+			ndc.z = ndc.z - bias;
 
-			
-			if ( ndc.z > depthShadow) {
-				//isLit = 0.0;
-			}
+			isLit = texture( gTexShadow, ndc );
+		
 		}
-
 
 		// Light direction and distance
 		vec3 directionToLight = LIGHT_POSITION[i] - vec3(passWorldPos.xyz);

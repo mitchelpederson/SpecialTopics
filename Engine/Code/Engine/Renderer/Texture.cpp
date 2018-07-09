@@ -5,6 +5,7 @@
 
 #include "Engine/Renderer/Texture.hpp"
 #include "Engine/Renderer/glbindings.h"
+#include "Engine/Renderer/Sampler.hpp"
 #include "Engine/ThirdParty/stb/stb_image.h"
 #include "Engine/Core/ErrorWarningAssert.hpp"
 #include <iostream>
@@ -213,4 +214,13 @@ Texture* Texture::CreateDuplicateTarget( Texture* copy ) {
 	Texture* duplicate = new Texture();
 	duplicate->CreateRenderTarget(copy->GetDimensions().x, copy->GetDimensions().y, copy->m_format);
 	return duplicate;
+}
+
+
+void Texture::SetSamplerMode( eSamplerModes mode ) {
+	m_sampleMode = mode;
+}
+
+eSamplerModes Texture::GetSamplerMode() const {
+	return m_sampleMode;
 }

@@ -102,6 +102,7 @@ extern PFNGLREADPIXELSPROC					glReadPixels;
 extern PFNGLDELETETEXTURESPROC				glDeleteTextures;
 extern PFNGLGENERATEMIPMAPPROC				glGenerateMipmap;
 extern PFNGLVIEWPORTPROC					glViewport;
+extern PFNGLSAMPLERPARAMETERFVPROC			glSamplerParameterfv;
 
 
 void BindGLFunctions();

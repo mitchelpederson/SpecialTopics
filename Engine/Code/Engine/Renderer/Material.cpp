@@ -90,10 +90,10 @@ void Material::RemoveProperty( const std::string& name ) {
 
 
 void Material::SetTexture( unsigned int bindPoint, Texture* tex, Sampler* sampler ) {
-	textures.resize(bindPoint + 1);
+	textures.resize(bindPoint + 1, nullptr);
 	textures[bindPoint] = tex;
 	
-	samplers.resize(bindPoint + 1);
+	samplers.resize(bindPoint + 1, nullptr);
 	samplers[bindPoint] = sampler;
 }
 

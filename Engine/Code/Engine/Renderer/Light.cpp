@@ -54,6 +54,7 @@ void Light::SetPosition( const Vector3& position ) {
 Texture* Light::CreateOrGetShadowTexture() {
 	if (m_depthTarget == nullptr) {
 		m_depthTarget = new Texture();
+		m_depthTarget->SetSamplerMode(SAMPLER_SHADOW);
 		m_depthTarget->CreateRenderTarget(m_shadowMapResolution.x, m_shadowMapResolution.y, TEXTURE_FORMAT_D24S8);
 		return m_depthTarget;
 	}

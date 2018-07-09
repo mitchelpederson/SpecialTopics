@@ -215,7 +215,7 @@ public:
 	Texture* GetDefaultColorTarget();
 	Texture* GetDefaultDepthTarget();
 	FrameBuffer* GetDefaultFrameBuffer();
-
+	Sampler* GetSamplerForMode( eSamplerModes mode = SAMPLER_NEAREST );
 
 	static GLenum ToGLCompare( DepthCompare compare );
 	static GLenum ToGLCullMode( CullMode mode );
@@ -280,6 +280,8 @@ private:
 	Sampler* m_nearestSampler = nullptr;
 	Sampler* m_linearSampler = nullptr;
 	Sampler* m_defaultSampler = nullptr;
+	Sampler* m_linearMipmapSampler = nullptr;
+	Sampler* m_shadowSampler = nullptr;
 	Texture* m_defaultColorTarget = nullptr;
 	Texture* m_defaultDepthTarget = nullptr;
 	FrameBuffer* m_defaultFrameBuffer = nullptr;

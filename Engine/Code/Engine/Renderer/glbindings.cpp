@@ -78,6 +78,7 @@ PFNGLREADPIXELSPROC					glReadPixels				= nullptr;
 PFNGLDELETETEXTURESPROC				glDeleteTextures			= nullptr;
 PFNGLGENERATEMIPMAPPROC				glGenerateMipmap			= nullptr;
 PFNGLVIEWPORTPROC					glViewport					= nullptr;
+PFNGLSAMPLERPARAMETERFVPROC			glSamplerParameterfv		= nullptr;
 
 
 void BindGLFunctions() {
@@ -159,4 +160,5 @@ void BindGLFunctions() {
 	GL_BIND_FUNCTION( glDeleteTextures );
 	GL_BIND_FUNCTION( glGenerateMipmap );
 	GL_BIND_FUNCTION( glViewport );
+	GL_BIND_FUNCTION( glSamplerParameterfv );
 }

@@ -3,13 +3,13 @@
 //
 #pragma once
 #include "Engine/Math/IntVector2.hpp"
+#include "Engine/Renderer/Sampler.hpp"
 #include <string>
 
 enum eTextureFormat {
 	TEXTURE_FORMAT_RGBA8,
 	TEXTURE_FORMAT_D24S8
 };
-
 class Texture {
 	friend class Renderer;
 
@@ -21,6 +21,8 @@ public:
 	bool CreateRenderTarget( int width, int height, eTextureFormat format = TEXTURE_FORMAT_RGBA8 );
 	IntVector2 GetDimensions() const;
 	bool IsCubemap() const;
+	void SetSamplerMode( eSamplerModes mode = SAMPLER_NEAREST_MIPMAP_LINEAR );
+	eSamplerModes GetSamplerMode() const;
 
 	static Texture* CreateDuplicateTarget( Texture* copy );
 
@@ -33,5 +35,6 @@ protected:
 	IntVector2		m_dimensions;
 	eTextureFormat  m_format = TEXTURE_FORMAT_RGBA8;
 	bool			m_isCubemap = false;
+	eSamplerModes	m_sampleMode = SAMPLER_NEAREST_MIPMAP_LINEAR;
 
 };
