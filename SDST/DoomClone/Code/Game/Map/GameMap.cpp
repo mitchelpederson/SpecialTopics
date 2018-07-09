@@ -29,6 +29,7 @@ GameMap::GameMap( Image const& mapImage ) {
 	m_minimapCamera = new Camera();
 	Texture* tex = new Texture();
 	tex->CreateRenderTarget(400, 400);
+	tex->SetSamplerMode(SAMPLER_NEAREST);
 	m_minimapCamera->SetColorTarget(tex);
 	m_minimapCamera->SetProjection(Matrix44::MakeOrtho2D(Vector2(0.f, 0.f), Vector2((float) (m_dimensions.x * 2) * Window::GetInstance()->GetAspectRatio(), (float) (m_dimensions.y * 2))));
 	m_minimapCamera->transform.position = Vector3(0.f, 0.f, -15.f);
@@ -43,6 +44,10 @@ GameMap::GameMap( Image const& mapImage ) {
 	m_playerCamera->SetProjection(Matrix44::MakeProjection(90.f, Window::GetInstance()->GetAspectRatio(), 0.1f, 100.f));
 
 	m_entities.push_back(player);
+	g_theRenderer->CreateOrGetTexture("Data/Images/wolfenstein_textures.png")->SetSamplerMode(SAMPLER_NEAREST);
+	g_theRenderer->CreateOrGetTexture("Data/Images/enemysheet.png")->SetSamplerMode(SAMPLER_NEAREST);
+	g_theRenderer->CreateOrGetTexture("Data/Fonts/Wolfenstein.png")->SetSamplerMode(SAMPLER_NEAREST);
+	g_theRenderer->CreateOrGetTexture("Data/Images/weapons.png")->SetSamplerMode(SAMPLER_NEAREST);
 
 }
 
