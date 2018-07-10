@@ -128,4 +128,23 @@
 		<depth write="false" compare="always" />
 	</shader>
 
+	<shader name="ui-font" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+	<shader name="ui" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/passthrough.vs" />
+		<fragment file="Data/Shaders/passthrough.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
 </shaders>

@@ -5,7 +5,6 @@
 #include "Engine/Core/Clock.hpp"
 #include "Engine/ThirdParty/tinyxml2/tinyxml2.h"
 #include "Engine/Math/Vector2.hpp"
-#include <vector>
 #include "Engine/Core/Transform.hpp"
 #include "Engine/Renderer/Mesh.hpp"
 #include "Engine/Renderer/FirstPersonCamera.hpp"
@@ -17,10 +16,14 @@
 #include "Engine/Renderer/CubeMap.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
 
+#include "Game/States/GameState.hpp"
+#include "Game/Player.hpp"
 #include "Game/Map/GameMap.hpp"
+#include "Game/CampaignDefinition.hpp"
 
+#include <vector>
 
-
+class PlayState;
 
 enum DevModeShader {
 	DEV_SHADER_NONE,
@@ -34,6 +37,15 @@ enum DevModeShader {
 	DEV_SHADER_VERTEX_BITANGENTS,
 	NUM_DEV_SHADERS
 };
+
+enum eGameState {
+	STATE_NONE,
+	STATE_LOAD,
+	STATE_MENU,
+	STATE_SETUP,
+	STATE_PLAY
+};
+
 
 //-----------------------------------------------------------------------------------------------
 // TheGame class created by Mitchel Pederson
@@ -56,24 +68,41 @@ public:
 	float GetDeltaTime();
 	float GetElapsedTime();
 	Camera* GetPlayerCamera();
-	
-public:
-	RenderSceneGraph* m_scene = nullptr;
-	Clock* m_gameClock;
-	Material* particleMaterial = nullptr;
-	SpriteSheet* terrain = nullptr;
-	GameMap* currentMap = nullptr;
 
+	void BeginTransitionToState( eGameState next ); 
 
-private:
+	Player* GetPlayer();
+	GameMap* GetCurrentMap();
+	PlayState* GetCurrentPlayState();
+
 	void LoadTileDefinitions(std::string filePath);
 	void LoadEntityDefinitions(std::string filePath);
 	void LoadSpriteDefinitions(std::string filePath);
 	void LoadIsoSpriteDefinitions(std::string filePath);
 	void LoadIsoSpriteAnimDefinitions(std::string filePath);
+	void LoadCampaignDefinitions(std::string filePath);
+
+	
+public:
+	Clock* m_gameClock;
+	Material* particleMaterial = nullptr;
+	SpriteSheet* terrain = nullptr;
+	CampaignDefinition* currentCampaign = nullptr;
+	unsigned int currentLevelInCampaign = 0;
+
 
 
 private:
+	
+
+
+private:
+
+	void GoToNextState();
+
+	GameState* m_currentStatePtr = nullptr;
+	eGameState m_currentState = STATE_LOAD;
+	eGameState m_nextState = STATE_MENU;
 
 	SoundID music;
 	SoundPlaybackID musicPlaybackID;

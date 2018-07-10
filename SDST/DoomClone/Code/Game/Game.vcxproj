@@ -299,12 +299,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
+    <ClCompile Include="CampaignDefinition.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EntityDefinition.cpp" />
     <ClCompile Include="Main_Win32.cpp" />
     <ClCompile Include="Map\GameMap.cpp" />
     <ClCompile Include="Map\TileDefinition.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="States\GameState.cpp" />
+    <ClCompile Include="States\LoadState.cpp" />
+    <ClCompile Include="States\MenuState.cpp" />
+    <ClCompile Include="States\PlayState.cpp" />
+    <ClCompile Include="States\SetupState.cpp" />
     <ClCompile Include="TheGame.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -314,6 +320,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.hpp" />
+    <ClInclude Include="CampaignDefinition.hpp" />
     <ClInclude Include="EngineBuildPreferences.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EntityDefinition.hpp" />
@@ -322,6 +329,11 @@
     <ClInclude Include="Map\GameMap.hpp" />
     <ClInclude Include="Map\TileDefinition.hpp" />
     <ClInclude Include="Player.hpp" />
+    <ClInclude Include="States\GameState.hpp" />
+    <ClInclude Include="States\LoadState.hpp" />
+    <ClInclude Include="States\MenuState.hpp" />
+    <ClInclude Include="States\PlayState.hpp" />
+    <ClInclude Include="States\SetupState.hpp" />
     <ClInclude Include="TheGame.hpp" />
   </ItemGroup>
   <ItemGroup>

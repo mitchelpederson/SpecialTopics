@@ -1,0 +1,9 @@
+<campaigns>
+
+	<campaign name="Episode 1">
+		<map name="Entry" src="test4.png" />
+		<map name="Barracks" src="barracks.png" />
+		<map name="Armory" src="armory.png" />
+	</campaign>
+
+</campaigns>

@@ -40,7 +40,7 @@ Entity::Entity( unsigned char id )
 
 void Entity::Update() {
 
-	GameMap* map = g_theGame->currentMap;
+	GameMap* map = g_theGame->GetCurrentMap();
 
 	if (m_isAlive) {
 
@@ -67,7 +67,7 @@ void Entity::Update() {
 	UpdateSpriteAnim();
 
 	if (m_def->IsHostile() && m_isAlive) {
-		Entity* player = g_theGame->currentMap->player;
+		Entity* player = g_theGame->GetPlayer();
 
 		Vector2 displacementToPlayer = player->m_position - m_position;
 
@@ -120,11 +120,10 @@ void Entity::RenderMinimap() const {
 //-----------------------------------------------------------------------------------------------
 // Behaviors
 //
-
 void Entity::Shoot() {
 	if (m_firingDelayTimer.HasElapsed() && m_currentAmmo > 0) {
 		Vector2 bulletStart = m_position + (Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_physicalRadius);
-		RaycastResult result = g_theGame->currentMap->Raycast(bulletStart, m_orientationDegrees);
+		RaycastResult result = g_theGame->GetCurrentMap()->Raycast(bulletStart, m_orientationDegrees);
 
 		if (result.hitEntity) {
 			result.entity->Damage(m_def->GetShotDamage());

@@ -26,17 +26,12 @@ typedef void (*command_cb)( const std::string& command );
 TheGame* TheGame::m_instance = nullptr;
 extern bool g_isQuitting;
 
-//-----------------------------------------------------------------------------------------------
-// Constructor, set to first wave and initial spawn
-//
+
 TheGame::TheGame() { 
 
 }
 
 
-//-----------------------------------------------------------------------------------------------
-// 
-//
 TheGame::~TheGame() {
 
 }

@@ -3,7 +3,7 @@
 
 BitmapFont::BitmapFont( const std::string& imageFilePath ) {
 	m_spriteSheet = new SpriteSheet(g_theRenderer->CreateOrGetTexture(imageFilePath), IntVector2(16, 16));
-
+	g_theRenderer->CreateOrGetTexture(imageFilePath)->SetSamplerMode(SAMPLER_NEAREST);
 	m_baseAspect = 1.f;
 
 }

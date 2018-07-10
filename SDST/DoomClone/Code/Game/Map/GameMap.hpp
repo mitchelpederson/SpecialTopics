@@ -4,6 +4,7 @@
 #include "Game/Player.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Renderer/Renderable.h"
+#include "Engine/Renderer/FirstPersonCamera.hpp"
 #include <vector>
 
 
@@ -60,6 +61,12 @@ private:
 
 	ForwardRenderPath* m_forwardRenderPath = nullptr;
 
+	// LIGHTING
+
+	float specularPower = 100.f;
+	float specularAmount = 0.1f;
+	float ambientIntensity = 0.3f;
+	Rgba ambientColor;
 
 	// DEBUG
 	bool m_shouldDisplayMinimap = true;

@@ -14,9 +14,15 @@
 #include "Engine/Core/Rgba.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
+
 #include "Game/TheGame.hpp"
 #include "Game/GameCommon.hpp"
 #include "Game/EntityDefinition.hpp"
+#include "Game/States/GameState.hpp"
+#include "Game/States/LoadState.hpp"
+#include "Game/States/PlayState.hpp"
+#include "Game/States/MenuState.hpp"
+#include "Game/States/SetupState.hpp"
 
 
 TheGame* TheGame::m_instance = nullptr;
@@ -48,21 +54,7 @@ void TheGame::Initialize() {
 
 	CommandRegistration::RegisterCommand("quit", QuitGame);
 
-	g_theRenderer->CreateOrGetBitmapFont("Courier");
-	g_theRenderer->CreateOrGetBitmapFont("Wolfenstein");
 	terrain = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/wolfenstein_textures.png"), IntVector2(6,19));
-	LoadSpriteDefinitions("Data/Definitions/sprites.xml");
-	LoadIsoSpriteDefinitions("Data/Definitions/isosprites.xml");
-	LoadIsoSpriteAnimDefinitions("Data/Definitions/isospriteanims.xml");
-	LoadTileDefinitions("Data/Definitions/tiles.xml");
-	LoadEntityDefinitions("Data/Definitions/entities.xml");
-
-	m_camera = new FirstPersonCamera();
-	m_camera->SetProjection(Matrix44::MakeProjection(45.f, 16.f / 9.f, 0.1f, 100.f));	
-	m_camera->SetFrameBuffer(g_theRenderer->GetDefaultFrameBuffer());
-	m_camera->transform.position = Vector3(16.f, 16.f, -10.f);
-	m_cameraLight = new Light();
-
 	m_gameClock = new Clock(g_masterClock);
 
 	MeshBuilder builder;
@@ -78,8 +70,7 @@ void TheGame::Initialize() {
 
 	DebugRenderSet3DCamera(m_camera);
 
-	Image gameMapImage("Data/Maps/test4.png");
-	currentMap = new GameMap(gameMapImage);
+	m_currentStatePtr = new LoadState();
 
 }
 
@@ -135,10 +126,11 @@ void TheGame::Update() {
 		ProcessInput();
 	}
 
+	if (m_nextState != STATE_NONE && m_currentStatePtr->IsReadyToExit()) {
+		GoToNextState();
+	}
 
-	currentMap->Update();
-	//m_camera->Update();
-	
+	m_currentStatePtr->Update();	
 }
 
 
@@ -146,22 +138,11 @@ void TheGame::Update() {
 // Calls render for all game objects
 //
 void TheGame::Render() {
-	g_theRenderer->DisableAllLights();
-	// setup
-	float halfWidth = Window::GetInstance()->GetWidth() / 2.f;
-	float halfHeight = Window::GetInstance()->GetHeight() / 2.f;
 
-	g_theRenderer->SetCamera(m_camera);
-	m_camera->SetProjection(Matrix44::MakeProjection(40.f, halfWidth / halfHeight, 0.001f, 100.f));
 
-	g_theRenderer->SetAmbientLight(ambientIntensity, ambientColor);
-	g_theRenderer->SetSpecular(specularPower, specularAmount);
-
-	currentMap->Render();
+	m_currentStatePtr->Render();
 
 	g_theRenderer->SetCameraToUI();
-
-	DebugRenderSet3DCamera(m_camera);
 }
 
 
@@ -240,6 +221,67 @@ void TheGame::LoadIsoSpriteAnimDefinitions(std::string filePath) {
 }
 
 
+void TheGame::LoadCampaignDefinitions(std::string filePath) {
+	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
+	doc->LoadFile(filePath.c_str());
+	const tinyxml2::XMLElement* root = doc->RootElement();
+	const tinyxml2::XMLElement* campaignDef = root->FirstChildElement();
+
+	while (campaignDef != nullptr) {
+		new CampaignDefinition(*campaignDef);
+		campaignDef = campaignDef->NextSiblingElement();
+	}
+	delete doc;
+}
+
+
 Camera* TheGame::GetPlayerCamera() {
-	return currentMap->GetPlayerCamera();
+	return GetCurrentMap()->GetPlayerCamera();
+}
+
+
+void TheGame::BeginTransitionToState( eGameState next ) {
+	m_nextState = next;
+	m_currentStatePtr->OnBeginExit();
+}
+
+
+Player* TheGame::GetPlayer() {
+	if ( m_currentState == STATE_PLAY ) {
+		return (Player*) (GetCurrentMap()->player);
+	}
+	return nullptr;
+}
+
+
+PlayState* TheGame::GetCurrentPlayState() {
+	if ( m_currentState == STATE_PLAY ) {
+		return (PlayState*) m_currentStatePtr;
+	}
+	return nullptr;
+}
+
+
+GameMap* TheGame::GetCurrentMap() {
+	return GetCurrentPlayState()->testGameMap;
+}
+
+
+void TheGame::GoToNextState() {
+
+	delete m_currentStatePtr;
+
+	if (m_nextState == STATE_MENU) {
+		m_currentStatePtr = new MenuState();
+	}
+	else if (m_nextState == STATE_PLAY) {
+		m_currentStatePtr = new PlayState();
+	}
+	else if (m_nextState == STATE_SETUP) {
+		m_currentStatePtr = new SetupState();
+	}
+	m_currentState = m_nextState;
+	m_nextState = STATE_NONE;
+
+	m_currentStatePtr->OnEnter();
 }

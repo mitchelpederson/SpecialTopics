@@ -20,6 +20,9 @@
     <Filter Include="General\Entities">
       <UniqueIdentifier>{f5b51117-9e09-44be-818b-983ee906a3b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="General\States">
+      <UniqueIdentifier>{a2299aca-8d99-41bd-98f1-6c46593fc51f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main_Win32.cpp">
@@ -45,6 +48,24 @@
     </ClCompile>
     <ClCompile Include="EntityDefinition.cpp">
       <Filter>General\Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="States\GameState.cpp">
+      <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\LoadState.cpp">
+      <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\MenuState.cpp">
+      <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\PlayState.cpp">
+      <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="States\SetupState.cpp">
+      <Filter>General\States</Filter>
+    </ClCompile>
+    <ClCompile Include="CampaignDefinition.cpp">
+      <Filter>General\Maps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,6 +98,24 @@
     </ClInclude>
     <ClInclude Include="EntityDefinition.hpp">
       <Filter>General\Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="States\GameState.hpp">
+      <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\LoadState.hpp">
+      <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\MenuState.hpp">
+      <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\PlayState.hpp">
+      <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="States\SetupState.hpp">
+      <Filter>General\States</Filter>
+    </ClInclude>
+    <ClInclude Include="CampaignDefinition.hpp">
+      <Filter>General\Maps</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

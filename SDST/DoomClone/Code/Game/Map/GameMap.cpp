@@ -359,6 +359,9 @@ bool GameMap::IsTileVisible( IntVector2 tileCoords ) const {
 
 
 void GameMap::Render() const {
+	g_theRenderer->DisableAllLights();
+	g_theRenderer->SetAmbientLight(ambientIntensity, ambientColor);
+	g_theRenderer->SetSpecular(specularPower, specularAmount);
 
 	m_forwardRenderPath->RenderSceneForCamera(m_playerCamera, scene);
 
