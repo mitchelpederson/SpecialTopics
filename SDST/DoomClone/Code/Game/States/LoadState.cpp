@@ -6,19 +6,25 @@
 #include "Game/GameCommon.hpp"
 
 
+//----------------------------------------------------------------------------------------------------------------
 LoadState::LoadState() {
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::OnEnter() {
 	BeginFadeIn(0.f);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::OnBeginExit() {
 	BeginFadeOut(0.2f);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::Update() {
 
 	if (m_isSecondFrame) {
@@ -35,6 +41,7 @@ void LoadState::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::Render() const {
 	g_theRenderer->SetCameraToUI();
 	g_theRenderer->SetShader(g_theRenderer->GetShader("ui"));
@@ -45,6 +52,7 @@ void LoadState::Render() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::LoadResources() {
 	g_theRenderer->CreateOrGetTexture("Data/Images/Terrain_8x8.png");
 	LoadAudio();
@@ -61,6 +69,7 @@ void LoadState::LoadResources() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void LoadState::LoadAudio() {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile("Data/Definitions/audiocues.xml");

@@ -2,6 +2,8 @@
 #include "Game/EntityDefinition.hpp"
 #include "Game/GameCommon.hpp"
 
+
+//----------------------------------------------------------------------------------------------------------------
 Entity::Entity() 
 	: m_position(2.f, 2.f)
 	, m_velocity(0.f, 0.f)
@@ -20,10 +22,11 @@ Entity::Entity()
 {}
 
 
+//----------------------------------------------------------------------------------------------------------------
 Entity::Entity( unsigned char id )
 	: m_firingDelayTimer(g_theGame->m_gameClock)
-	, m_cantMoveTimer(g_theGame->m_gameClock)
-{
+	, m_cantMoveTimer(g_theGame->m_gameClock) {
+
 	m_def = EntityDefinition::s_definitions[id];
 	m_cosmeticRadius = m_def->GetCosmeticRadius();
 	m_physicalRadius = m_def->GetPhysicalRadius();
@@ -38,6 +41,7 @@ Entity::Entity( unsigned char id )
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Update() {
 
 	GameMap* map = g_theGame->GetCurrentMap();
@@ -86,6 +90,7 @@ void Entity::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::UpdateSpriteAnim() {
 	if (m_currentSpriteAnim->HasFinished() && m_isAlive) {
 		delete m_currentSpriteAnim;
@@ -93,6 +98,8 @@ void Entity::UpdateSpriteAnim() {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Render() const {
 
 	if ("NONE" != m_animSetName) {
@@ -106,6 +113,7 @@ void Entity::Render() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::RenderMinimap() const {
 	if (m_isAlive) {
 		Vector2 minimapPosition;
@@ -117,9 +125,9 @@ void Entity::RenderMinimap() const {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 // Behaviors
-//
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Shoot() {
 	if (m_firingDelayTimer.HasElapsed() && m_currentAmmo > 0) {
 		Vector2 bulletStart = m_position + (Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_physicalRadius);
@@ -139,75 +147,106 @@ void Entity::Shoot() {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//////////////////////////////////////////////////////////////////////////
 // Getters and Setters
-//
+//----------------------------------------------------------------------------------------------------------------
 void Entity::SetPosition(const Vector2& position) {
 	m_position = position;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::SetCosmeticRadius(float newRadius) {
 	m_cosmeticRadius = newRadius;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::SetPhysicalRadius(float newRadius) {
 	m_physicalRadius = newRadius;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Vector2	Entity::GetPosition() const {
 	return m_position;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::SetVelocity(const Vector2& velocity) {
 	m_velocity = velocity;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Vector2 Entity::GetVelocity() const {
 	return m_velocity;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Disc2 Entity::GetCosmeticDisc2() const {
 	return Disc2(m_position, m_cosmeticRadius);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Disc2 Entity::GetPhysicalDisc2() const {
 	return Disc2(m_position, m_physicalRadius);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 float Entity::GetOrientationDegrees() const {
 	return m_orientationDegrees;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::SetOrientationDegrees(float orientation) {
 	m_orientationDegrees = orientation;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 float Entity::GetSpinSpeed() const {
 	return m_spinSpeed;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 float Entity::GetAge() const {
 	return m_age;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 bool Entity::IsAlive() const {
 	return m_isAlive;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 AABB2 Entity::GetPhysicalAABB2() const {
 	return AABB2(Vector2(m_position.x - m_physicalRadius, m_position.y - m_physicalRadius)
 		, Vector2(m_position.x + m_physicalRadius, m_position.y + m_physicalRadius));
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Revive() {
 	m_isAlive = true;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 float Entity::GetHealth() const {
 	return m_health;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Damage(float damageAmount) {
 
 	m_health -= damageAmount;
@@ -219,6 +258,7 @@ void Entity::Damage(float damageAmount) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Kill() {
 	m_isAlive = false;
 	delete m_currentSpriteAnim;
@@ -226,6 +266,7 @@ void Entity::Kill() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Entity::Heal(float healAmount) {
 
 	m_health += healAmount;
@@ -233,6 +274,7 @@ void Entity::Heal(float healAmount) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Entity::IsSolid() const {
 	return m_isSolid;
 }

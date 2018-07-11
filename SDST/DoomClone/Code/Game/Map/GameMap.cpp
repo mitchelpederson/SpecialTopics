@@ -6,6 +6,8 @@
 #include "Engine/Renderer/MeshBuilder.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 
+
+//----------------------------------------------------------------------------------------------------------------
 GameMap::GameMap( Image const& mapImage ) {
 	m_dimensions = mapImage.GetDimensions();
 
@@ -63,6 +65,7 @@ GameMap::~GameMap() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::SpawnEntities( Image const& mapImage ) {
 	for (int row = 0; row < m_dimensions.y; row++) {
 		for (int col = 0; col < m_dimensions.x; col++) {
@@ -80,6 +83,7 @@ void GameMap::SpawnEntities( Image const& mapImage ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::SpawnEntityFromIDOnTile( unsigned char id, IntVector2 const& coord ) {
 	Entity* entity = new Entity(id);
 	entity->SetPosition(Vector2(coord.x + 0.5f, coord.y + 0.5f));
@@ -87,6 +91,7 @@ void GameMap::SpawnEntityFromIDOnTile( unsigned char id, IntVector2 const& coord
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::SpawnPlayer( Player* playerFromPlayState ) {
 	player = playerFromPlayState;
 	player->m_position = m_playerSpawn;
@@ -94,6 +99,7 @@ void GameMap::SpawnPlayer( Player* playerFromPlayState ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::AddTileMeshesToScene() {
 
 	for (int col = 0; col < m_dimensions.x; col++) {
@@ -296,7 +302,7 @@ Mesh* GameMap::BuildMinimapMesh( Image const& image ) {
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::Update() {
 
 	if (g_theInputSystem->WasKeyJustPressed('M')) {
@@ -322,6 +328,7 @@ void GameMap::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::DeleteDeadEntities() {
 	for ( int entityIndex = (int) m_entities.size() - 1; entityIndex >= 0; entityIndex-- ) {
 		if (m_entities[entityIndex]->m_isDeleteable) {
@@ -333,6 +340,7 @@ void GameMap::DeleteDeadEntities() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::PushEntityOutOfTile( Entity* entity, IntVector2 const& tileCoords ) {
 
 	if (IsTileSolid(tileCoords)) {

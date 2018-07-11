@@ -10,14 +10,20 @@ ProfilerWindow* ProfilerWindow::instance = nullptr;
 bool ProfilerWindow::isOpen = false;
 ProfilerWindow::eViewMode ProfilerWindow::currentProfilerViewMode = PROFILER_VIEW_TREE;
 
+
+//----------------------------------------------------------------------------------------------------------------
 void OpenProfiler( const std::string& command ) {
 	ProfilerWindow::Open();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void CloseProfiler( const std::string& command ) {
 	ProfilerWindow::Close();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::Initialize() {
 	instance = new ProfilerWindow();
 
@@ -26,6 +32,7 @@ void ProfilerWindow::Initialize() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::Update() {
 	if (isOpen && !Profiler::IsPaused()) {
 
@@ -73,6 +80,7 @@ void ProfilerWindow::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::Render() const {
 	if (isOpen) {
 		ProfilerReport* latestFrame = savedFrames.back();
@@ -88,6 +96,7 @@ void ProfilerWindow::Render() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderGeneralFrameInfo( ProfilerReportEntry* root ) const {
 
 	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 1.f), "FPS: " + std::to_string( 1.0 / root->totalTime), 4.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
@@ -99,12 +108,15 @@ void ProfilerWindow::RenderGeneralFrameInfo( ProfilerReportEntry* root ) const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderReportEntries( ProfilerReportEntry* root ) const {
 
 	RenderEntry(root, 0, 0);
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 unsigned int ProfilerWindow::RenderEntry( ProfilerReportEntry* node, unsigned int index, unsigned int indent ) const {
 	
 	// Get the bounds of this line's text box
@@ -131,11 +143,13 @@ unsigned int ProfilerWindow::RenderEntry( ProfilerReportEntry* node, unsigned in
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderBackground() const {
 	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 60, 100, 180));
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderHistoryGraph() const {
 
 	g_theRenderer->DrawAABB(historyRenderBox, Rgba(50, 50, 50, 255));
@@ -175,14 +189,19 @@ void ProfilerWindow::RenderHistoryGraph() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 ProfilerWindow* ProfilerWindow::GetInstance() {
 	return instance;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::Open() {
 	isOpen = true;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::Close() {
 	isOpen = false;
 }

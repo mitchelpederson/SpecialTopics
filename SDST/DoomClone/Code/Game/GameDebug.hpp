@@ -7,11 +7,13 @@
 typedef void (*command_cb)( const std::string& command ); 
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DebugPause( const std::string& command ) {
 	g_masterClock->SetPaused(!g_masterClock->IsPaused());
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DebugTimeScale( const std::string& command ) {
 	std::vector<std::string> tokens = SplitString(command, ' ');
 	if (tokens.size() >= 1) {
@@ -24,6 +26,7 @@ void DebugTimeScale( const std::string& command ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RegisterDebugTimeCommands() {
 	void (*pauseCB)( const std::string& command ) = DebugPause;
 	void (*timeScaleCB)( const std::string& command ) = DebugTimeScale;

@@ -3,18 +3,22 @@
 #include "Engine/Profiler/ProfilerScopedLog.hpp"
 #include "Engine/Profiler/Profiler.hpp"
 
+
 struct LightComparisonData {
 	unsigned int index;
 	float weight;
 };
 
 
+
+//----------------------------------------------------------------------------------------------------------------
 ForwardRenderPath::ForwardRenderPath( Renderer* r ) : renderer( r ) {
 	m_effectCamera = new Camera();
 	m_effectCamera->SetProjectionOrtho(1.f, -1.f, 1.f);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 	PROFILER_SCOPED_PUSH();
 	scene->SortCameras();
@@ -25,6 +29,7 @@ void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* scene ) {
 
 	PROFILER_SCOPED_PUSH();
@@ -72,6 +77,7 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, RenderSceneGraph* scene, Camera* currentCamera ) {
 	PROFILER_SCOPED_PUSH();
 	Camera cam;
@@ -112,6 +118,7 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::EnableLightsForDrawCall( const DrawCall& drawCall, RenderSceneGraph* scene ) {
 	PROFILER_SCOPED_PUSH();
 	int maxLights = (int) min(drawCall.m_lightCount, scene->m_lights.size());
@@ -122,6 +129,7 @@ void ForwardRenderPath::EnableLightsForDrawCall( const DrawCall& drawCall, Rende
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::ClearBasedOnCameraOptions( Camera* camera ){
 	PROFILER_SCOPED_PUSH();
 	renderer->ClearScreen(Rgba(0, 0, 0, 255));
@@ -129,6 +137,7 @@ void ForwardRenderPath::ClearBasedOnCameraOptions( Camera* camera ){
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCount, unsigned int m_lightIndices[MAX_LIGHTS], const Vector3& position, RenderSceneGraph* scene ) {
 	PROFILER_SCOPED_PUSH();
 	unsigned int numLights = (unsigned int) scene->m_lights.size();
@@ -171,6 +180,7 @@ void ForwardRenderPath::ComputeMostContributingLights( unsigned int* m_lightCoun
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera* camera ) {
 	PROFILER_SCOPED_PUSH();
 	// Sort based on the queue, so we can draw opaque before transparent things
@@ -218,6 +228,7 @@ void ForwardRenderPath::SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera*
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 	PROFILER_SCOPED_PUSH();
 	if (camera->cameraEffects.size() == 0) {

@@ -6,11 +6,13 @@
 
 //////////////////////////////////////////////////////////////////////////
 // Profiler Console Command Callbacks
-
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerPauseCommand( const std::string& command ) {
 	Profiler::Pause();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerUnpauseCommand( const std::string& command ) {
 	Profiler::Unpause();
 }
@@ -18,7 +20,7 @@ void ProfilerUnpauseCommand( const std::string& command ) {
 
 //////////////////////////////////////////////////////////////////////////
 // ProfilerMeasurement
-
+//----------------------------------------------------------------------------------------------------------------
 ProfilerMeasurement::~ProfilerMeasurement() {
 	for (unsigned int index = 0; index < children.size(); index++) {
 		delete children[index];
@@ -27,21 +29,25 @@ ProfilerMeasurement::~ProfilerMeasurement() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerMeasurement::AddChild( ProfilerMeasurement* child ) {
 	children.push_back(child);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerMeasurement::SetParent( ProfilerMeasurement* p ) {
 	parent = p;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void ProfilerMeasurement::FinishMeasurement() {
 	hpcEnd = GetPerformanceCount();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 float ProfilerMeasurement::GetLengthSeconds() {
 	uint64_t length = hpcEnd - hpcStart;
 	return (float) PerformanceCountToSeconds(length);
@@ -54,16 +60,20 @@ float ProfilerMeasurement::GetLengthSeconds() {
 
 Profiler* Profiler::instance = nullptr;
 
+
+//----------------------------------------------------------------------------------------------------------------
 Profiler::Profiler() {
 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Profiler::~Profiler() {
 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::Initialize() {
 #ifdef PROFILER_ENABLED
 
@@ -78,6 +88,7 @@ void Profiler::Initialize() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::MarkFrame() {
 #ifdef PROFILER_ENABLED
 
@@ -107,6 +118,7 @@ void Profiler::MarkFrame() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::Push( const std::string& id ) {
 #ifdef PROFILER_ENABLED
 
@@ -129,6 +141,7 @@ void Profiler::Push( const std::string& id ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::Pop() {
 #ifdef PROFILER_ENABLED
 
@@ -152,6 +165,7 @@ void Profiler::Pop() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::SaveFrame() {
 #ifdef PROFILER_ENABLED
 
@@ -169,6 +183,7 @@ void Profiler::SaveFrame() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 ProfilerMeasurement* Profiler::CreateMeasurement( const std::string& id ) {
 	ProfilerMeasurement* pm = new ProfilerMeasurement();
 	pm->id = id;
@@ -177,26 +192,31 @@ ProfilerMeasurement* Profiler::CreateMeasurement( const std::string& id ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::Pause() {
 	instance->SignalAboutToPause();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::Unpause() {
 	instance->SignalAboutToUnpause();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::SignalAboutToPause() {
 	m_isAboutToPause = true;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::SignalAboutToUnpause() {
 	m_isAboutToUnpause = true;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::PauseInstance() {
 	m_isPaused = true;
 	m_isAboutToPause = false;
@@ -204,6 +224,7 @@ void Profiler::PauseInstance() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Profiler::UnpauseInstance() {
 	m_isPaused = false;
 	m_isAboutToPause = false;
@@ -211,15 +232,19 @@ void Profiler::UnpauseInstance() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Profiler::IsInstancePaused() {
 	return m_isPaused;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 bool Profiler::IsPaused() {
 	return instance->IsInstancePaused();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 ProfilerMeasurement* Profiler::GetPreviousFrame( unsigned int index /* = 0 */ ) {
 	if (index >= instance->m_history.size()) {
 		return nullptr;

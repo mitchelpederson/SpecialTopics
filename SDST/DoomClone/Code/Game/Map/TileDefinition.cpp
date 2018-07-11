@@ -1,10 +1,12 @@
-#include "Engine/Core/XmlUtilities.hpp"
-
 #include "Game/Map/TileDefinition.hpp"
+
+#include "Engine/Core/XmlUtilities.hpp"
 
 
 std::map<std::string, TileDefinition*> TileDefinition::s_definitions;
 
+
+//----------------------------------------------------------------------------------------------------------------
 TileDefinition::TileDefinition( tinyxml2::XMLElement const& xml, SpriteSheet* textureSpriteSheet ) {
 
 	tileSpriteLocation = textureSpriteSheet;
@@ -35,12 +37,14 @@ TileDefinition::TileDefinition( tinyxml2::XMLElement const& xml, SpriteSheet* te
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 TileDefinition* TileDefinition::GetTileDefByName( std::string const& name ) {
 	std::map<std::string, TileDefinition*>::iterator it = s_definitions.find(name);
 	return it->second;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 TileDefinition* TileDefinition::GetTileByID( unsigned char id ) {
 	std::map<std::string, TileDefinition*>::iterator it = s_definitions.begin();
 
@@ -55,32 +59,49 @@ TileDefinition* TileDefinition::GetTileByID( unsigned char id ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Texture* TileDefinition::GetSpriteSheetTexture() const {
 	return tileSpriteLocation->GetTexture();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 AABB2 TileDefinition::GetCeilingUVs() const {
 	return tileSpriteLocation->GetTexCoordsForSprteCoords(ceilingTexture);
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
 AABB2 TileDefinition::GetWallUVs() const {
 	return tileSpriteLocation->GetTexCoordsForSprteCoords(wallTexture);
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
 AABB2 TileDefinition::GetFloorUVs() const {
 	return tileSpriteLocation->GetTexCoordsForSprteCoords(floorTexture);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 bool TileDefinition::IsSolid() const {
 	return isSolid;
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
 bool TileDefinition::IsLevelExit() const {
 	return isLevelExit;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 unsigned char TileDefinition::GetID() const {
 	return id;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Rgba TileDefinition::GetMinimapColor() const {
 	return minimapColor;
 }

@@ -28,28 +28,28 @@
 TheGame* TheGame::m_instance = nullptr;
 extern bool g_isQuitting;
 
-//-----------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------
 // Constructor, set to first wave and initial spawn
-//
 TheGame::TheGame() { 
 
 }
 
 
-//-----------------------------------------------------------------------------------------------
-// 
-//
+//----------------------------------------------------------------------------------------------------------------
 TheGame::~TheGame() {
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void QuitGame( const std::string& command ) {
 	g_isQuitting = true;
 }
 
-//-----------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------
 // Spawns the initial asteroids
-//
 void TheGame::Initialize() {
 
 	CommandRegistration::RegisterCommand("quit", QuitGame);
@@ -75,9 +75,8 @@ void TheGame::Initialize() {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Removes the given bullet and packs the array
-//
 void TheGame::CheckIfPauseStateChanged() {
 	if (!DevConsole::GetInstance()->IsOpen() && g_theInputSystem->WasKeyJustPressed('P') && m_isPaused == false) {
 		m_gameClock->SetPaused(true);
@@ -87,14 +86,15 @@ void TheGame::CheckIfPauseStateChanged() {
 	}
 }
 
-//-----------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------------------------
 // Process input relating to game logic EXCEPT pausing and time scaling
-//
 void TheGame::ProcessInput() {
 	ProcessDebugInput();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::ProcessDebugInput() {
 
 	if (g_theInputSystem->WasKeyJustPressed('V')) {
@@ -103,10 +103,13 @@ void TheGame::ProcessDebugInput() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 float TheGame::GetDeltaTime() {
 	return m_gameClock->frame.seconds;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 float TheGame::GetElapsedTime() {
 	return m_gameClock->total.seconds;
 }
@@ -134,9 +137,8 @@ void TheGame::Update() {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Calls render for all game objects
-//
 void TheGame::Render() {
 
 
@@ -146,11 +148,13 @@ void TheGame::Render() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool TheGame::IsDevModeActive() const {
 	return m_devModeActive;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadTileDefinitions(std::string filePath) {
 
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
@@ -166,6 +170,7 @@ void TheGame::LoadTileDefinitions(std::string filePath) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadEntityDefinitions(std::string filePath) {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile(filePath.c_str());
@@ -179,6 +184,8 @@ void TheGame::LoadEntityDefinitions(std::string filePath) {
 	delete doc;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadSpriteDefinitions(std::string filePath) {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile(filePath.c_str());
@@ -193,6 +200,7 @@ void TheGame::LoadSpriteDefinitions(std::string filePath) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadIsoSpriteDefinitions(std::string filePath) {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile(filePath.c_str());
@@ -207,6 +215,7 @@ void TheGame::LoadIsoSpriteDefinitions(std::string filePath) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadIsoSpriteAnimDefinitions(std::string filePath) {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile(filePath.c_str());
@@ -221,6 +230,7 @@ void TheGame::LoadIsoSpriteAnimDefinitions(std::string filePath) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::LoadCampaignDefinitions(std::string filePath) {
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
 	doc->LoadFile(filePath.c_str());
@@ -235,17 +245,20 @@ void TheGame::LoadCampaignDefinitions(std::string filePath) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Camera* TheGame::GetPlayerCamera() {
 	return GetCurrentMap()->GetPlayerCamera();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::BeginTransitionToState( eGameState next ) {
 	m_nextState = next;
 	m_currentStatePtr->OnBeginExit();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Player* TheGame::GetPlayer() {
 	if ( m_currentState == STATE_PLAY ) {
 		return (Player*) (GetCurrentMap()->player);
@@ -254,6 +267,7 @@ Player* TheGame::GetPlayer() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 PlayState* TheGame::GetCurrentPlayState() {
 	if ( m_currentState == STATE_PLAY ) {
 		return (PlayState*) m_currentStatePtr;
@@ -262,11 +276,13 @@ PlayState* TheGame::GetCurrentPlayState() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 GameMap* TheGame::GetCurrentMap() {
 	return GetCurrentPlayState()->testGameMap;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void TheGame::GoToNextState() {
 
 	delete m_currentStatePtr;

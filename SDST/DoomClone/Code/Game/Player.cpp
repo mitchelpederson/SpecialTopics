@@ -1,5 +1,6 @@
 #include "Game/Player.hpp"
 #include "Game/GameCommon.hpp"
+
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
 #include "Engine/Core/Window.hpp"
@@ -7,6 +8,9 @@
 #include <sstream>
 #include <iomanip>
 
+
+
+//----------------------------------------------------------------------------------------------------------------
 Player::Player() 
 	: Entity(100)
 {
@@ -14,6 +18,7 @@ Player::Player()
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Player::ProcessInput() {
 
 	if (!DevConsole::IsOpen()) {
@@ -47,6 +52,7 @@ void Player::ProcessInput() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Player::Update() {
 
 	ProcessInput();
@@ -55,6 +61,7 @@ void Player::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Player::Render() const {
 	g_theRenderer->SetCameraToUI();
 
@@ -70,11 +77,13 @@ void Player::Render() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Player::Shoot() {
 	Entity::Shoot();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Player::Kill() {
 	m_isAlive = false;
 }

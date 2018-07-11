@@ -2,13 +2,19 @@
 #include "Engine/Renderer/glbindings.h"
 #include "Engine/Math/Vector4.hpp"
 
+
+//----------------------------------------------------------------------------------------------------------------
 Sampler::Sampler() {}
 
+
+//----------------------------------------------------------------------------------------------------------------
 Sampler::~Sampler()
 {
 	Destroy();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 bool Sampler::Create( eSamplerModes mode /* = SAMPLER_NEAREST_MIPMAP_LINEAR */ )
 {
 	// create the sampler handle if needed; 
@@ -33,6 +39,8 @@ bool Sampler::Create( eSamplerModes mode /* = SAMPLER_NEAREST_MIPMAP_LINEAR */ )
 	return true; 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Sampler::Destroy()
 {
 	if (m_handle != NULL) {
@@ -42,11 +50,13 @@ void Sampler::Destroy()
 } 
 
 
+//----------------------------------------------------------------------------------------------------------------
 unsigned int Sampler::GetHandle() const {
 	return m_handle;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Sampler::SetSamplerMode( eSamplerModes mode ) {
 
 	switch (mode) {
@@ -73,9 +83,12 @@ void Sampler::SetSamplerMode( eSamplerModes mode ) {
 		glSamplerParameteri( m_handle, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER );  
 		glSamplerParameteri( m_handle, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER );		
 		glSamplerParameteri( m_handle, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_BORDER );
-
-		glSamplerParameterfv( m_handle, GL_TEXTURE_BORDER_COLOR, (GLfloat*) &Vector4(1.f, 1.f, 1.f, 1.f));
-
+		
+		{
+			Vector4 white = Vector4(1.f, 1.f, 1.f, 1.f);
+			glSamplerParameterfv( m_handle, GL_TEXTURE_BORDER_COLOR, (GLfloat*) &white);
+		}
+		
 		glSamplerParameteri( m_handle, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE );
 		glSamplerParameteri( m_handle, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
 		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR );

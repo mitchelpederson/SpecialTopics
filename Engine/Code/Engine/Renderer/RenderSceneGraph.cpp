@@ -1,27 +1,32 @@
 #include "Engine/Renderer/RenderSceneGraph.hpp"
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::AddRenderable( Renderable* r ) {
 	m_renderables.push_back(r);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::AddCamera( Camera* c ) {
 	m_cameras.push_back(c);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::AddLight( Light* l ) {
 	m_lights.push_back(l);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::AddParticleEmitter( ParticleEmitter* p ) {
 	m_particleEmitters.push_back(p);
 	m_renderables.push_back(p->renderable);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::RemoveRenderable( Renderable* r) {
 	std::vector<Renderable*>::iterator searchResult = std::find(m_renderables.begin(), m_renderables.end(), r);
 	if (searchResult != m_renderables.end()) {
@@ -32,6 +37,7 @@ void RenderSceneGraph::RemoveRenderable( Renderable* r) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::RemoveCamera( Camera* c ) {
 	std::vector<Camera*>::iterator searchResult = std::find(m_cameras.begin(), m_cameras.end(), c);
 	if (searchResult != m_cameras.end()) {
@@ -42,6 +48,7 @@ void RenderSceneGraph::RemoveCamera( Camera* c ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::RemoveLight( Light* l ) {
 	std::vector<Light*>::iterator searchResult = std::find(m_lights.begin(), m_lights.end(), l);
 	if (searchResult != m_lights.end()) {
@@ -52,7 +59,8 @@ void RenderSceneGraph::RemoveLight( Light* l ) {
 }
 
 
-// Nuance with this, remove the particle emitter's renderable too
+//----------------------------------------------------------------------------------------------------------------
+// Nuance: remove the particle emitter's renderable too
 void RenderSceneGraph::RemoveParticleEmitter( ParticleEmitter* l ) {
 	std::vector<ParticleEmitter*>::iterator searchResult = std::find(m_particleEmitters.begin(), m_particleEmitters.end(), l);
 	if (searchResult != m_particleEmitters.end()) {
@@ -64,18 +72,25 @@ void RenderSceneGraph::RemoveParticleEmitter( ParticleEmitter* l ) {
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void RenderSceneGraph::SortCameras() {
 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 unsigned int RenderSceneGraph::GetRenderableCount() const {
 	return (unsigned int) m_renderables.size();
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
 unsigned int RenderSceneGraph::GetLightCount() const {
 	return (unsigned int) m_lights.size();
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
 unsigned int RenderSceneGraph::GetCameraCount() const {
 	return (unsigned int) m_cameras.size();
 }

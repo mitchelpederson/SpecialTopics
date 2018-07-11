@@ -102,6 +102,7 @@ void App::Initialize() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void App::GetMessages( unsigned int msg, size_t wParam, size_t lParam ) {
 	switch (msg) {
 		// App close requested via "X" button, or right-click "Close Window" on task bar, or "Close" from system menu, or Alt-F4

@@ -1,15 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "Engine/Renderer/Renderer.hpp"
-#include "Engine/Core/EngineCommon.hpp"
 
+#include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/ErrorWarningAssert.hpp"
+#include "Engine/Core/XmlUtilities.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vector3.hpp"
 #include "Engine/Math/Matrix44.hpp"
-#include "Engine/core/ErrorWarningAssert.hpp"
-#include "Engine/Core/XmlUtilities.hpp"
+#include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/glbindings.h"
 #include "Engine/Renderer/RenderBuffer.hpp"
 #include "Engine/Renderer/ShaderProgram.hpp"
