@@ -10,13 +10,12 @@ public:
 
 	virtual void OnEnter();
 	virtual void OnBeginExit();
-	bool IsReadyToExit();
 
 	virtual void Update();
 	virtual void Render() const;
 
 	bool IsFading() const;
-
+	bool IsReadyToExit();
 	float GetDeltaTime() const;
 	float GetElapsedTime() const;
 

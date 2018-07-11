@@ -67,13 +67,13 @@ public:
 
 	float GetDeltaTime();
 	float GetElapsedTime();
-	Camera* GetPlayerCamera();
 
 	void BeginTransitionToState( eGameState next ); 
 
 	Player* GetPlayer();
 	GameMap* GetCurrentMap();
 	PlayState* GetCurrentPlayState();
+	Camera* GetPlayerCamera();
 
 	void LoadTileDefinitions(std::string filePath);
 	void LoadEntityDefinitions(std::string filePath);
@@ -88,8 +88,6 @@ public:
 	Material* particleMaterial = nullptr;
 	SpriteSheet* terrain = nullptr;
 	CampaignDefinition* currentCampaign = nullptr;
-	unsigned int currentLevelInCampaign = 0;
-
 
 
 private:

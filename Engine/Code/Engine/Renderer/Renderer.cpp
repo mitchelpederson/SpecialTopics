@@ -548,7 +548,7 @@ void Renderer::DrawQuad(const Vector3& topLeft, const Vector3& bottomLeft, const
 void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 	const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint ) {
 	Vertex3D_PCU vertices[6];
-	SetShader(GetShader("passthroughTex"));
+	//SetShader(GetShader("passthroughTex"));
 	Vector2 topLeft(bounds.maxs.x, bounds.maxs.y);
 	Vector2 topRight(bounds.mins.x, bounds.maxs.y);
 	Vector2 bottomLeft(bounds.maxs.x, bounds.mins.y);

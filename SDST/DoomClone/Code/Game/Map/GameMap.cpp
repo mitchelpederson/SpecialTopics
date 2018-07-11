@@ -19,9 +19,6 @@ GameMap::GameMap( Image const& mapImage ) {
 		}
 	}
 
-	player = new Player();
-
-
 	AddTileMeshesToScene();
 	m_minimap = BuildMinimapMesh( mapImage );
 	SpawnEntities(mapImage);
@@ -43,12 +40,26 @@ GameMap::GameMap( Image const& mapImage ) {
 	m_playerCamera->SetSkybox(g_theRenderer->CreateCubeMap("Data/Images/galaxy2.png"));
 	m_playerCamera->SetProjection(Matrix44::MakeProjection(90.f, Window::GetInstance()->GetAspectRatio(), 0.1f, 100.f));
 
-	m_entities.push_back(player);
 	g_theRenderer->CreateOrGetTexture("Data/Images/wolfenstein_textures.png")->SetSamplerMode(SAMPLER_NEAREST);
 	g_theRenderer->CreateOrGetTexture("Data/Images/enemysheet.png")->SetSamplerMode(SAMPLER_NEAREST);
 	g_theRenderer->CreateOrGetTexture("Data/Fonts/Wolfenstein.png")->SetSamplerMode(SAMPLER_NEAREST);
 	g_theRenderer->CreateOrGetTexture("Data/Images/weapons.png")->SetSamplerMode(SAMPLER_NEAREST);
 
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+GameMap::~GameMap() {
+	delete m_minimapCamera;
+	m_minimapCamera = nullptr;
+	delete m_minimapRenderable;
+	m_minimapRenderable = nullptr;
+	delete m_playerCamera;
+	m_playerCamera = nullptr;
+	delete m_forwardRenderPath;
+	m_forwardRenderPath = nullptr;
+	delete scene;
+	scene = nullptr;
 }
 
 
@@ -61,7 +72,7 @@ void GameMap::SpawnEntities( Image const& mapImage ) {
 				SpawnEntityFromIDOnTile(blueChannel, IntVector2(col, row));
 			}
 			if (blueChannel == 100) {
-				player->SetPosition(Vector2(col + 0.5f, row + 0.5f));
+				m_playerSpawn = Vector2(col + 0.5f, row + 0.5f);
 			}
 
 		}
@@ -73,6 +84,13 @@ void GameMap::SpawnEntityFromIDOnTile( unsigned char id, IntVector2 const& coord
 	Entity* entity = new Entity(id);
 	entity->SetPosition(Vector2(coord.x + 0.5f, coord.y + 0.5f));
 	m_entities.push_back(entity);
+}
+
+
+void GameMap::SpawnPlayer( Player* playerFromPlayState ) {
+	player = playerFromPlayState;
+	player->m_position = m_playerSpawn;
+	m_entities.push_back(player);
 }
 
 
@@ -97,98 +115,98 @@ void GameMap::AddTileMeshesToScene() {
 					// front
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
 
 					// left
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
 
 					// right
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
 
 					// back
 					//bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
 
 				}
 				else {
@@ -199,51 +217,51 @@ void GameMap::AddTileMeshesToScene() {
 					// front
 					// bl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3(col, 0.f, row));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
 
 					// tl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
 
 					// br
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
 
 					// tr 
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
 
 					// tl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 0.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
 
 					// bl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3(col, 1.f, row));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
 
 					// br
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
 
 					// tl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
 
 					// br
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
 
 					// tr 
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3(col + 1, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
 
 					// tl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3(col, 1.f, row + 1));
+					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
 				}
 
 				mb.End();
@@ -305,7 +323,7 @@ void GameMap::Update() {
 
 
 void GameMap::DeleteDeadEntities() {
-	for ( int entityIndex = m_entities.size() - 1; entityIndex >= 0; entityIndex-- ) {
+	for ( int entityIndex = (int) m_entities.size() - 1; entityIndex >= 0; entityIndex-- ) {
 		if (m_entities[entityIndex]->m_isDeleteable) {
 			delete m_entities[entityIndex];
 			m_entities[entityIndex] = m_entities[m_entities.size() - 1];
@@ -331,11 +349,19 @@ void GameMap::PushEntityOutOfTile( Entity* entity, IntVector2 const& tileCoords 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool GameMap::IsTileSolid( IntVector2 const& tileCoords ) const {
 	return m_tiles[tileCoords.y * m_dimensions.x + tileCoords.x]->IsSolid();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
+bool GameMap::IsTileLevelExit( IntVector2 const& tileCoords ) const {
+	return m_tiles[tileCoords.y * m_dimensions.x + tileCoords.x]->IsLevelExit();
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 bool GameMap::IsTileVisible( IntVector2 tileCoords ) const {
 	IntVector2 up		= tileCoords + IntVector2( 0,  1);
 	IntVector2 down		= tileCoords + IntVector2( 0, -1);
@@ -358,6 +384,7 @@ bool GameMap::IsTileVisible( IntVector2 tileCoords ) const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::Render() const {
 	g_theRenderer->DisableAllLights();
 	g_theRenderer->SetAmbientLight(ambientIntensity, ambientColor);
@@ -373,6 +400,7 @@ void GameMap::Render() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::RenderMinimap() const {
 	g_theRenderer->SetCamera(m_minimapCamera);
 	g_theRenderer->DrawRenderable(m_minimapRenderable);
@@ -395,6 +423,7 @@ void GameMap::RenderMinimap() const {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::CorrectEntityCollisions() {
 
 	for (unsigned int entityIndex = 0; entityIndex < m_entities.size(); entityIndex++) {
@@ -427,11 +456,13 @@ void GameMap::CorrectEntityCollisions() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Camera* GameMap::GetPlayerCamera() {
 	return m_playerCamera;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GameMap::SortEntitiesByDistanceToPlayer() {
 	for (unsigned int entityIndex = 0; entityIndex < m_entities.size() - 1; entityIndex++) {
 		if (m_entities[entityIndex] != player) {
@@ -447,6 +478,7 @@ void GameMap::SortEntitiesByDistanceToPlayer() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 RaycastResult GameMap::Raycast( Vector2 const& startPosition, float direction ) const {
 	Vector2 rayStep = Vector2::MakeDirectionAtDegrees(direction) * 0.1f;
 
@@ -477,6 +509,7 @@ RaycastResult GameMap::Raycast( Vector2 const& startPosition, float direction ) 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Entity* GameMap::GetEntityAtPoint( Vector2 const& point ) const {
 
 	for (unsigned int entityIndex = 0; entityIndex < m_entities.size(); entityIndex++) {
@@ -487,4 +520,24 @@ Entity* GameMap::GetEntityAtPoint( Vector2 const& point ) const {
 	}
 
 	return nullptr;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool GameMap::IsPlayerOnVictoryTile() {
+	IntVector2 playerTile( player->m_position );
+
+	IntVector2 north = playerTile + IntVector2(  0,  1 );
+	IntVector2 south = playerTile + IntVector2(  0, -1 );
+	IntVector2 east  = playerTile + IntVector2(  1,  0 );
+	IntVector2 west  = playerTile + IntVector2( -1,  0 );
+
+	if (   IsTileLevelExit( north ) 
+		|| IsTileLevelExit( south )
+		|| IsTileLevelExit( east ) 
+		|| IsTileLevelExit( west ) ) {
+		return true;
+	}
+
+	return false;
 }

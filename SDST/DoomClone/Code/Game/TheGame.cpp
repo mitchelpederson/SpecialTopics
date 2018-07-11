@@ -1,3 +1,12 @@
+#include "Game/TheGame.hpp"
+#include "Game/GameCommon.hpp"
+#include "Game/EntityDefinition.hpp"
+#include "Game/States/GameState.hpp"
+#include "Game/States/LoadState.hpp"
+#include "Game/States/PlayState.hpp"
+#include "Game/States/MenuState.hpp"
+#include "Game/States/SetupState.hpp"
+
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/XmlUtilities.hpp"
@@ -14,15 +23,6 @@
 #include "Engine/Core/Rgba.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
-
-#include "Game/TheGame.hpp"
-#include "Game/GameCommon.hpp"
-#include "Game/EntityDefinition.hpp"
-#include "Game/States/GameState.hpp"
-#include "Game/States/LoadState.hpp"
-#include "Game/States/PlayState.hpp"
-#include "Game/States/MenuState.hpp"
-#include "Game/States/SetupState.hpp"
 
 
 TheGame* TheGame::m_instance = nullptr;

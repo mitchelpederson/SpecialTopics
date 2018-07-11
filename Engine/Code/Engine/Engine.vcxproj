@@ -276,9 +276,11 @@
     <ClCompile Include="Core\Clock.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Image.cpp" />
+    <ClCompile Include="Core\Logger.cpp" />
     <ClCompile Include="Core\Rgba.cpp" />
     <ClCompile Include="Core\Stopwatch.cpp" />
     <ClCompile Include="Core\StringUtils.cpp" />
+    <ClCompile Include="Core\Threads.cpp" />
     <ClCompile Include="Core\Time.cpp" />
     <ClCompile Include="Core\Transform.cpp" />
     <ClCompile Include="Core\Vertex.cpp" />
@@ -358,9 +360,11 @@
     <ClInclude Include="Core\Entity.hpp" />
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
     <ClInclude Include="Core\Image.hpp" />
+    <ClInclude Include="Core\Logger.hpp" />
     <ClInclude Include="Core\Rgba.hpp" />
     <ClInclude Include="Core\Stopwatch.hpp" />
     <ClInclude Include="Core\StringUtils.hpp" />
+    <ClInclude Include="Core\Threads.hpp" />
     <ClInclude Include="Core\Time.hpp" />
     <ClInclude Include="Core\Transform.hpp" />
     <ClInclude Include="Core\Vertex.hpp" />

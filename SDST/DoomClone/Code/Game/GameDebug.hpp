@@ -15,7 +15,7 @@ void DebugPause( const std::string& command ) {
 void DebugTimeScale( const std::string& command ) {
 	std::vector<std::string> tokens = SplitString(command, ' ');
 	if (tokens.size() >= 1) {
-		float scale = atof(tokens[1].c_str());
+		float scale = (float) atof(tokens[1].c_str());
 		g_masterClock->SetScale(scale);
 	}
 	else {

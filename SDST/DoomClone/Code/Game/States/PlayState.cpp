@@ -9,39 +9,46 @@
 #include "Game/GameCommon.hpp"
 
 
+//----------------------------------------------------------------------------------------------------------------
 PlayState::PlayState()
 	: m_sceneClock(new Clock(g_masterClock))
+	, m_moveToNextLevelTimer(m_sceneClock)
 {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::Initialize() {
 
 	particleMaterial = g_theRenderer->GetMaterial("additive");
 
-	Image gameMapImage("Data/Maps/test4.png");
-	testGameMap = new GameMap(gameMapImage);
+	player = new Player();
+	LoadAndStartLevel(0);
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::OnEnter() {
 	BeginFadeIn(0.5f);
 	Initialize();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::OnBeginExit() {
 	BeginFadeOut(0.5f);
 }
 
-//-----------------------------------------------------------------------------------------------
-// Process input relating to game logic EXCEPT pausing and time scaling
-//
+
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::ProcessInput() {
 	ProcessDebugInput();
 	ProcessPlayerInput();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::ProcessPlayerInput() {
 	PROFILER_SCOPED_PUSH();
 	
@@ -55,32 +62,45 @@ void PlayState::ProcessPlayerInput() {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::ProcessDebugInput() {
 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::Update() {
 	PROFILER_SCOPED_PUSH();
 
-	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
+	if (currentSubstate == STATE_PLAYING && testGameMap->IsPlayerOnVictoryTile()) {
+		currentSubstate = STATE_LEVEL_COMPLETE;
+		m_moveToNextLevelTimer.SetTimer(1.f);
+	}
+
+	if (currentSubstate == STATE_LEVEL_COMPLETE && m_moveToNextLevelTimer.HasElapsed()) {
+		GoToNextLevel();
+	}
+
+	if (currentSubstate == STATE_CAMPAIGN_COMPLETE && g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
 		g_theGame->BeginTransitionToState(STATE_MENU);
 	}
+
 	GameState::Update();
 
 	CheckIfPauseStateChanged();
 
-	if (!DevConsole::GetInstance()->IsOpen()) {
+	if (!DevConsole::GetInstance()->IsOpen() && currentSubstate == STATE_PLAYING) {
 		ProcessInput();
 	}
 
 	testGameMap->Update();
 
 	
-	
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::Render() const {
 	PROFILER_SCOPED_PUSH();
 	g_theRenderer->SetCameraToUI();
@@ -88,11 +108,10 @@ void PlayState::Render() const {
 	g_theRenderer->SetShader(g_theRenderer->GetShader("ui-font"));
 	GameState::Render();
 
-	// Begin actual game render
-
-
+	// Render the game and minimap
 	testGameMap->Render();
 
+	// Render any state related UI like victory or death message
 	g_theRenderer->SetShader(nullptr);
 	g_theRenderer->DisableDepth();
 	g_theRenderer->SetCameraToUI();
@@ -102,20 +121,23 @@ void PlayState::Render() const {
 	}
 
 	if (currentSubstate == STATE_PLAYER_DIED) {
-		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 50.f, 100.f, 100.f), Vector2(0.5f, 0.f), "YOU DIED", 20.f, Rgba(200, 0, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_WORD_WRAP);	
+		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 50.f, 100.f, 100.f), Vector2(0.5f, 0.f), "YOU DIED", 20.f, Rgba(200, 0, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_WORD_WRAP);	
 	}
 
-	if (currentSubstate == STATE_PLAYER_WINS) {
-		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 50.f, 100.f, 100.f), Vector2(0.5f, 0.f), "You win!", 20.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_WORD_WRAP);
-		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 0.f, 100.f, 50.f), Vector2(0.5f, 1.f), "Press Enter to return to the main menu", 6.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_WORD_WRAP);
-
+	if (currentSubstate == STATE_LEVEL_COMPLETE) {
+		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 50.f, 100.f, 100.f), Vector2(0.5f, 0.f), "LEVEL COMPLETE", 20.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_WORD_WRAP);
 	}
 
+	if (currentSubstate == STATE_CAMPAIGN_COMPLETE) {
+		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 50.f, 100.f, 100.f), Vector2(0.5f, 0.f), "You win this campaign!", 20.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_WORD_WRAP);
+		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 0.f, 100.f, 50.f), Vector2(0.5f, 1.f), "Press Enter to return to the main menu", 6.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_WORD_WRAP);
+	}
 
 	GameState::Render();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::CheckIfPauseStateChanged() {
 	if (!DevConsole::GetInstance()->IsOpen() && g_theInputSystem->WasKeyJustPressed('P') && m_isPaused == false) {
 		m_sceneClock->SetPaused(true);
@@ -126,6 +148,30 @@ void PlayState::CheckIfPauseStateChanged() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void PlayState::SignalPlayerDied() {
 	currentSubstate = STATE_PLAYER_DIED;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void PlayState::GoToNextLevel() {
+	currentLevelInCampaign++;
+	if (currentLevelInCampaign == g_theGame->currentCampaign->GetNumberOfLevels()) {
+		currentSubstate = STATE_CAMPAIGN_COMPLETE;
+	}
+
+	else {
+		LoadAndStartLevel(currentLevelInCampaign);
+		currentSubstate = STATE_PLAYING;
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void PlayState::LoadAndStartLevel( unsigned int levelIndex ) {
+	delete testGameMap;
+	Image gameMapImage( g_theGame->currentCampaign->GetLevelPath(levelIndex) );
+	testGameMap = new GameMap( gameMapImage );
+	testGameMap->SpawnPlayer( player );
 }

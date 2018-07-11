@@ -80,8 +80,8 @@ void Sampler::SetSamplerMode( eSamplerModes mode ) {
 		glSamplerParameteri( m_handle, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL );
 		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 		glSamplerParameteri( m_handle, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_LOD, -1000.f );
-		glSamplerParameteri( m_handle, GL_TEXTURE_MAX_LOD, 1000.f );
+		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_LOD, (GLint) -1000.f );
+		glSamplerParameteri( m_handle, GL_TEXTURE_MAX_LOD, (GLint) 1000.f );
 
 		break;
 	default: 

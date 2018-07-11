@@ -6,4 +6,12 @@
 		<map name="Armory" src="armory.png" />
 	</campaign>
 
+	<campaign name="Episode 2">
+		<map name="Barracks" src="barracks.png" />
+		<map name="Armory" src="armory.png" />
+	</campaign>
+
+	<campaign name="Episode 3">
+		<map name="Armory" src="armory.png" />
+	</campaign>
 </campaigns>

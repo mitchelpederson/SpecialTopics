@@ -2,6 +2,7 @@
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Core/XmlUtilities.hpp"
 #include "Engine/Core/Transform.hpp"
+#include "Engine/Core/Logger.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/MeshBuilder.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
@@ -43,10 +44,11 @@ void QuitGame( const std::string& command ) {
 
 
 void TheGame::Initialize() {
-
+	 
 	CommandRegistration::RegisterCommand("quit", QuitGame);
 	
 	m_state = new LoadState();
+	Logger::Printf("Initialized TheGame");
 }
 
 
@@ -60,6 +62,7 @@ void TheGame::Update() {
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F1)) {
 		m_devModeActive = !m_devModeActive;
 	}
+	DevConsole::Printf("Printing to debug console once a frame");
 }
 
 

@@ -53,6 +53,7 @@ void LoadState::LoadResources() {
 	g_theGame->LoadIsoSpriteAnimDefinitions("Data/Definitions/isospriteanims.xml");
 	g_theGame->LoadTileDefinitions("Data/Definitions/tiles.xml");
 	g_theGame->LoadEntityDefinitions("Data/Definitions/entities.xml");
+	g_theGame->LoadCampaignDefinitions("Data/Definitions/campaigns.xml");
 
 	g_theRenderer->CreateOrGetBitmapFont("Courier");
 	g_theRenderer->CreateOrGetBitmapFont("Wolfenstein");

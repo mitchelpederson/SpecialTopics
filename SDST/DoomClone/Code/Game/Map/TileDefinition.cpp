@@ -9,11 +9,11 @@ TileDefinition::TileDefinition( tinyxml2::XMLElement const& xml, SpriteSheet* te
 
 	tileSpriteLocation = textureSpriteSheet;
 
-	name		= ParseXmlAttribute(xml, "name",		name);
-	isSolid		= ParseXmlAttribute(xml, "isSolid",		isSolid);
-	id			= ParseXmlAttribute(xml, "id",			id);
-	isLevelExit = ParseXmlAttribute(xml, "isLevelExit", isLevelExit);
-	minimapColor= ParseXmlAttribute(xml, "minimapColor",minimapColor);
+	name		=					ParseXmlAttribute(xml, "name",			name);
+	isSolid		=					ParseXmlAttribute(xml, "isSolid",		isSolid);
+	id			= (unsigned char)	ParseXmlAttribute(xml, "id",			id);
+	isLevelExit =					ParseXmlAttribute(xml, "isLevelExit",	isLevelExit);
+	minimapColor=					ParseXmlAttribute(xml, "minimapColor",	minimapColor);
 	
 	const tinyxml2::XMLElement* texturesElement = xml.FirstChildElement("textures");
 	if (texturesElement != nullptr) {

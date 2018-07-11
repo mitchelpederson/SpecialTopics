@@ -1,4 +1,10 @@
 #pragma once
+#include "Game/Entity.hpp"
+#include "Game/Player.hpp"
+#include "Game/States/GameState.hpp"
+#include "Game/Map/GameMap.hpp"
+#include "Game/CampaignDefinition.hpp"
+
 #include "Engine/Renderer/RenderSceneGraph.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/Material.hpp"
@@ -7,18 +13,14 @@
 #include "Engine/Math/Ray.hpp"
 #include "Engine/Physics/Contacts.hpp"
 
-#include "Game/Entity.hpp"
-#include "Game/Player.hpp"
-#include "Game/States/GameState.hpp"
-#include "Game/Map/GameMap.hpp"
-
 #include <vector>
 
 
 enum ePlaySubstate {
 	STATE_PLAYING,
 	STATE_PLAYER_DIED,
-	STATE_PLAYER_WINS
+	STATE_LEVEL_COMPLETE,
+	STATE_CAMPAIGN_COMPLETE
 };
 
 class PlayState : public GameState {
@@ -32,9 +34,7 @@ public:
 
 	void Initialize();
 
-
 	void SignalPlayerDied();
-	void SignalPlayerWins();
 
 
 public:
@@ -43,36 +43,32 @@ public:
 	SpriteSheet* terrain = nullptr;
 
 	GameMap* testGameMap = nullptr;
-	Entity* player = nullptr;
+	Player* player = nullptr;
 	ePlaySubstate currentSubstate = STATE_PLAYING;
 
 
 private:
+	Stopwatch m_moveToNextLevelTimer;
+	unsigned int currentLevelInCampaign = 0;
 
-
-	CubeMap* m_skyboxTexture = nullptr;
-	Shader* m_skyboxShader = nullptr;
 
 	void ProcessPlayerInput();
 	void ProcessInput();
 	void ProcessDebugInput();
 	void CheckIfPauseStateChanged();
+	void GoToNextLevel();
+	void LoadAndStartLevel( unsigned int levelIndex );
 	bool m_isPaused;
-
-	//  [4/10/2018 Mitchel Pederson]
-
-
-	Vector3 lightPos = Vector3();
-	Rgba lightColor;
-
 
 	std::string debugShaderName = "";
 
+
+	CubeMap* m_skyboxTexture = nullptr;
+	Shader* m_skyboxShader = nullptr;
+	Vector3 lightPos = Vector3();
+	Rgba lightColor;
 	Light* m_cameraLight = nullptr;
 	Light* m_sun = nullptr;
 
 	std::vector<Light*> m_pointLights;
-
-
-
 };

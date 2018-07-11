@@ -5,9 +5,10 @@
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Core/Time.hpp"
 #include "Engine/Core/Transform.hpp"
+#include "Engine/Core/Threads.hpp"
+#include "Engine/Core/Logger.hpp"
 #include "Engine/Blackboard.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
-#include "Engine/Core/Time.hpp"
 #include "Engine/Renderer/DebugRender.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Profiler/Profiler.hpp"
@@ -72,6 +73,7 @@ void App::Run() {
 	DebugRenderShutdown();
 	void (*fncptr)( unsigned int msg, size_t wparam, size_t lparam ) = GetMessages;
 	Window::GetInstance()->UnregisterHandler(fncptr);
+	Logger::Shutdown();
 }
 
 
@@ -79,6 +81,7 @@ void App::Run() {
 // Sets up the engine systems
 //
 void App::Initialize() {
+	Logger::Startup();
 	g_masterClock = new Clock();
 	g_theBlackboard = new Blackboard("Data/GameConfig.xml");
 	g_theRenderer = new Renderer();
@@ -97,6 +100,9 @@ void App::Initialize() {
 	Window::GetInstance()->RegisterHandler(fncptr);
 
 	new DevConsole();
+
+	CommandRegistration::RegisterCommand("test_non_threaded", TestThreadNonThreaded);
+	CommandRegistration::RegisterCommand("test_threads", TestThreadThreaded);
 	
 	m_timeAtStartup = GetCurrentTimeSeconds();
 }

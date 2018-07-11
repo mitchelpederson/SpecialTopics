@@ -3,12 +3,13 @@
 #include "Engine/ThirdParty/tinyxml2/tinyxml2.h"
 
 #include <vector>
+#include <map>
 #include <string.h>
 
 struct CampaignLevel {
 public:
-	std::string levelName;
-	std::string pathToLevelImage;
+	std::string levelName = "ERROR";
+	std::string pathToLevelImage = "ERROR";
 };
 
 class CampaignDefinition {
@@ -17,6 +18,9 @@ public:
 
 	Image* GetLevelImage( unsigned int levelIndex );
 	std::string GetLevelName( unsigned int levelIndex );
+	std::string GetLevelPath( unsigned int levelIndex );
+	std::string GetCampaignName();
+	unsigned int GetNumberOfLevels();
 
 	static std::map<std::string, CampaignDefinition*> definitions;
 

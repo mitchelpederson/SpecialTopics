@@ -58,6 +58,7 @@ void Player::Update() {
 void Player::Render() const {
 	g_theRenderer->SetCameraToUI();
 
+	g_theRenderer->SetShader(g_theRenderer->GetShader("passthroughTex-no-depth"));
 	AABB2 texCoords = m_currentSpriteAnim->GetCurrentIsoSprite()->GetSpriteForViewAngle(Vector3::FORWARD, Vector3::FORWARD, Vector3::RIGHT)->GetUVs();
 	g_theRenderer->DrawTexturedAABB( AABB2(30.f, 0.f, 70.f, 40.f * Window::GetInstance()->GetAspectRatio()), *m_gunSpriteSheet->GetTexture(), texCoords.mins, texCoords.maxs, Rgba() );
 

@@ -78,6 +78,16 @@
 		<depth write="false" compare="always" />
 	</shader>
 
+	<shader name="passthroughTex-no-depth" cull="back" fill="solid" frontface="ccw" lit="false" queue="opaque">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
 	<shader name="additive" cull="back" fill="solid" frontface="ccw" lit="false" queue="alpha">
 		<vertex file="Data/Shaders/passthroughTex.vs" />
 		<fragment file="Data/Shaders/passthroughTex.fs" />

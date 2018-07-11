@@ -49,7 +49,7 @@ void ProfilerWindow::Update() {
 
 		savedFrames.push_back(frameReport);
 		if (frameReport->GetTotalFrameTime() > maxFrameTimeInHistory) {
-			maxFrameTimeInHistory = frameReport->GetTotalFrameTime();
+			maxFrameTimeInHistory = (float) frameReport->GetTotalFrameTime();
 			lastFrameThatSetMax = frameCount;
 		}
 
@@ -62,8 +62,8 @@ void ProfilerWindow::Update() {
 			maxFrameTimeInHistory -= maxFrameTimeInHistory * 0.05f;
 			for (unsigned int frameIndex = 0; frameIndex < savedFrames.size(); frameIndex++) {
 				if (savedFrames[frameIndex]->GetTotalFrameTime() > maxFrameTimeInHistory) {
-					maxFrameTimeInHistory = savedFrames[frameIndex]->GetTotalFrameTime();
-					lastFrameThatSetMax = frameCount - (savedFrames.size() - frameIndex);
+					maxFrameTimeInHistory = (float) savedFrames[frameIndex]->GetTotalFrameTime();
+					lastFrameThatSetMax = frameCount - ((unsigned int) savedFrames.size() - frameIndex);
 				}
 			}
 		}
@@ -114,7 +114,7 @@ unsigned int ProfilerWindow::RenderEntry( ProfilerReportEntry* node, unsigned in
 	// Format the information in a string
 	std::string nodeString = Stringf("%-*s %10f (%8f) %10f (%8f)", 75 - indent, node->id.c_str(), node->totalTime, node->percentTime, node->selfTime, node->selfPercentTime);
 	std::string indentedNodeString = "";
-	for (int i = 0; i < indent; i++) {
+	for (unsigned int i = 0; i < indent; i++) {
 		indentedNodeString += " ";
 	}
 	indentedNodeString += nodeString;
@@ -152,8 +152,8 @@ void ProfilerWindow::RenderHistoryGraph() const {
 		ProfilerReport* nextFrameReport = savedFrames[frameIndex + 1];
 
 		float currentOffsetOfLeft = sliceWidth * (float) frameIndex + historyRenderBox.mins.x;
-		float currentReportVertexHeight = RangeMapFloat(currentFrameReport->GetTotalFrameTime(), 0.f, maxFrameTimeInHistory, historyRenderBox.mins.y, historyRenderBox.maxs.y);
-		float nextReportVertexHeight = RangeMapFloat(nextFrameReport->GetTotalFrameTime(), 0.f, maxFrameTimeInHistory, historyRenderBox.mins.y, historyRenderBox.maxs.y);
+		float currentReportVertexHeight = RangeMapFloat((float) currentFrameReport->GetTotalFrameTime(), 0.f, maxFrameTimeInHistory, historyRenderBox.mins.y, historyRenderBox.maxs.y);
+		float nextReportVertexHeight = RangeMapFloat((float) nextFrameReport->GetTotalFrameTime(), 0.f, maxFrameTimeInHistory, historyRenderBox.mins.y, historyRenderBox.maxs.y);
 	
 		Vector3 bl( currentOffsetOfLeft, historyRenderBox.mins.y, 0.f );
 		Vector3 br( currentOffsetOfLeft + sliceWidth, historyRenderBox.mins.y, 0.f );

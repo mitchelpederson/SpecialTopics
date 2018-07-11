@@ -44,7 +44,7 @@ void ProfilerMeasurement::FinishMeasurement() {
 
 float ProfilerMeasurement::GetLengthSeconds() {
 	uint64_t length = hpcEnd - hpcStart;
-	return PerformanceCountToSeconds(length);
+	return (float) PerformanceCountToSeconds(length);
 }
 
 

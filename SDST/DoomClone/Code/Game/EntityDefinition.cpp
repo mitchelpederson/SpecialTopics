@@ -5,14 +5,14 @@ std::map<unsigned char, EntityDefinition*> EntityDefinition::s_definitions;
 
 
 EntityDefinition::EntityDefinition( tinyxml2::XMLElement const& xml ) {
-	m_name				= ParseXmlAttribute(xml, "name",			m_name);
-	m_physicalRadius	= ParseXmlAttribute(xml, "physicalRadius",	m_physicalRadius);
-	m_maxHealth			= ParseXmlAttribute(xml, "maxHealth",		m_maxHealth);
-	m_id				= ParseXmlAttribute(xml, "id",				m_id);
-	m_minimapColor		= ParseXmlAttribute(xml, "minimapColor",	m_minimapColor);
-	m_isHostile			= ParseXmlAttribute(xml, "isHostile",		m_isHostile);
-	m_shootingDelay		= ParseXmlAttribute(xml, "shootingDelay",	m_shootingDelay);
-	m_shotDamage		= ParseXmlAttribute(xml, "shotDamage",		m_shotDamage);
+	m_name				=					ParseXmlAttribute(xml, "name",				m_name);
+	m_physicalRadius	=					ParseXmlAttribute(xml, "physicalRadius",	m_physicalRadius);
+	m_maxHealth			=					ParseXmlAttribute(xml, "maxHealth",			m_maxHealth);
+	m_id				= (unsigned char)	ParseXmlAttribute(xml, "id",				m_id);
+	m_minimapColor		=					ParseXmlAttribute(xml, "minimapColor",		m_minimapColor);
+	m_isHostile			=					ParseXmlAttribute(xml, "isHostile",			m_isHostile);
+	m_shootingDelay		=					ParseXmlAttribute(xml, "shootingDelay",		m_shootingDelay);
+	m_shotDamage		=					ParseXmlAttribute(xml, "shotDamage",		m_shotDamage);
 
 	const tinyxml2::XMLElement* spriteElement = xml.FirstChildElement("sprite");
 	if (spriteElement != nullptr) {

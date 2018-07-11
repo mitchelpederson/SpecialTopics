@@ -1,6 +1,7 @@
 #include "Engine/DevConsole/DevConsole.hpp"
 #include "Engine/DevConsole/Command.hpp"
 #include "Engine/Core/EngineCommon.hpp"
+#include "Engine/Core/Logger.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <stdarg.h>
 #include <fstream>
@@ -9,6 +10,7 @@ DevConsole* DevConsole::m_instance = nullptr;
 const int STRINGF_STACK_LOCAL_TEMP_LENGTH = 2048;
 
 
+//----------------------------------------------------------------------------------------------------------------
 void GetInt( const std::string& command ) {
 	Command com(command);
 
@@ -23,6 +25,7 @@ void GetInt( const std::string& command ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Help (const std::string& command ) {
 	Command com(command);
 	DevConsole::Printf(Rgba(0, 255, 0, 255), "Commands:");
@@ -34,6 +37,8 @@ void Help (const std::string& command ) {
 	DevConsole::Printf("save_log \"text\"               - saves a log to the given file path");
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void EchoWithColor( const std::string& command ) {
 	Command com(command);
 	Rgba color;
@@ -55,6 +60,7 @@ void EchoWithColor( const std::string& command ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::SaveLog( const std::string& command ) {
 	Command com(command);
 	std::string fileName = "";
@@ -80,6 +86,8 @@ void DevConsole::SaveLog( const std::string& command ) {
 	DevConsole::Printf("Saved to %s", fileName.c_str());
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 DevConsole::DevConsole() {
 	if (m_instance == nullptr) {
 		m_instance = this;
@@ -100,6 +108,7 @@ DevConsole::DevConsole() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 DevConsole::~DevConsole() {
 	if (m_instance == this) {
 		m_instance = nullptr;
@@ -107,15 +116,19 @@ DevConsole::~DevConsole() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 DevConsole* DevConsole::GetInstance() {
 	return m_instance;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool DevConsole::IsOpen() {
 	return m_instance->m_isOpen;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::Update() {
 
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_TILDE)) {
@@ -194,6 +207,7 @@ void DevConsole::Update() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::CheckKey( int keyCode, char asciiUpper, char asciiLower ) {
 	
 	if (g_theInputSystem->WasKeyJustPressed((unsigned char) keyCode)) {									
@@ -207,6 +221,7 @@ void DevConsole::CheckKey( int keyCode, char asciiUpper, char asciiLower ) {
 }		
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::ProcessTypingInput() {
 
 
@@ -259,6 +274,8 @@ void DevConsole::ProcessTypingInput() {
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::Render() const {
 	if (m_isOpen == true) {
 		g_theRenderer->SetShader(nullptr);
@@ -267,21 +284,25 @@ void DevConsole::Render() const {
 		//g_theRenderer->SetAlphaBlending();
 		g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 170) );		
 		
-		for (int messageIndex = m_messages.size() - 1; messageIndex > m_messages.size() - 50 && messageIndex >= 0; messageIndex--) {
+		g_theRenderer->SetShader(g_theRenderer->GetShader("ui-font"));
+		for (int messageIndex = (int) m_messages.size() - 1; messageIndex > (signed int) m_messages.size() - 50 && messageIndex >= 0; messageIndex--) {
 			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, 100.f, (m_messages.size() - messageIndex + 1.f) * m_fontSize);
 			g_theRenderer->DrawTextInBox2D( messageBoxBounds, Vector2(0.f, 0.5f), m_messages[messageIndex].message, m_fontSize, m_messages[messageIndex].color, 0.4f, m_currentFont, TEXT_DRAW_OVERRUN );
 		}
 
+		g_theRenderer->SetShader(nullptr);
 		m_inputBox.Render();
 	}
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::ToggleOpen() {
 	m_isOpen = !m_isOpen;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::Printf( const char* format, ... ) {
 
 		// Copied from StringUtils
@@ -292,9 +313,12 @@ void DevConsole::Printf( const char* format, ... ) {
 	va_end( variableArgumentList );
 	textLiteral[ STRINGF_STACK_LOCAL_TEMP_LENGTH - 1 ] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	m_instance->AddMessage(textLiteral, Rgba());
+	//m_instance->AddMessage(textLiteral, Rgba());
+	Logger::PrintTaggedf("Debug", "%s", textLiteral );
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::Printf( const Rgba& color, const char* format, ... ) {
 
 		// Copied from StringUtils
@@ -305,10 +329,13 @@ void DevConsole::Printf( const Rgba& color, const char* format, ... ) {
 	va_end( variableArgumentList );
 	textLiteral[ STRINGF_STACK_LOCAL_TEMP_LENGTH - 1 ] = '\0'; // In case vsnprintf overran (doesn't auto-terminate)
 
-	m_instance->AddMessage(textLiteral, color);
+	//m_instance->AddMessage(textLiteral, color);
+	Logger::PrintTaggedf("Debug", "%s", textLiteral );
+
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::AddMessage( const char* message, const Rgba& color ) {
 	Message m;
 	m.message = message;
@@ -317,6 +344,7 @@ void DevConsole::AddMessage( const char* message, const Rgba& color ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::RunCommand(std::string commandString) {
 	DevConsole::Printf(commandString.c_str());
 
@@ -324,6 +352,8 @@ void DevConsole::RunCommand(std::string commandString) {
 	CommandRegistration::RunCommand(command);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void DevConsole::Clear( const std::string& command ) {
 	GetInstance()->m_messages.clear();
 }

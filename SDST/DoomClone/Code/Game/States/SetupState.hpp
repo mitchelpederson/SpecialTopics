@@ -13,4 +13,11 @@ public:
 
 private:
 
+	void UpdateCursorPosition();
+	void SelectCampaign();
+
+	unsigned int m_campaignSelectCursor = 0;
+	unsigned int m_numCampaigns = 0;
+
+	std::vector<std::string> m_campaignNames;
 };
