@@ -79,7 +79,12 @@ void Entity::Update() {
 
 		// Check if I can shoot based on how aligned my angle is to the direction to the player
 		if (DotProduct(displacementToPlayer.GetNormalized(), Vector2::MakeDirectionAtDegrees(m_orientationDegrees)) > 0.8f) {
-			Shoot();
+			Vector2 bulletStart = m_position + (Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_physicalRadius);
+			RaycastResult result = g_theGame->GetCurrentMap()->Raycast(bulletStart, m_orientationDegrees);
+
+			if (result.hitEntity && result.entity == g_theGame->GetPlayer()) {
+				Shoot();
+			}
 		}
 
 		// If not shooting, then move towards player
@@ -143,6 +148,10 @@ void Entity::Shoot() {
 		m_firingDelayTimer.Reset();
 		m_cantMoveTimer.Reset();
 		m_currentAmmo--;
+
+		SoundID pistolShot = g_audioSystem->CreateOrGetSound("Data/Audio/pistol_shot.wav");
+		Vector3 position3D( m_position.x, 0.5f, m_position.y );
+		g_audioSystem->PlaySoundAtLocation(pistolShot, position3D, Vector3::ZERO);
 	}
 }
 

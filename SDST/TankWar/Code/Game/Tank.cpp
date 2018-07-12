@@ -82,7 +82,7 @@ void Tank::ProcessPlayerInput() {
 			Vector3 turretForward = m_turretTransform.GetWorldForward();
 			Vector3 turretPosition = m_turretTransform.GetWorldLocation();
 			currentState->SpawnBullet( turretPosition + (turretForward * 0.7f), turretForward, 30.f, TEAM_PLAYER );
-			m_cannonSound->Play();
+			m_cannonSound->PlayAtLocation(transform.position, Vector3::ZERO, 0.5f);
 		}
 	}
 }
@@ -99,6 +99,7 @@ void Tank::Update() {
 	transform.position.y = 0.125f + g_theGame->GetCurrentPlayState()->testGameMap->GetHeightAtPoint(Vector2(transform.position.x, transform.position.z));
 	UpdateTurret();
 	m_turretRenderable->SetModelMatrix(m_turretTransform.GetLocalToWorldMatrix());
+
 }
 
 

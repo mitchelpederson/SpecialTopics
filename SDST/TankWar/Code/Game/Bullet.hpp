@@ -4,6 +4,7 @@
 
 #include "Engine/Core/Stopwatch.hpp"
 #include "Engine/Renderer/Light.hpp"
+#include "Engine/Audio/AudioCue.hpp"
 
 class Bullet : public GameObject {
 
@@ -23,6 +24,8 @@ private:
 	Light* m_bulletLight = nullptr;
 	Mesh* m_bulletMesh = nullptr;
 	Stopwatch lifeTimer;
+
+	AudioCue* m_explosionSound = nullptr;
 
 	float m_damage = 1.f;
 };

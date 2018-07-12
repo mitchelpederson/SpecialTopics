@@ -73,29 +73,39 @@ void PlayState::ProcessDebugInput() {
 void PlayState::Update() {
 	PROFILER_SCOPED_PUSH();
 
-	if (currentSubstate == STATE_PLAYING && testGameMap->IsPlayerOnVictoryTile()) {
-		currentSubstate = STATE_LEVEL_COMPLETE;
-		m_moveToNextLevelTimer.SetTimer(1.f);
+	if (currentSubstate == STATE_PLAYING) {
+
+		if (testGameMap->IsPlayerOnVictoryTile()) {
+			currentSubstate = STATE_LEVEL_COMPLETE;
+			m_moveToNextLevelTimer.SetTimer(1.f);
+			
+			if (currentLevelInCampaign != g_theGame->currentCampaign->GetNumberOfLevels()) {
+				BeginFadeOut(1.f);
+			}
+		}
+
+		if (!DevConsole::GetInstance()->IsOpen()) {
+			ProcessInput();
+		}
 	}
 
-	if (currentSubstate == STATE_LEVEL_COMPLETE && m_moveToNextLevelTimer.HasElapsed()) {
-		GoToNextLevel();
+	if (currentSubstate == STATE_LEVEL_COMPLETE) { 
+		if (m_moveToNextLevelTimer.HasElapsed()) {
+			GoToNextLevel();
+		}
 	}
 
-	if (currentSubstate == STATE_CAMPAIGN_COMPLETE && g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) && !IsFading() && !DevConsole::GetInstance()->IsOpen()) {
-		g_theGame->BeginTransitionToState(STATE_MENU);
+	if (currentSubstate == STATE_CAMPAIGN_COMPLETE) {
+		if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER) &&  !DevConsole::GetInstance()->IsOpen()) {
+			g_theGame->BeginTransitionToState(STATE_MENU);
+		}
 	}
 
 	GameState::Update();
 
 	CheckIfPauseStateChanged();
 
-	if (!DevConsole::GetInstance()->IsOpen() && currentSubstate == STATE_PLAYING) {
-		ProcessInput();
-	}
-
 	testGameMap->Update();
-
 	
 }
 
@@ -103,18 +113,21 @@ void PlayState::Update() {
 //----------------------------------------------------------------------------------------------------------------
 void PlayState::Render() const {
 	PROFILER_SCOPED_PUSH();
-	g_theRenderer->SetCameraToUI();
-	g_theRenderer->SetShader(g_theRenderer->GetShader("passthrough"));
-	g_theRenderer->SetShader(g_theRenderer->GetShader("ui-font"));
-	GameState::Render();
+	
 
 	// Render the game and minimap
 	testGameMap->Render();
+
+	// Render fade in/out before state messages
+	g_theRenderer->SetCameraToUI();
+	g_theRenderer->SetShader(g_theRenderer->GetShader("passthrough"));
+	GameState::Render();
 
 	// Render any state related UI like victory or death message
 	g_theRenderer->SetShader(nullptr);
 	g_theRenderer->DisableDepth();
 	g_theRenderer->SetCameraToUI();
+	g_theRenderer->SetShader(g_theRenderer->GetShader("ui-font"));
 
 	if (currentSubstate != STATE_PLAYING) {
 		g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 100));
@@ -133,7 +146,6 @@ void PlayState::Render() const {
 		g_theRenderer->DrawTextInBox2D(AABB2(0.f, 0.f, 100.f, 50.f), Vector2(0.5f, 1.f), "Press Enter to return to the main menu", 6.f, Rgba(0, 200, 0, 255), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_WORD_WRAP);
 	}
 
-	GameState::Render();
 }
 
 
@@ -174,4 +186,5 @@ void PlayState::LoadAndStartLevel( unsigned int levelIndex ) {
 	Image gameMapImage( g_theGame->currentCampaign->GetLevelPath(levelIndex) );
 	testGameMap = new GameMap( gameMapImage );
 	testGameMap->SpawnPlayer( player );
+	BeginFadeIn(1.f);
 }

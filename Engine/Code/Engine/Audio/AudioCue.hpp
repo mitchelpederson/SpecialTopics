@@ -9,6 +9,8 @@ public:
 	AudioCue( AudioCueDefinition* def );
 
 	void Play( float volume=1.f, float balance=0.0f, float speed=1.0f, bool isPaused=false );
+	void PlayAtLocation( const Vector3& position, const Vector3& velocity, float volume=1.f, float balance=0.0f, float speed=1.0f, bool isPaused=false );
+
 	void Stop();
 
 

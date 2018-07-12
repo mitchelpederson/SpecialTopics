@@ -13,12 +13,15 @@ Bullet::Bullet(PlayState* playState, eTeam team)
 	m_collisionRadius = 0.1f;
 	BuildBulletMesh();
 	lifeTimer.SetTimer(5.f);
+	m_explosionSound = new AudioCue(AudioCueDefinition::s_definitions["explosion"]);
 }
 
 Bullet::~Bullet() {
 	currentState->m_scene->RemoveLight(m_bulletLight);
 	delete m_bulletMesh;
 	m_bulletMesh = nullptr;
+	delete m_explosionSound;
+	m_explosionSound = nullptr;
 }
 
 void Bullet::BuildBulletMesh() {
@@ -54,6 +57,7 @@ void Bullet::Update() {
 
 
 void Bullet::Kill() {
+	m_explosionSound->PlayAtLocation(transform.position, Vector3::ZERO);
 	GameObject::Kill();
 }
 

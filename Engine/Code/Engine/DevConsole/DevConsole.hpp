@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Core/Rgba.hpp"
+#include "Engine/Core/Logger.hpp"
 #include "Engine/Renderer/BitmapFont.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/DevConsole/DevConsoleInputBox.hpp"
@@ -49,6 +50,8 @@ private:
 
 	void ProcessTypingInput();
 	void CheckKey( int keyCode, char asciiUpper, char asciiLower );
+
+	static void ProcessLoggerMessages( const LogEntry* entry, void* args );
 
 	bool m_isOpen = false;
 	static DevConsole* m_instance;

@@ -27,7 +27,16 @@ typedef void (*command_cb)( const std::string& command );
 TheGame* TheGame::m_instance = nullptr;
 extern bool g_isQuitting;
 
+bool TheGame::m_spam = false;
+bool TheGame::m_devModeActive = false;
 
+
+void TheGame::DebugStartSpam( const std::string& command ) {
+	m_spam = true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 TheGame::TheGame() { 
 
 }
@@ -46,6 +55,7 @@ void QuitGame( const std::string& command ) {
 void TheGame::Initialize() {
 	 
 	CommandRegistration::RegisterCommand("quit", QuitGame);
+	CommandRegistration::RegisterCommand("start_spam", DebugStartSpam);
 	
 	m_state = new LoadState();
 	Logger::Printf("Initialized TheGame");
@@ -62,7 +72,12 @@ void TheGame::Update() {
 	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F1)) {
 		m_devModeActive = !m_devModeActive;
 	}
-	DevConsole::Printf("Printing to debug console once a frame");
+
+	if (m_spam) {
+		Logger::PrintTaggedf("spam", "This is an annoying spam message");
+		Logger::Warningf("There's some spam going on! Restart to get rid of it");
+		Logger::Errorf("something is really wrong here");
+	}
 }
 
 
@@ -80,6 +95,7 @@ bool TheGame::IsDevModeActive() const {
 void TheGame::BeginTransitionToState( eGameState next ) {
 	nextState = next;
 	m_state->OnBeginExit();
+	DevConsole::Printf("Changing states");
 }
 
 
@@ -103,6 +119,7 @@ void TheGame::GoToNextState() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 PlayState* TheGame::GetCurrentPlayState() {
 	if (currentState == STATE_PLAY) {
 		return (PlayState*) m_state;

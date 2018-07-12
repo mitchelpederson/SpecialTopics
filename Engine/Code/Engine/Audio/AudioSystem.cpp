@@ -80,7 +80,7 @@ SoundID AudioSystem::CreateOrGetSound( const std::string& soundFilePath )
 	else
 	{
 		FMOD::Sound* newSound = nullptr;
-		m_fmodSystem->createSound( soundFilePath.c_str(), FMOD_DEFAULT, nullptr, &newSound );
+		m_fmodSystem->createSound( soundFilePath.c_str(), FMOD_3D, nullptr, &newSound );
 		if( newSound )
 		{
 			SoundID newSoundID = m_registeredSounds.size();
@@ -121,6 +121,24 @@ SoundPlaybackID AudioSystem::PlaySound( SoundID soundID, bool isLooped, float vo
 	}
 
 	return (SoundPlaybackID) channelAssignedToSound;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+SoundPlaybackID AudioSystem::PlaySoundAtLocation( SoundID soundID, const Vector3& position, const Vector3& velocity, bool isLooped/* =false */, float volume/* =1.f */, float balance/* =0.0f */, float speed/* =1.0f */, bool isPaused/* =false */ ) {
+	
+	SoundPlaybackID playbackID = PlaySound( soundID, isLooped, volume, balance, speed, true );
+	FMOD::Channel* playbackChannel = (FMOD::Channel*) playbackID;
+	playbackChannel->set3DAttributes((FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity);
+	playbackChannel->setPaused(isPaused);
+	return playbackID;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::SetSound3DParameters( SoundPlaybackID playbackID, const Vector3& position, const Vector3& velocity ) {
+	FMOD::Channel* playbackChannel = (FMOD::Channel*) playbackID;
+	playbackChannel->set3DAttributes((FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity);
 }
 
 
@@ -216,10 +234,16 @@ float AudioSystem::GetBassVolume() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void AudioSystem::AddFFTToChannel( SoundPlaybackID sound ) {
 	FMOD::Channel* channel = (FMOD::Channel*) sound;
 	channel->addDSP(0, m_fftdsp);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::SetListenerParameters( const Vector3& position, const Vector3& velocity, const Vector3& forward, const Vector3& up ) {
+	m_fmodSystem->set3DListenerAttributes( 0, (FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity, (FMOD_VECTOR*) &forward, (FMOD_VECTOR*) &up );
+}
 
 #endif // !defined( ENGINE_DISABLE_AUDIO )
