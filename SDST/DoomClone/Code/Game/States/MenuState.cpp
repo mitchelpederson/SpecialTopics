@@ -12,6 +12,7 @@ MenuState::MenuState() {
 
 void MenuState::OnEnter() {
 	BeginFadeIn(0.2f);
+	g_audioSystem->DeactivateGlobalReverb();
 }
 
 void MenuState::OnBeginExit() {

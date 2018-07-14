@@ -7,6 +7,7 @@
 struct FrameDef {
 	std::string isoSprite = "";
 	float duration = 0.1f;
+	std::string audioCueName = "";
 
 	IsoSprite* GetSprite() {
 		return IsoSprite::s_isoSprites[isoSprite];
@@ -28,6 +29,7 @@ public:
 	static std::map<std::string, IsoSpriteAnimDef*> s_definitions;
 
 	IsoSprite* GetIsoSpriteForTime( float timeIntoAnim ) const;
+	std::string GetFrameSoundForTime( float timeIntoAnim, float deltaSeconds ) const;
 	float GetDuration() const;
 	eAnimMode GetMode() const;
 	const std::string& GetName() const;

@@ -58,6 +58,8 @@ void Player::Update() {
 	ProcessInput();
 	Entity::Update();
 
+	g_audioSystem->SetListenerParameters(Vector3(m_position.x, 0.5f, m_position.y), Vector3::ZERO, g_theGame->GetPlayerCamera()->GetForward(), Vector3::UP );
+
 }
 
 

@@ -2,6 +2,8 @@
 #include "Game/EntityDefinition.hpp"
 #include "Game/GameCommon.hpp"
 
+#include "Engine/Audio/AudioCue.hpp"
+
 
 //----------------------------------------------------------------------------------------------------------------
 Entity::Entity() 
@@ -38,6 +40,7 @@ Entity::Entity( unsigned char id )
 	m_firingDelayTimer.SetTimer(m_def->GetShootingDelay());
 	m_firingDelayTimer.Reset();
 	m_cantMoveTimer.SetTimer(0.75f);
+	m_playSounds2D = m_def->Is2DSoundSource();
 }
 
 
@@ -70,6 +73,19 @@ void Entity::Update() {
 
 	UpdateSpriteAnim();
 
+	if ( m_currentSpriteAnim != nullptr && m_isAlive ) {
+		std::string soundName = m_currentSpriteAnim->GetFrameSound();
+		if (soundName != "") {
+			AudioCue cue(AudioCueDefinition::s_definitions[soundName]);
+			if (m_playSounds2D) {
+				cue.Play();
+			}
+			else {
+				cue.PlayAtLocation(Vector3(m_position.x, 0.5f, m_position.y), Vector3::ZERO, 0.3f);
+			}
+		}
+	}
+
 	if (m_def->IsHostile() && m_isAlive) {
 		Entity* player = g_theGame->GetPlayer();
 
@@ -79,7 +95,12 @@ void Entity::Update() {
 
 		// Check if I can shoot based on how aligned my angle is to the direction to the player
 		if (DotProduct(displacementToPlayer.GetNormalized(), Vector2::MakeDirectionAtDegrees(m_orientationDegrees)) > 0.8f) {
-			Shoot();
+			Vector2 bulletStart = m_position + (Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_physicalRadius);
+			RaycastResult result = g_theGame->GetCurrentMap()->Raycast(bulletStart, m_orientationDegrees);
+
+			if (result.hitEntity && result.entity == player) {
+				Shoot();
+			}
 		}
 
 		// If not shooting, then move towards player
@@ -143,6 +164,15 @@ void Entity::Shoot() {
 		m_firingDelayTimer.Reset();
 		m_cantMoveTimer.Reset();
 		m_currentAmmo--;
+
+		SoundID pistolShot = g_audioSystem->CreateOrGetSound("Data/Audio/pistol_shot.wav", !m_playSounds2D);
+		if (!m_playSounds2D) {
+			Vector3 position3D( m_position.x, 0.5f, m_position.y );
+			g_audioSystem->PlaySoundAtLocation(pistolShot, position3D, Vector3::ZERO, false, 0.7f);
+		}
+		else {
+			g_audioSystem->PlaySound(pistolShot);
+		}
 	}
 }
 

@@ -14,6 +14,7 @@ EntityDefinition::EntityDefinition( tinyxml2::XMLElement const& xml ) {
 	m_isHostile			=					ParseXmlAttribute(xml, "isHostile",			m_isHostile);
 	m_shootingDelay		=					ParseXmlAttribute(xml, "shootingDelay",		m_shootingDelay);
 	m_shotDamage		=					ParseXmlAttribute(xml, "shotDamage",		m_shotDamage);
+	m_playSounds2D		=					ParseXmlAttribute(xml, "sounds2D",			m_playSounds2D);
 
 	// Read the <sprite> element if it exists
 	const tinyxml2::XMLElement* spriteElement = xml.FirstChildElement("sprite");
@@ -103,4 +104,10 @@ std::string EntityDefinition::GetSpriteSetName() const {
 //----------------------------------------------------------------------------------------------------------------
 Rgba EntityDefinition::GetMinimapColor() const {
 	return m_minimapColor;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool EntityDefinition::Is2DSoundSource() const {
+	return m_playSounds2D;
 }

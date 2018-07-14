@@ -23,6 +23,7 @@ IsoSpriteAnimDef::IsoSpriteAnimDef( const tinyxml2::XMLElement& xml ) {
 		FrameDef* currentFrame = new FrameDef();
 		currentFrame->isoSprite = ParseXmlAttribute(*frame, "src", currentFrame->isoSprite);
 		currentFrame->duration	= ParseXmlAttribute(*frame, "time", currentFrame->duration);
+		currentFrame->audioCueName = ParseXmlAttribute(*frame, "soundCue", currentFrame->audioCueName);
 		m_duration += currentFrame->duration;
 		m_frames.push_back(currentFrame);
 		frame = frame->NextSiblingElement("frame");
@@ -58,6 +59,34 @@ IsoSprite* IsoSpriteAnimDef::GetIsoSpriteForTime( float timeIntoAnim ) const {
 
 	// if we return nullptr something went wrong with the def
 	ERROR_AND_DIE("GetIsoSpriteForTime did not find a frame before it ran out of frames!");
+}
+
+
+std::string IsoSpriteAnimDef::GetFrameSoundForTime( float timeIntoAnim, float deltaSeconds ) const {
+	float cumulativeDuration = 0.f;
+	float timeIntoAnimReduced = timeIntoAnim; // for looping, keep subtracting duration until it's less than duration
+
+	// If the mode is clamp and the time is past the duration, just get the last frame.
+	if (m_mode == ANIM_MODE_CLAMP && m_duration < timeIntoAnim) {
+		return "";	
+	}
+
+	// make sure timeIntoAnimReduced is between 0 and m_duration
+	while (timeIntoAnimReduced > m_duration) {
+		timeIntoAnimReduced -= m_duration;
+	}
+
+	// now loop through the frames, adding their individual durations, until
+	// their cumulative durations are greater than timeIntoAnimReduced
+	for (int index = 0; index < m_frames.size(); index++) {
+		cumulativeDuration += m_frames[index]->duration;
+		if (cumulativeDuration > timeIntoAnimReduced && cumulativeDuration < timeIntoAnimReduced + deltaSeconds) {
+			return m_frames[index]->audioCueName;
+		}
+	}
+
+	// Unlike GetCurrentIsoSprite(), its ok to not find a sound
+	return "";
 }
 
 

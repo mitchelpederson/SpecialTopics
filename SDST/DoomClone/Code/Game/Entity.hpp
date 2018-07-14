@@ -68,6 +68,7 @@ public:
 	float		m_ageAtDeath;
 
 	bool		m_isSolid = true;
+	bool		m_playSounds2D = false;
 
 	Stopwatch	m_firingDelayTimer;
 	Stopwatch	m_cantMoveTimer;

@@ -15,6 +15,7 @@ public:
 	void Reset();
 
 	IsoSprite* GetCurrentIsoSprite() const;
+	std::string GetFrameSound();
 	bool HasFinished() const;
 
 

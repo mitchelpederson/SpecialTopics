@@ -20,6 +20,7 @@ public:
 	float	GetShotDamage() const;
 	bool	IsSolid() const;
 	bool	IsHostile() const;
+	bool	Is2DSoundSource() const;
 	std::string GetSpriteSetName() const;
 	Rgba	GetMinimapColor() const;
 
@@ -34,6 +35,7 @@ private:
 	float		m_shotDamage;
 	bool		m_isSolid;
 	bool		m_isHostile;
+	bool		m_playSounds2D;
 	std::string m_name;
 	std::string	m_spriteSetName = "NONE";
 	Rgba		m_minimapColor;

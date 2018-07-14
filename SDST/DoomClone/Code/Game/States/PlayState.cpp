@@ -24,6 +24,7 @@ void PlayState::Initialize() {
 
 	player = new Player();
 	LoadAndStartLevel(0);
+	//g_audioSystem->ActivateGlobalReverb();
 
 }
 

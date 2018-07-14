@@ -6,4 +6,19 @@
 		<soundfile src="Data/Audio/tank_shot3.wav" />
 	</audiocue>
 
+	<audiocue name="bootStep">
+		<soundfile src="Data/Audio/Foot_Conc_BootRun01.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun02.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun03.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun04.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun05.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun06.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun07.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun08.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun09.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun10.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun11.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun12.wav" />
+		<soundfile src="Data/Audio/Foot_Conc_BootRun13.wav" />
+	</audiocue>
 </audiocues>

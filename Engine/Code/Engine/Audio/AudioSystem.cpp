@@ -70,21 +70,59 @@ void AudioSystem::EndFrame()
 
 
 //-----------------------------------------------------------------------------------------------
-SoundID AudioSystem::CreateOrGetSound( const std::string& soundFilePath )
+SoundID AudioSystem::CreateOrGetSound( const std::string& soundFilePath, bool is3D /* = true */ )
 {
-	std::map< std::string, SoundID >::iterator found = m_registeredSoundIDs.find( soundFilePath );
-	if( found != m_registeredSoundIDs.end() )
+	if ( is3D ) {
+		return CreateOrGet3DSound(soundFilePath);
+	}
+	else {
+		return CreateOrGet2DSound(soundFilePath);
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+SoundID AudioSystem::CreateOrGet3DSound( const std::string& soundFilePath ) {
+	
+	std::map< std::string, SoundID >::iterator found = m_registered3DSoundIDs.find( soundFilePath );
+	if( found != m_registered3DSoundIDs.end() )
 	{
 		return found->second;
 	}
 	else
 	{
 		FMOD::Sound* newSound = nullptr;
-		m_fmodSystem->createSound( soundFilePath.c_str(), FMOD_DEFAULT, nullptr, &newSound );
+		m_fmodSystem->createSound( soundFilePath.c_str(), FMOD_3D, nullptr, &newSound );
+
 		if( newSound )
 		{
 			SoundID newSoundID = m_registeredSounds.size();
-			m_registeredSoundIDs[ soundFilePath ] = newSoundID;
+			m_registered3DSoundIDs[ soundFilePath ] = newSoundID;
+			m_registeredSounds.push_back( newSound );
+			return newSoundID;
+		}
+	}
+
+	return MISSING_SOUND_ID;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+SoundID AudioSystem::CreateOrGet2DSound( const std::string& soundFilePath ) {
+
+	std::map< std::string, SoundID >::iterator found = m_registered2DSoundIDs.find( soundFilePath );
+	if( found != m_registered2DSoundIDs.end() )
+	{
+		return found->second;
+	}
+	else
+	{
+		FMOD::Sound* newSound = nullptr;
+		m_fmodSystem->createSound( soundFilePath.c_str(), FMOD_2D, nullptr, &newSound );
+		if( newSound )
+		{
+			SoundID newSoundID = m_registeredSounds.size();
+			m_registered2DSoundIDs[ soundFilePath ] = newSoundID;
 			m_registeredSounds.push_back( newSound );
 			return newSoundID;
 		}
@@ -119,6 +157,38 @@ SoundPlaybackID AudioSystem::PlaySound( SoundID soundID, bool isLooped, float vo
 		channelAssignedToSound->setPan( balance );
 		channelAssignedToSound->setLoopCount( loopCount );
 	}
+
+	return (SoundPlaybackID) channelAssignedToSound;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+SoundPlaybackID AudioSystem::PlaySoundAtLocation( SoundID soundID, const Vector3& position, const Vector3& velocity, bool isLooped/* =false */, float volume/* =1.f */, float balance/* =0.0f */, float speed/* =1.0f */, bool isPaused/* =false */ ) {
+	size_t numSounds = m_registeredSounds.size();
+	if( soundID < 0 || soundID >= numSounds )
+		return MISSING_SOUND_ID;
+
+	FMOD::Sound* sound = m_registeredSounds[ soundID ];
+	if( !sound )
+		return MISSING_SOUND_ID;
+
+	FMOD::Channel* channelAssignedToSound = nullptr;
+	m_fmodSystem->playSound( sound, nullptr, true, &channelAssignedToSound );
+	if( channelAssignedToSound )
+	{
+		int loopCount = isLooped ? -1 : 0;
+		unsigned int playbackMode = isLooped ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+		float frequency;
+		channelAssignedToSound->setMode(playbackMode);
+		channelAssignedToSound->getFrequency( &frequency );
+		channelAssignedToSound->setFrequency( frequency * speed );
+		channelAssignedToSound->setVolume( volume );
+		channelAssignedToSound->setPan( balance );
+		channelAssignedToSound->setLoopCount( loopCount );
+	}
+
+	channelAssignedToSound->set3DAttributes( (FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity );
+	channelAssignedToSound->setPaused( isPaused );
 
 	return (SoundPlaybackID) channelAssignedToSound;
 }
@@ -221,5 +291,26 @@ void AudioSystem::AddFFTToChannel( SoundPlaybackID sound ) {
 	channel->addDSP(0, m_fftdsp);
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::SetListenerParameters( const Vector3& position, const Vector3& velocity, const Vector3& forward, const Vector3& up ) {
+	m_fmodSystem->set3DListenerAttributes( 0, (FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity, (FMOD_VECTOR*) &forward, (FMOD_VECTOR*) &up );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::ActivateGlobalReverb() {
+	FMOD_REVERB_PROPERTIES* reverbProperties = new FMOD_REVERB_PROPERTIES( FMOD_PRESET_STONECORRIDOR );
+	m_fmodSystem->setReverbProperties( 0, reverbProperties );
+	delete reverbProperties;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::DeactivateGlobalReverb() {
+	FMOD_REVERB_PROPERTIES* reverbProperties = new FMOD_REVERB_PROPERTIES( FMOD_PRESET_OFF );
+	m_fmodSystem->setReverbProperties( 0, reverbProperties );
+	delete reverbProperties;
+}
 
 #endif // !defined( ENGINE_DISABLE_AUDIO )

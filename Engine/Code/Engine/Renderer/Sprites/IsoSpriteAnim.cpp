@@ -25,6 +25,11 @@ void IsoSpriteAnim::Reset() {
 }
 
 
+std::string IsoSpriteAnim::GetFrameSound() {
+	return m_def->GetFrameSoundForTime(m_clock->total.seconds - m_startTime, m_clock->frame.seconds);
+}
+
+
 IsoSprite* IsoSpriteAnim::GetCurrentIsoSprite() const {
 	float currentTime = m_clock->total.seconds - m_startTime;
 	return m_def->GetIsoSpriteForTime(currentTime);
