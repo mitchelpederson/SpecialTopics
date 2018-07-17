@@ -194,6 +194,13 @@ SoundPlaybackID AudioSystem::PlaySoundAtLocation( SoundID soundID, const Vector3
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
+void AudioSystem::SetSound3DParameters( SoundPlaybackID playbackID, const Vector3& position, const Vector3& velocity ) {
+	FMOD::Channel* playbackChannel = (FMOD::Channel*) playbackID;
+	playbackChannel->set3DAttributes((FMOD_VECTOR*) &position, (FMOD_VECTOR*) &velocity);
+}
+
+
 //-----------------------------------------------------------------------------------------------
 void AudioSystem::StopSound( SoundPlaybackID soundPlaybackID )
 {
@@ -286,6 +293,7 @@ float AudioSystem::GetBassVolume() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void AudioSystem::AddFFTToChannel( SoundPlaybackID sound ) {
 	FMOD::Channel* channel = (FMOD::Channel*) sound;
 	channel->addDSP(0, m_fftdsp);

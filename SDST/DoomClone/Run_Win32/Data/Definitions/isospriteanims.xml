@@ -11,7 +11,7 @@
 	<isoanim id="enemy.shoot" loop="clamp">
    		<frame src="enemy.shoot1" time=".05" />
    		<frame src="enemy.shoot3" time=".10" soundCue="pistolShot" />
-         <frame src="enemy.shoot2" time=".25" />
+        <frame src="enemy.shoot2" time=".25" />
 	</isoanim>
 	<isoanim id="enemy.death" loop="clamp">
    		<frame src="enemy.death1" time=".15" />

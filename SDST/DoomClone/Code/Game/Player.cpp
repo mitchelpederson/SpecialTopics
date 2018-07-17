@@ -57,6 +57,9 @@ void Player::Update() {
 
 	ProcessInput();
 	Entity::Update();
+	Vector3 position3D( m_position.x, 0.5f, m_position.y );
+	Vector3 velocity3D( m_velocity.x, 0.f, m_velocity.y );
+	g_audioSystem->SetListenerParameters( position3D, velocity3D, g_theGame->GetPlayerCamera()->GetForward(), Vector3::UP );
 
 	g_audioSystem->SetListenerParameters(Vector3(m_position.x, 0.5f, m_position.y), Vector3::ZERO, g_theGame->GetPlayerCamera()->GetForward(), Vector3::UP );
 

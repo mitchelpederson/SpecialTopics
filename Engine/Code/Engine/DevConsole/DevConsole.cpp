@@ -91,6 +91,7 @@ void DevConsole::SaveLog( const std::string& command ) {
 DevConsole::DevConsole() {
 	if (m_instance == nullptr) {
 		m_instance = this;
+		Logger::AddHook( ProcessLoggerMessages, nullptr );
 	}
 
 	m_currentFont = g_theRenderer->CreateOrGetBitmapFont("Bisasam");
@@ -358,3 +359,10 @@ void DevConsole::Clear( const std::string& command ) {
 	GetInstance()->m_messages.clear();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
+void DevConsole::ProcessLoggerMessages( const LogEntry* entry, void* args ) {
+	if (entry->tag == "Debug") {
+		m_instance->AddMessage(entry->text.c_str(), Rgba());
+	}
+}

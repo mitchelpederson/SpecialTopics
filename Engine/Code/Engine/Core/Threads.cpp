@@ -39,7 +39,7 @@ static DWORD WINAPI ThreadEntryPoint( void* arg ) {
 	ThreadCB cb = initData->callback;
 	void* passArgs = initData->arg;
 
-	delete arg;
+	//delete arg;
 
 	cb( passArgs );
 	return 0;

@@ -104,7 +104,7 @@ void Entity::Update() {
 			Vector2 bulletStart = m_position + (Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_physicalRadius);
 			RaycastResult result = g_theGame->GetCurrentMap()->Raycast(bulletStart, m_orientationDegrees);
 
-			if (result.hitEntity && result.entity == player) {
+			if (result.hitEntity && result.entity == g_theGame->GetPlayer()) {
 				Shoot();
 			}
 		}
@@ -182,7 +182,6 @@ void Entity::Shoot() {
 		m_firingDelayTimer.Reset();
 		m_cantMoveTimer.Reset();
 		m_currentAmmo--;
-
 		SoundID pistolShot = g_audioSystem->CreateOrGetSound("Data/Audio/pistol_shot.wav", !m_playSounds2D);
 		if (!m_playSounds2D) {
 			// Enemy sound effects should be triggered through the sprite animations. 2D sounds are player

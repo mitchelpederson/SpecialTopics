@@ -70,7 +70,7 @@ void PlayState::Initialize() {
 		SpawnBaseInRandomSpot();
 	}
 
-	m_bgMusic = g_audioSystem->PlaySound(g_audioSystem->CreateOrGetSound("Data/Audio/tankwar.wav"), true, 0.5f);
+	m_bgMusic = g_audioSystem->PlaySoundAtLocation(g_audioSystem->CreateOrGetSound("Data/Audio/tankwar.wav"), player->transform.position, Vector3::ZERO, true, 0.2f);
 
 
 }
@@ -174,6 +174,9 @@ void PlayState::Update() {
 	}
 	CheckForCombatCollisions();
 	ClearDeadGameObjects();
+
+	g_audioSystem->SetListenerParameters(m_camera->transform.position, Vector3::ZERO, m_camera->GetForward(), m_camera->GetUp());
+	g_audioSystem->SetSound3DParameters(m_bgMusic, m_camera->transform.position, Vector3::ZERO);
 }
 
 

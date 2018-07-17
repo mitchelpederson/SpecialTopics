@@ -6,11 +6,12 @@
 #include <map>
 #include <string.h>
 
+
 struct CampaignLevel {
-public:
 	std::string levelName = "ERROR";
 	std::string pathToLevelImage = "ERROR";
 };
+
 
 class CampaignDefinition {
 public:

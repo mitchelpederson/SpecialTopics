@@ -6,7 +6,6 @@
 		<soundfile src="Data/Audio/tank_shot3.wav" />
 	</audiocue>
 
-
 	<audiocue name="explosion">
 		<soundfile src="Data/Audio/explosion1.wav" />
 		<soundfile src="Data/Audio/explosion3.wav" />
@@ -16,4 +15,5 @@
 		<soundfile src="Data/Audio/explosion7.wav" />
 		<soundfile src="Data/Audio/explosion8.wav" />
 	</audiocue>
+
 </audiocues>

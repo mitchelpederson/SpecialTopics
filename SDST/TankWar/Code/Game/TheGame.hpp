@@ -65,6 +65,7 @@ public:
 private:
 
 	void GoToNextState();
+	
 
 	eGameState currentState = STATE_LOAD;
 	eGameState nextState = STATE_MENU;
@@ -73,7 +74,12 @@ private:
 
 	static TheGame* m_instance;
 
-	bool m_devModeActive;
+	static bool m_devModeActive;
+
+
+	// Debug
+	static void DebugStartSpam( const std::string& command );
+	static bool m_spam;
 
 };
 
