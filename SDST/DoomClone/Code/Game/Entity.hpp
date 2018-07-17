@@ -1,16 +1,20 @@
 #pragma once
+#include "Game/EntityDefinition.hpp"
+
 #include "Engine/Core/Stopwatch.hpp"
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Math/Disc2.hpp"
 #include "Engine/Math/AABB2.hpp"
 #include "Engine/Renderer/Sprites/IsoSpriteAnim.hpp"
-#include "Game/EntityDefinition.hpp"
+#include "Engine/Renderer/Light.hpp"
+
+class GameMap;
 
 class Entity {
 
 public:
 	Entity();
-	Entity( unsigned char id );
+	Entity( unsigned char id, GameMap* parent );
 
 	virtual void	Update();
 	virtual void	UpdateSpriteAnim();
@@ -51,6 +55,7 @@ public:
 	std::string	m_animSetName;
 	Vector2		m_position;
 	Vector2		m_velocity;
+	GameMap*	m_parentMap = nullptr;
 
 	float		m_cosmeticRadius;
 	float		m_physicalRadius;
@@ -72,5 +77,7 @@ public:
 
 	Stopwatch	m_firingDelayTimer;
 	Stopwatch	m_cantMoveTimer;
+
+	Light*		m_light = nullptr;
 	
 };

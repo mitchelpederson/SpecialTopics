@@ -1,5 +1,18 @@
 <shaders>
 
+
+
+	<shader name="lit-sprite" cull="back" fill="solid" frontface="ccw" queue="alpha">
+		<vertex file="Data/Shaders/lit.vs" />
+		<fragment file="Data/Shaders/lit.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="less" />
+	</shader>
+
+
 	<shader name="cutout" cull="back" fill="solid" frontface="ccw" queue="opaque">
 		<vertex file="Data/Shaders/cutout.vs" />
 		<fragment file="Data/Shaders/cutout.fs" />
@@ -33,6 +46,16 @@
 	<shader name="phong-normal-map" cull="back" fill="solid" frontface="ccw" queue="opaque">
 		<vertex file="Data/Shaders/dot3-normal-map.vs" />
 		<fragment file="Data/Shaders/dot3-normal-map.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+	<shader name="lit-terrain" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/lit.vs" />
+		<fragment file="Data/Shaders/lit.fs" />
 		<blend>
 			<color op="add" src="src_alpha" dest="inv_src_alpha" />
 			<alpha op="add" src="one" dest="one" />

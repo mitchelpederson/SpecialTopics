@@ -120,4 +120,11 @@
          <facing dir="-1,-1" src="hud.pistol5" />  <!-- toward left -->
          <facing dir=" 1,-1" src="hud.pistol5" />  <!-- toward right -->
    </isosprite>
+
+   <isosprite id="light">
+         <facing dir="-1, 1" src="light" />  <!-- away left -->
+         <facing dir=" 1, 1" src="light" />  <!-- away right -->
+         <facing dir="-1,-1" src="light" />  <!-- toward left -->
+         <facing dir=" 1,-1" src="light" />  <!-- toward right -->
+   </isosprite>
 </isosprites>

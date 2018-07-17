@@ -46,7 +46,11 @@ GameMap::GameMap( Image const& mapImage ) {
 	g_theRenderer->CreateOrGetTexture("Data/Images/enemysheet.png")->SetSamplerMode(SAMPLER_NEAREST);
 	g_theRenderer->CreateOrGetTexture("Data/Fonts/Wolfenstein.png")->SetSamplerMode(SAMPLER_NEAREST);
 	g_theRenderer->CreateOrGetTexture("Data/Images/weapons.png")->SetSamplerMode(SAMPLER_NEAREST);
+	g_theRenderer->CreateOrGetTexture("Data/Images/light.png")->SetSamplerMode(SAMPLER_NEAREST);
 
+	m_playerLight = new Light();
+	m_playerLight->SetAsSpotLight(Vector3(m_playerSpawn.x, 1.f, m_playerSpawn.y),m_playerCamera->GetForward(), 15.f, 20.f, Rgba());
+	scene->AddLight(m_playerLight);
 }
 
 
@@ -85,7 +89,7 @@ void GameMap::SpawnEntities( Image const& mapImage ) {
 
 //----------------------------------------------------------------------------------------------------------------
 void GameMap::SpawnEntityFromIDOnTile( unsigned char id, IntVector2 const& coord ) {
-	Entity* entity = new Entity(id);
+	Entity* entity = new Entity(id, this);
 	entity->SetPosition(Vector2(coord.x + 0.5f, coord.y + 0.5f));
 	m_entities.push_back(entity);
 }
@@ -119,100 +123,108 @@ void GameMap::AddTileMeshesToScene() {
 					AABB2 wallUVs = currentDef->GetWallUVs();
 
 					// front
+					mb.SetNormal(Vector3::FORWARD * -1.f);
+					mb.SetTangent(Vector3::RIGHT);
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 0.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 0.f, 0.f));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 1.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 0.f, 0.f));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 1.f, 0.f));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 1.f, 0.f));
 
 					// left
+					mb.SetNormal(Vector3::RIGHT * -1.f);
+					mb.SetTangent(Vector3::FORWARD);
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 0.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 0.f, 1.f));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 1.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 0.f, 1.f));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 1.f, 1.f));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 1.f, 0.f));
 
 					// right
+					mb.SetNormal(Vector3::RIGHT);
+					mb.SetTangent(Vector3::FORWARD * -1.f);
 					// bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 0.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 0.f, 1.f));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 1.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 0.f, 1.f));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 1.f, 1.f));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 1.f, 0.f));
 
 					// back
+					mb.SetNormal(Vector3::FORWARD);
+					mb.SetTangent(Vector3::RIGHT * -1.f);
 					//bl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 0.f, 1.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 0.f, 1.f));
 
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 1.f, 1.f));
 
 					// br
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 0.f, 1.f));
 
 					// tr 
 					mb.SetUV(Vector2(wallUVs.maxs.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 1.f, 1.f));
 					// tl
 					mb.SetUV(Vector2(wallUVs.mins.x, wallUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 1.f, 1.f));
 
 				}
 				else {
@@ -221,55 +233,60 @@ void GameMap::AddTileMeshesToScene() {
 					AABB2 ceilingUVs = currentDef->GetCeilingUVs();
 
 					// front
+					mb.SetNormal(Vector3::UP);
+					mb.SetTangent(Vector3::RIGHT);
 					// bl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 0.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 0.f, 0.f));
 
 					// tl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 0.f, 1.f));
 
 					// br
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 0.f, 0.f));
 
 					// tr 
 					mb.SetUV(Vector2(floorUVs.maxs.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 0.f, 1.f));
 
 					// tl
 					mb.SetUV(Vector2(floorUVs.mins.x, floorUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 0.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 0.f, 1.f));
 
+					mb.SetNormal(Vector3::UP * -1.f);
+					mb.SetTangent(Vector3::RIGHT * -1.f);
 					// bl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row));
+					mb.PushVertex(Vector3(0.f, 1.f, 0.f));
 
 					// br
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 1.f, 0.f));
 
 					// tl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 1.f, 1.f));
 
 					// br
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.mins.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row));
+					mb.PushVertex(Vector3(1.f, 1.f, 0.f));
 
 					// tr 
 					mb.SetUV(Vector2(ceilingUVs.maxs.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col + 1, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(1.f, 1.f, 1.f));
 
 					// tl
 					mb.SetUV(Vector2(ceilingUVs.mins.x, ceilingUVs.maxs.y));
-					mb.PushVertex(Vector3((float) col, 1.f, (float) row + 1));
+					mb.PushVertex(Vector3(0.f, 1.f, 1.f));
 				}
 
+				tileRenderable->SetModelMatrix(Matrix44::MakeTranslation(Vector3((float) col, 0.f, (float) row)));
 				mb.End();
 				tileMesh->FromBuilderAsType<Vertex3D_Lit>(&mb);
 				scene->AddRenderable(tileRenderable);
@@ -325,6 +342,8 @@ void GameMap::Update() {
 	m_playerCamera->Update();
 
 	DeleteDeadEntities();
+
+	m_playerLight->SetAsSpotLight(Vector3(player->m_position.x, 1.f, player->m_position.y),m_playerCamera->GetForward(), 15.f, 20.f, Rgba());
 }
 
 
@@ -437,12 +456,12 @@ void GameMap::CorrectEntityCollisions() {
 	for (unsigned int entityIndex = 0; entityIndex < m_entities.size(); entityIndex++) {
 		Entity* thisEntity = m_entities[entityIndex];
 
-		if (thisEntity->IsAlive()) {
+		if (thisEntity->IsAlive() && thisEntity->IsSolid()) {
 			for(unsigned int otherEntityIndex = 0; otherEntityIndex < m_entities.size(); otherEntityIndex++) {
 				if (entityIndex != otherEntityIndex) {
 					Entity* otherEntity = m_entities[otherEntityIndex];
 
-					if (otherEntity->IsAlive()) {
+					if (otherEntity->IsAlive() && otherEntity->IsSolid()) {
 						// check if they are intersecting
 						Vector2 displacement = thisEntity->m_position - otherEntity->m_position;
 						float distance = displacement.GetLength();

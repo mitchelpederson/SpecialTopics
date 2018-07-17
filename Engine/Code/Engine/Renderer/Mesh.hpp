@@ -21,6 +21,8 @@ public:
 	Mesh();
 	Mesh( unsigned int count, Vertex3D_PCU* vertices );
 	Mesh( unsigned int vertCount, unsigned int indexCount, Vertex3D_PCU* vertices, unsigned int* indices );
+	Mesh( unsigned int vertCount, unsigned int indexCount, Vertex3D_Lit* vertices, unsigned int* indices );
+
 	~Mesh();
 
 	void SetMesh( unsigned int count, Vertex3D_PCU* vertices );

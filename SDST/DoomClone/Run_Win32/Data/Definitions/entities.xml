@@ -8,4 +8,11 @@
 		<sprite name="enemy" />
 		<physics maxMoveSpeed="1.0" maxTurnRate="100.0" isSolid="true" />
 	</entity>
+
+	<entity name="light" id="150" physicalRadius="0.1" maxHealth="1000000" minimapColor="255,255,255,255" isHostile="false">
+		<sprite name="light" />
+		<physics isSolid="false" />
+		<light color="255,255,255,255" intensity="0.7" attenuation="0.5" />
+	</entity>
+	
 </entities>

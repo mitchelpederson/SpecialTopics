@@ -1,7 +1,7 @@
+#include "Game/Map/GameMap.hpp"
 #include "Game/Entity.hpp"
 #include "Game/EntityDefinition.hpp"
 #include "Game/GameCommon.hpp"
-
 #include "Engine/Audio/AudioCue.hpp"
 
 
@@ -25,10 +25,10 @@ Entity::Entity()
 
 
 //----------------------------------------------------------------------------------------------------------------
-Entity::Entity( unsigned char id )
+Entity::Entity( unsigned char id, GameMap* parent )
 	: m_firingDelayTimer(g_theGame->m_gameClock)
 	, m_cantMoveTimer(g_theGame->m_gameClock) {
-
+	m_parentMap = parent;
 	m_def = EntityDefinition::s_definitions[id];
 	m_cosmeticRadius = m_def->GetCosmeticRadius();
 	m_physicalRadius = m_def->GetPhysicalRadius();
@@ -36,11 +36,17 @@ Entity::Entity( unsigned char id )
 	m_health = m_maxHealth;
 	m_isSolid = m_def->IsSolid();
 	m_animSetName = m_def->GetSpriteSetName();
-	m_currentSpriteAnim = new IsoSpriteAnim(IsoSpriteAnimDef::s_definitions[m_animSetName + ".walk"], g_theGame->m_gameClock);
+	m_currentSpriteAnim = new IsoSpriteAnim(IsoSpriteAnimDef::s_definitions[m_animSetName + ".idle"], g_theGame->m_gameClock);
 	m_firingDelayTimer.SetTimer(m_def->GetShootingDelay());
 	m_firingDelayTimer.Reset();
 	m_cantMoveTimer.SetTimer(0.75f);
 	m_playSounds2D = m_def->Is2DSoundSource();
+
+	if (m_def->HasLight()) {
+		m_light = new Light();
+		m_light->SetAsPointLight(Vector3::ZERO, Rgba());
+		m_parentMap->scene->AddLight(m_light);
+	}
 }
 
 
@@ -73,7 +79,7 @@ void Entity::Update() {
 
 	UpdateSpriteAnim();
 
-	if ( m_currentSpriteAnim != nullptr && m_isAlive ) {
+	if ( m_currentSpriteAnim != nullptr ) {
 		std::string soundName = m_currentSpriteAnim->GetFrameSound();
 		if (soundName != "") {
 			AudioCue cue(AudioCueDefinition::s_definitions[soundName]);
@@ -108,6 +114,18 @@ void Entity::Update() {
 			m_position += Vector2::MakeDirectionAtDegrees(m_orientationDegrees) * m_def->GetMaxMoveSpeed() * g_theGame->GetDeltaTime();
 		}
 	}
+
+	if (m_def->HasLight()) {
+		Vector2 playerPosition = g_theGame->GetPlayer()->m_position;
+		Vector3 myPosition3D(m_position.x, 0.8f, m_position.y);
+		Vector3 playerPosition3D(playerPosition.x, 0.8f, playerPosition.y);
+		Vector3 dispToPlayer = playerPosition3D - myPosition3D;
+		dispToPlayer.Normalize();
+		dispToPlayer *= 0.1f;
+
+
+		m_light->SetAsPointLight(myPosition3D + dispToPlayer, Rgba());
+	}
 }
 
 
@@ -129,7 +147,7 @@ void Entity::Render() const {
 		Vector3 cameraForward = g_theGame->GetPlayerCamera()->GetForward();
 		Vector3 entityDirection = Vector3( CosDegrees(m_orientationDegrees + 45.f), 0.f, SinDegrees(m_orientationDegrees + 45.f) );
 		Sprite* currentSprite = m_currentSpriteAnim->GetCurrentIsoSprite()->GetSpriteForViewAngle(entityDirection, cameraForward, cameraRight);
-		g_theRenderer->DrawSprite(spritePos, currentSprite, Vector3::UP, cameraRight);
+		g_theRenderer->DrawSprite(spritePos, currentSprite, Vector3::UP, cameraRight, Vector2(1.f, 1.f), Rgba(), true);
 	}
 }
 
@@ -167,8 +185,7 @@ void Entity::Shoot() {
 
 		SoundID pistolShot = g_audioSystem->CreateOrGetSound("Data/Audio/pistol_shot.wav", !m_playSounds2D);
 		if (!m_playSounds2D) {
-			Vector3 position3D( m_position.x, 0.5f, m_position.y );
-			g_audioSystem->PlaySoundAtLocation(pistolShot, position3D, Vector3::ZERO, false, 0.7f);
+			// Enemy sound effects should be triggered through the sprite animations. 2D sounds are player
 		}
 		else {
 			g_audioSystem->PlaySound(pistolShot);

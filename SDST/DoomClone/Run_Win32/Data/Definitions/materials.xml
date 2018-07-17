@@ -1,8 +1,9 @@
 <materials>
 
-	<material name="tile" shader="passthroughTex">
+	<material name="tile" shader="lit-terrain">
 		<textures>
 			<texture slot="0" path="Data/Images/wolfenstein_textures.png"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
 		</textures>
 	</material>
 

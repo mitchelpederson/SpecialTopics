@@ -129,6 +129,7 @@ public:
 	void DrawRenderable( Renderable* renderable );
 	void DrawMesh( Mesh* mesh );
 	void DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimitive drawPrimitive );
+	void DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive );
 
 	void DrawRegularPolygon(const Vector2& center, float radius, float degreesToRotate, int sides, Rgba color = Rgba(255, 255, 255, 255));
 	void DrawRegularPolygonLocal(const Vector2& center, float radius, int sides);
@@ -138,7 +139,7 @@ public:
 	void DrawAABB(const AABB2& bounds, const Rgba& color);
 	void DrawQuad(const Matrix44& transform, const Vector2& dimensions, const Rgba& color);
 	void DrawQuad(const Vector3& topLeft, const Vector3& bottomLeft, const Vector3& topRight, const Vector3& bottomRight, const AABB2& topUVs = AABB2::ZERO_TO_ONE, const Rgba& color = Rgba());
-	void DrawSprite( const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale = Vector2(1.f, 1.f), const Rgba& tint = Rgba()); 
+	void DrawSprite( const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale = Vector2(1.f, 1.f), const Rgba& tint = Rgba(), bool isLit = false); 
 	void DrawTexturedAABB( const AABB2& bounds, const Texture& texture, const Vector2& texCoordsAtMins, 
 							const Vector2& texCoordsAtMaxs, const Rgba& tint ); 
 	void DrawCube( const Vector3& center, const Vector3& size, const Rgba& color = Rgba(255, 255, 255, 255), const AABB2& topUVs = AABB2::ZERO_TO_ONE, const AABB2& sideUVs = AABB2::ZERO_TO_ONE, const AABB2& bottomUVs = AABB2::ZERO_TO_ONE);

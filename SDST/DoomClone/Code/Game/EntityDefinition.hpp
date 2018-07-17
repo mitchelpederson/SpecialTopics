@@ -21,6 +21,7 @@ public:
 	bool	IsSolid() const;
 	bool	IsHostile() const;
 	bool	Is2DSoundSource() const;
+	bool	HasLight() const;
 	std::string GetSpriteSetName() const;
 	Rgba	GetMinimapColor() const;
 
@@ -36,6 +37,7 @@ private:
 	bool		m_isSolid;
 	bool		m_isHostile;
 	bool		m_playSounds2D;
+	bool		m_hasLight;
 	std::string m_name;
 	std::string	m_spriteSetName = "NONE";
 	Rgba		m_minimapColor;

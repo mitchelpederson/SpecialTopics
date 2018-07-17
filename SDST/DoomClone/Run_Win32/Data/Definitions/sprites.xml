@@ -212,4 +212,12 @@
 		<uv layout="pixel">256,64,319,127</uv>
 		<pivot>0.5,0.5</pivot>
 	</sprite>
+
+	<!-- OBJECTS -->
+	<sprite id="light">
+		<diffuse src="Data/Images/light.png" />
+		<ppu>64</ppu>
+		<uv layout="pixel">0,0,63,63</uv>
+		<pivot>0.5,0</pivot>
+	</sprite>
 </sprites>

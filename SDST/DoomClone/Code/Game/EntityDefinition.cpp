@@ -30,6 +30,15 @@ EntityDefinition::EntityDefinition( tinyxml2::XMLElement const& xml ) {
 		m_isSolid = ParseXmlAttribute(*physicsElement, "isSolid", m_isSolid);
 	}
 
+	// Read the <light> element if it exists
+	const tinyxml2::XMLElement* lightElement = xml.FirstChildElement("light");
+	if (lightElement != nullptr) {
+		m_hasLight = true;
+	}
+	else {
+		m_hasLight = false;
+	}
+
 	s_definitions[m_id] = this;
 
 }
@@ -110,4 +119,10 @@ Rgba EntityDefinition::GetMinimapColor() const {
 //----------------------------------------------------------------------------------------------------------------
 bool EntityDefinition::Is2DSoundSource() const {
 	return m_playSounds2D;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool EntityDefinition::HasLight() const {
+	return m_hasLight;
 }

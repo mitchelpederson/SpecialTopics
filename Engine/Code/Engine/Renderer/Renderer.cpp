@@ -440,6 +440,18 @@ void Renderer::DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimiti
 }
 
 
+void Renderer::DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive ) {
+
+	Matrix44 model;
+	Mesh* immediateMesh = new Mesh(numVerts, numIndices, verts, indices);
+	immediateMesh->SetDrawPrimitive(drawPrimitive);
+	SetModelMatrix(model);
+	DrawMesh(immediateMesh);
+	delete immediateMesh;
+
+}
+
+
 void Renderer::DisableTexture2D() {
 	glDisable(GL_TEXTURE_2D);
 }
@@ -1386,10 +1398,18 @@ void Renderer::ClearDepth( float depth )
 }
 
 
-void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale, const Rgba& tint /* = Rgba() */) {
+void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale, const Rgba& tint /* = Rgba() */, bool isLit /* = false */) {
 	
-	UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthroughTex"));
+	if (isLit) {
+		SetShader(GetShader("lit-sprite"));
+	}
+	else {
+		UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthroughTex"));
+	}
+
 	UseTexture(0, *sprite->GetTexture());
+	UseTexture(1, *CreateOrGetTexture("Data/Images/blank_normal.png"));
+
 	Vector2 pivot = sprite->GetPivot();
 	float leftPivotOffset = pivot.x * sprite->GetDimensions().x;
 	float rightPivotOffset = (1.f - pivot.x) * sprite->GetDimensions().x;
@@ -1403,7 +1423,59 @@ void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3
 	Vector3 topRight(		position.x - (rightPivotOffset * right.x * scale.x),	position.y + (topPivotOffset * up.y * scale.y),		position.z - (rightPivotOffset * right.z * scale.x) );
 	Vector3 bottomRight(	position.x - (rightPivotOffset * right.x * scale.x),	position.y - (bottomPivotOffset * up.y * scale.y),	position.z - (rightPivotOffset * right.z * scale.x) );
 
-	DrawQuad(topLeft, bottomLeft, topRight, bottomRight, sprite->GetUVs(), tint);
+	if(isLit) {
+		Vector3 topCenter( position.x, position.y + (topPivotOffset * up.y * scale.y), position.z);
+		Vector3 bottomCenter( position.x, position.y - (bottomPivotOffset * up.y * scale.y), position.z);
+
+		AABB2 uvs = sprite->GetUVs();
+
+		Vertex3D_Lit vertices[6];
+		unsigned int indices[12] = { 0, 2, 1		// 1 - 3 - 5
+								   , 2, 3, 1		// | \ | \ |
+								   , 2, 4, 3		// |  \|  \|
+								   , 4, 5, 3 };		// 0 - 2 - 4
+
+		vertices[0].color = tint;
+		vertices[0].normal = right;
+		vertices[0].tangent = forward * -1.f;
+		vertices[0].position = bottomLeft;
+		vertices[0].uv = Vector2(uvs.mins);
+
+		vertices[1].color = tint;
+		vertices[1].normal = right;
+		vertices[1].tangent = forward * -1.f;
+		vertices[1].position = topLeft;
+		vertices[1].uv = Vector2(uvs.mins.x, uvs.maxs.y);
+
+		vertices[2].color = tint;
+		vertices[2].normal = forward * -1.f;
+		vertices[2].tangent = right * -1.f;
+		vertices[2].position = bottomCenter;
+		vertices[2].uv = Vector2((uvs.mins.x + uvs.maxs.x) * 0.5f, uvs.mins.y);
+
+		vertices[3].color = tint;
+		vertices[3].normal = forward * -1.f;
+		vertices[3].tangent = right * -1.f;
+		vertices[3].position = topCenter;
+		vertices[3].uv = Vector2((uvs.mins.x + uvs.maxs.x) * 0.5f, uvs.maxs.y);
+
+		vertices[4].color = tint;
+		vertices[4].normal = right * -1.f;
+		vertices[4].tangent = forward;
+		vertices[4].position = bottomRight;
+		vertices[4].uv = Vector2(uvs.maxs.x, uvs.mins.y);
+
+		vertices[5].color = tint;
+		vertices[5].normal = right * -1.f;
+		vertices[5].tangent = forward;
+		vertices[5].position = topRight;
+		vertices[5].uv = Vector2(uvs.maxs);
+		DrawMeshImmediate(vertices, 6, indices, 12, TRIANGLES);
+	}
+	else {
+		DrawQuad(topLeft, bottomLeft, topRight, bottomRight, sprite->GetUVs(), tint);
+	}
+	
 
 }
 

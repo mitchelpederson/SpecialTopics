@@ -73,11 +73,13 @@ private:
 	// LIGHTING
 
 	float specularPower = 100.f;
-	float specularAmount = 0.1f;
-	float ambientIntensity = 0.3f;
+	float specularAmount = 0.0f;
+	float ambientIntensity = .3f;
 	Rgba ambientColor;
 
+	Light* m_playerLight = nullptr;
+
 	// DEBUG
-	bool m_shouldDisplayMinimap = true;
+	bool m_shouldDisplayMinimap = false;
 	bool m_isMinimapZoomed = false;
 };

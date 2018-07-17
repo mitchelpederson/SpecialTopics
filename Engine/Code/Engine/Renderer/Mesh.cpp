@@ -20,6 +20,18 @@ Mesh::Mesh( unsigned int vertCount, unsigned int indexCount, Vertex3D_PCU* verti
 }
 
 
+Mesh::Mesh( unsigned int vertCount, unsigned int indexCount, Vertex3D_Lit* vertices, unsigned int* indices ) {
+	m_vbo.SetVertices(sizeof(Vertex3D_Lit), vertCount, vertices);
+	m_ibo.SetIndices(indexCount, indices);
+	m_instructions.startIndex = 0;
+	m_instructions.type = TRIANGLES;
+	m_instructions.vertexCount = m_vbo.GetVertexCount();
+	m_instructions.useIndices = true;
+	m_instructions.indexCount = m_ibo.GetIndexCount();
+	m_layout = &Vertex3D_Lit::LAYOUT;
+}
+
+
 Mesh::Mesh( unsigned int count,  Vertex3D_PCU* vertices ) {
 	m_vbo.SetVertices( sizeof(Vertex3D_PCU), count, vertices );
 	m_instructions.startIndex = 0;

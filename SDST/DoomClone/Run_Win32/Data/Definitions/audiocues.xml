@@ -1,11 +1,5 @@
 <audiocues>
 
-	<audiocue name="tank-shot">
-		<soundfile src="Data/Audio/tank_shot1.wav" />
-		<soundfile src="Data/Audio/tank_shot2.wav" />
-		<soundfile src="Data/Audio/tank_shot3.wav" />
-	</audiocue>
-
 	<audiocue name="bootStep">
 		<soundfile src="Data/Audio/Foot_Conc_BootRun01.wav" />
 		<soundfile src="Data/Audio/Foot_Conc_BootRun02.wav" />
@@ -20,5 +14,13 @@
 		<soundfile src="Data/Audio/Foot_Conc_BootRun11.wav" />
 		<soundfile src="Data/Audio/Foot_Conc_BootRun12.wav" />
 		<soundfile src="Data/Audio/Foot_Conc_BootRun13.wav" />
+	</audiocue>
+
+	<audiocue name="pistolShot">
+		<soundfile src="Data/Audio/pistol_shot.wav" />
+	</audiocue>
+
+	<audiocue name="bodyFall">
+		<soundfile src="Data/Audio/enemy_body_fall.wav" />
 	</audiocue>
 </audiocues>

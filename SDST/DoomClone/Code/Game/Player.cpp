@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------------------------------------------------
 Player::Player() 
-	: Entity(100)
+	: Entity(100, m_parentMap)
 {
 	m_gunSpriteSheet = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/weapons.png"), IntVector2(5,4));
 }
