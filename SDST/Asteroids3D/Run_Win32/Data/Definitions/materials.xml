@@ -35,4 +35,11 @@
 			<float name="burnAmount" value="1.0"/>
 		</properties>
 	</material>
+
+	<material name="debugRender" shader="debug">
+		<textures>
+			<texture slot="" path="Data/Images/white.png"/>
+		</textures>
+	</material>
+
 </materials>

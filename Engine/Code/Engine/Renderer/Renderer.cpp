@@ -465,6 +465,10 @@ void Renderer::EndFrame() {
 
 	CopyFrameBuffer(nullptr, m_currentCamera->m_frameBuffer);
 
+	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F11)) {
+		g_theRenderer->SaveScreenshot();
+	}
+
 	// "Present" the backbuffer by swapping the front (visible) and back (working) screen buffers
 	SwapBuffers( g_displayDeviceContext ); // Note: call this once at the end of each frame
 }
@@ -1416,7 +1420,7 @@ void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3
 	float bottomPivotOffset = pivot.y * sprite->GetDimensions().y;
 	float topPivotOffset = (1.f - pivot.y) * sprite->GetDimensions().y;
 
-	Vector3 forward = Vector3::CrossProduct(right, up);
+	Vector3 forward = Vector3::CrossProduct(right, up).GetNormalized();
 
 	Vector3 topLeft(		position.x + (leftPivotOffset  * right.x * scale.x),	position.y + (topPivotOffset * up.y * scale.y),		position.z + (leftPivotOffset  * right.z * scale.x) );
 	Vector3 bottomLeft(		position.x + (leftPivotOffset  * right.x * scale.x),	position.y - (bottomPivotOffset * up.y * scale.y),	position.z + (leftPivotOffset  * right.z * scale.x) );
@@ -1461,13 +1465,13 @@ void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3
 
 		vertices[4].color = tint;
 		vertices[4].normal = right * -1.f;
-		vertices[4].tangent = forward;
+		vertices[4].tangent = forward * -1.f;
 		vertices[4].position = bottomRight;
 		vertices[4].uv = Vector2(uvs.maxs.x, uvs.mins.y);
 
 		vertices[5].color = tint;
 		vertices[5].normal = right * -1.f;
-		vertices[5].tangent = forward;
+		vertices[5].tangent = forward * -1.f;
 		vertices[5].position = topRight;
 		vertices[5].uv = Vector2(uvs.maxs);
 		DrawMeshImmediate(vertices, 6, indices, 12, TRIANGLES);

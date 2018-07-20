@@ -7,6 +7,13 @@
 #include "Engine/Renderer/Renderer.hpp"
 
 
+struct LightComparisonData {
+	unsigned int index;
+	float weight;
+};
+
+
+
 //----------------------------------------------------------------------------------------------------------------
 GameMap::GameMap( Image const& mapImage ) {
 	m_dimensions = mapImage.GetDimensions();
@@ -420,6 +427,7 @@ void GameMap::Render() const {
 	m_forwardRenderPath->RenderSceneForCamera(m_playerCamera, scene);
 
 	for (unsigned int entityIndex = 0; entityIndex < m_entities.size(); entityIndex++) {
+		SetClosestLightsToPoint(Vector3(m_entities[entityIndex]->m_position.x, 0.5f, m_entities[entityIndex]->m_position.y));
 		m_entities[entityIndex]->Render();
 	}
 
@@ -447,6 +455,50 @@ void GameMap::RenderMinimap() const {
 		g_theRenderer->SetCameraToUI();
 		g_theRenderer->DrawTexturedAABB(AABB2(0.f, 0.f, minimapSize, minimapSize * Window::GetInstance()->GetAspectRatio()), *m_minimapCamera->m_frameBuffer->m_colorTarget, Vector2(1.f, 0.f), Vector2(0.f, 1.f), Rgba());
 	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void GameMap::SetClosestLightsToPoint( Vector3 const& point ) const {
+	
+	unsigned int numLights = (unsigned int) m_lights.size();
+	LightComparisonData* lights = new LightComparisonData[numLights];
+
+	// Get the distance to each light
+	for (unsigned int sceneLightIndex = 0; sceneLightIndex < numLights; sceneLightIndex++) {
+		const Light& light = *m_lights[sceneLightIndex];
+		lights[sceneLightIndex].index = sceneLightIndex;
+		if (light.m_isPointLight != 0.f) {
+			lights[sceneLightIndex].weight = light.m_intensity / ( 1.f + (light.m_attenuation * light.m_position.DistanceFrom(point)) );
+		}
+		else  {
+			lights[sceneLightIndex].weight = light.m_intensity;
+		}
+	}
+
+	// Sort by distance, i'm extremely lazy and am using a bubble sort for now. will improve when slow
+	for (unsigned int i = 0; i < numLights; i++) {
+		for (unsigned int j = 0; j < numLights - i - 1; j++) {
+			if (lights[j].weight < lights[j+1].weight) {
+				LightComparisonData temp = lights[j];
+				lights[j] = lights[j+1];
+				lights[j+1] = temp;
+			}
+		}
+	}
+
+	// Copy the closest 8 or all lights if there is less than 8
+	for (unsigned int i = 0; i < numLights; i++) {
+		int lightIndexToUse = lights[i].index;
+		g_theRenderer->SetLight(i, *m_lights[lightIndexToUse]);
+		if (i == MAX_LIGHTS - 1) {
+			delete lights;
+			return;
+		}
+	}	
+
+	delete[] lights;
+
 }
 
 

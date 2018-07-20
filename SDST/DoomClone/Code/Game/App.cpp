@@ -54,8 +54,8 @@ void App::Run() {
 
 		g_masterClock->BeginFrame();
 		Profiler::MarkFrame();
-		g_theRenderer->BeginFrame();
 		g_theInputSystem->BeginFrame();
+		g_theRenderer->BeginFrame();
 		g_audioSystem->BeginFrame();
 		DevConsole::GetInstance()->Update();
 		ProfilerWindow::GetInstance()->Update();
@@ -65,8 +65,8 @@ void App::Run() {
 		ProfilerWindow::GetInstance()->Render();
 		DevConsole::GetInstance()->Render();
 		g_audioSystem->EndFrame();
-		g_theInputSystem->EndFrame();
 		g_theRenderer->EndFrame();
+		g_theInputSystem->EndFrame();
 
 	}
 	DebugRenderShutdown();

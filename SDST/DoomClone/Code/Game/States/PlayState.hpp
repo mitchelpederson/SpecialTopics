@@ -51,6 +51,8 @@ private:
 	Stopwatch m_moveToNextLevelTimer;
 	unsigned int currentLevelInCampaign = 0;
 
+	SoundPlaybackID m_backgroundMusic;
+
 
 	void ProcessPlayerInput();
 	void ProcessInput();

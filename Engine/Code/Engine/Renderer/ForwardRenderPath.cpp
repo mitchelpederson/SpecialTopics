@@ -70,10 +70,6 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 	}
 
 	ApplyCameraEffects(camera);
-
-	if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_F11)) {
-		g_theRenderer->SaveScreenshot();
-	}
 }
 
 

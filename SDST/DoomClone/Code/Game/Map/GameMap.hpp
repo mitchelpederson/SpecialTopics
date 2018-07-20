@@ -58,6 +58,8 @@ private:
 	void	SortEntitiesByDistanceToPlayer();
 	void	DeleteDeadEntities();
 
+	void	SetClosestLightsToPoint( Vector3 const& point ) const;
+
 	std::vector<TileDefinition*> m_tiles;
 	std::vector<Entity*> m_entities;
 	IntVector2 m_dimensions;
@@ -69,6 +71,8 @@ private:
 	FirstPersonCamera* m_playerCamera = nullptr;
 
 	ForwardRenderPath* m_forwardRenderPath = nullptr;
+
+	std::vector<Light*> m_lights;
 
 	// LIGHTING
 

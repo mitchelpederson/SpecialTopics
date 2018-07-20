@@ -1,15 +1,17 @@
 #include "Game/App.hpp"
 #include "Game/GameCommon.hpp"
+#include "Game/GameDebug.hpp"
+
 #include "Engine/Renderer/Renderer.hpp"
+#include "Engine/Renderer/DebugRender.hpp"
 #include "Engine/InputSystem/InputSystem.hpp"
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Core/Time.hpp"
+#include "Engine/Core/Time.hpp"
+#include "Engine/Profiler/Profiler.hpp"
 #include "Engine/Blackboard.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
-#include "Engine/Core/Time.hpp"
-#include "Engine/Renderer/DebugRender.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
-#include "Game/GameDebug.hpp"
 
 typedef void (*windows_message_handler_cb)( unsigned int msg, size_t wparam, size_t lparam ); 
 
@@ -51,6 +53,7 @@ void App::Run() {
 	while (!g_isQuitting) {
 
 		g_masterClock->BeginFrame();
+		Profiler::MarkFrame();
 		g_theRenderer->BeginFrame();
 		g_theInputSystem->BeginFrame();
 		g_audioSystem->BeginFrame();
@@ -66,6 +69,7 @@ void App::Run() {
 	}
 	DebugRenderShutdown();
 	void (*fncptr)( unsigned int msg, size_t wparam, size_t lparam ) = GetMessages;
+	Profiler::MarkFrame();
 	Window::GetInstance()->UnregisterHandler(fncptr);
 }
 
@@ -76,6 +80,7 @@ void App::Run() {
 void App::Initialize() {
 	g_masterClock = new Clock();
 	g_theBlackboard = new Blackboard("Data/GameConfig.xml");
+	Profiler::Initialize();
 	g_theRenderer = new Renderer();
 	g_theInputSystem = new InputSystem();
 	g_audioSystem = new AudioSystem();

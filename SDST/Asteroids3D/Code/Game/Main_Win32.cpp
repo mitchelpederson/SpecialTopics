@@ -16,10 +16,10 @@ int WINAPI WinMain( HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR comman
 {
 
 	g_theApp = new App();
-	new Window(1280, 800, (void*) applicationInstanceHandle);
+	new Window(1280, 800, (void*) applicationInstanceHandle, "Asteroids3D");
 	g_theApp->Initialize();
 	g_theApp->Run();
-
+	
 	delete g_theApp;
 	return 0;
 }

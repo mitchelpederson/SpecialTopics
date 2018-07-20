@@ -52,8 +52,8 @@ void TheGame::Initialize() {
 	m_camera->SetProjection(Matrix44::MakeProjection(45.f, 16.f / 9.f, 0.1f, 100.f));	
 	m_camera->SetColorTarget(g_theRenderer->GetDefaultColorTarget());
 	m_camera->SetDepthStencilTarget(g_theRenderer->GetDefaultDepthTarget());
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("testPostProcessEffect"));
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("dashDistort"));
+	//m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("testPostProcessEffect"));
+	//m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("dashDistort"));
 	m_cameraLight = new Light();
 	//m_cameraLight->SetAsPointLight(m_camera->position, Rgba(), 1.f, 0.f);
 
@@ -305,7 +305,7 @@ void TheGame::Update() {
 	lightIntensity = ClampFloat(lightIntensity, 0.05f, 0.4f);
 
 	m_directional->SetAsDirectionalLight(Vector3(-10000.f, 0.f, 0.f), Vector3(-0.1f, 0.f, -1.f), Rgba(30, 170, 255, 255), lightIntensity, 0.f);
-	m_camera->Update(m_gameClock->frame.seconds);
+	m_camera->Update();
 	
 }
 

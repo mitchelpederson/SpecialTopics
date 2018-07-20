@@ -79,7 +79,7 @@ void main(void) {
 
 	mat4 tbn = mat4(vec4(surfaceTangent, 0), vec4(surfaceBitangent, 0), vec4(newNormal, 0), vec4(0,0,0,1));
 	surfaceNormal = normalize((tbn * vec4(surfaceNormal, 0)).xyz);
-	outColor = vec4(surfaceNormal, 1);
+	outColor = vec4((surfaceNormal + vec3(1)) * 0.5, 1);
 	return;
 	// calculate ambient light
 	vec3 surfaceLight = AMBIENT_COLOR.rgb * AMBIENT_INTENSITY;

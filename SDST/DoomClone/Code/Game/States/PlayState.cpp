@@ -24,7 +24,8 @@ void PlayState::Initialize() {
 
 	player = new Player();
 	LoadAndStartLevel(0);
-	//g_audioSystem->ActivateGlobalReverb();
+	g_audioSystem->ActivateGlobalReverb();
+	m_backgroundMusic = g_audioSystem->PlaySound(g_audioSystem->CreateOrGetSound("Data/Audio/killnazis.wav", false), true, 0.25f);
 
 }
 
@@ -39,6 +40,7 @@ void PlayState::OnEnter() {
 //----------------------------------------------------------------------------------------------------------------
 void PlayState::OnBeginExit() {
 	BeginFadeOut(0.5f);
+	g_audioSystem->StopSound(m_backgroundMusic);
 }
 
 
