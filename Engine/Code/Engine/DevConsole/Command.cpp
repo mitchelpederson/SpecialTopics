@@ -1,32 +1,36 @@
 #include "Engine/DevConsole/Command.hpp"
 #include "engine/DevConsole/DevConsole.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/ErrorWarningAssert.hpp"
 #include <map>
 #include <queue>
 #include <string>
+#include <fstream>
 
 typedef void (*command_cb)( const std::string& command ); 
 
-static std::map<std::string, command_cb> g_registeredCommands;
-
-
-std::map<std::string, command_cb> CommandRegistration::m_registeredCommands;
+std::vector<RegisteredCommand_T> CommandRegistration::m_registeredCommands;
 std::vector<std::string> CommandRegistration::m_history;
 
 
+//----------------------------------------------------------------------------------------------------------------
 Command::Command( const std::string& command ) : m_command(command) {
 	m_tokens = SplitString(m_command, ' ');
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Command::Command( Command& command ) : m_command(command.GetString()) {}
 Command::~Command() {}
 
+
+//----------------------------------------------------------------------------------------------------------------
 std::string Command::GetString() const {
 	return m_command;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 std::string Command::GetFirstToken() {
 	std::vector<std::string> tokens = SplitString(m_command, ' ');
 
@@ -35,30 +39,45 @@ std::string Command::GetFirstToken() {
 	return tokens[0];
 }
 
-void CommandRegistration::RegisterCommand( const std::string& name, command_cb callback ) {
-	m_registeredCommands[name] = callback;
+
+//----------------------------------------------------------------------------------------------------------------
+void CommandRegistration::RegisterCommand( const std::string& name, command_cb callback, const std::string& help ) {
+
+	for (unsigned int index = 0; index < m_registeredCommands.size(); index++) {
+		if (m_registeredCommands[index].command == name) {
+			ERROR_RECOVERABLE("Tried to add another command with the same name as [%s]", name.c_str());
+			return;
+		}
+	}
+
+	RegisteredCommand_T command;
+	command.command = name;
+	command.commandCallback = callback;
+	command.helpString = help;
+	m_registeredCommands.push_back(command);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void CommandRegistration::RunCommand( Command command ) {
 	m_history.push_back(command.GetString());
 	std::string firstToken = command.GetFirstToken();
 
-	std::map<std::string, command_cb>::iterator commandIterator = m_registeredCommands.find(firstToken);
+	for (unsigned int index = 0; index < m_registeredCommands.size(); index++) {
+		if (m_registeredCommands[index].command == firstToken) {
 
-	if (commandIterator == m_registeredCommands.end()) {
-		std::string output = "Could not find command: ";
-		output += firstToken;
-		DevConsole::Printf(Rgba(255, 0, 0, 255), output.c_str());
-		return;
+				m_registeredCommands[index].commandCallback(command.GetString());
+				return;
+		}
 	}
 
-	else {
-		commandIterator->second(command.GetString());
-	}
+	std::string output = "Could not find command: ";
+	output += firstToken;
+	DevConsole::Printf(Rgba(255, 0, 0, 255), output.c_str());
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Command::GetNextInt( int& arg ) {
 	arg = -1;
 
@@ -86,6 +105,7 @@ bool Command::GetNextInt( int& arg ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Command::GetNextRgba( Rgba& arg ) {
 
 	while (m_command[m_position] != '(') {
@@ -111,6 +131,8 @@ bool Command::GetNextRgba( Rgba& arg ) {
 	return true;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 bool Command::GetNextQuotedString( std::string& arg ) {
 	while (m_command[m_position] != '\"') {
 		if (m_command[m_position] == '\0') {
@@ -133,6 +155,43 @@ bool Command::GetNextQuotedString( std::string& arg ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Command CommandRegistration::GetPreviousCommand( int index ) {
 	return m_history.at(index);
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void CommandRegistration::SaveCommandHistory() {
+
+	std::fstream* commandHistoryFile = new std::fstream();
+	commandHistoryFile->open( "Log/command_history.txt", std::ios::out );
+
+	for ( unsigned int historyIndex = 0; historyIndex < m_history.size(); historyIndex++ ) {
+		*commandHistoryFile << m_history[ historyIndex ] << "\n";
+	}
+
+	commandHistoryFile->close();
+	delete commandHistoryFile;
+	commandHistoryFile = nullptr;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void CommandRegistration::LoadCommandHistory() {
+
+	std::fstream* commandHistoryFile = new std::fstream();
+	commandHistoryFile->open( "Log/command_history.txt", std::ios::in );
+
+	if (commandHistoryFile->is_open()) {
+		while ( !commandHistoryFile->eof() ) {
+			char buffer[256];
+			commandHistoryFile->getline( buffer, 255 );
+			m_history.push_back(buffer);
+		}
+	}
+
+	commandHistoryFile->close();
+	delete commandHistoryFile;
+	commandHistoryFile = nullptr;
 }

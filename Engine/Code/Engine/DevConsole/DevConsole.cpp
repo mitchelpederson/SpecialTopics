@@ -27,14 +27,21 @@ void GetInt( const std::string& command ) {
 
 //----------------------------------------------------------------------------------------------------------------
 void Help (const std::string& command ) {
-	Command com(command);
-	DevConsole::Printf(Rgba(0, 255, 0, 255), "Commands:");
-	DevConsole::Printf("printint [int]                - echoes an int");
-	DevConsole::Printf("quit                          - exits the game");
-	DevConsole::Printf("clear                         - clears the console");
-	DevConsole::Printf("help                          - shows this message");
-	DevConsole::Printf("echo_with_color (rgba) \"text\" - echoes the string in the given color");
-	DevConsole::Printf("save_log \"text\"               - saves a log to the given file path");
+
+	for (unsigned int i = 0; i < CommandRegistration::m_registeredCommands.size(); i++) {
+		for (unsigned int j = 0; j < CommandRegistration::m_registeredCommands.size() - 1; j++) {
+			std::string& before = CommandRegistration::m_registeredCommands[j].command;
+			std::string& after = CommandRegistration::m_registeredCommands[j+1].command;
+			if (before.compare( after ) > 0) {
+				std::swap( CommandRegistration::m_registeredCommands[j], CommandRegistration::m_registeredCommands[j+1] );
+			}
+		}
+	}
+
+	for (unsigned int index = 0; index < CommandRegistration::m_registeredCommands.size(); index++) {
+		RegisteredCommand_T const& comm = CommandRegistration::m_registeredCommands[index];
+		DevConsole::Printf("%s - %s", comm.command.c_str(), comm.helpString.c_str());
+	}
 }
 
 
@@ -94,13 +101,12 @@ DevConsole::DevConsole() {
 		Logger::AddHook( ProcessLoggerMessages, nullptr );
 	}
 
-	m_currentFont = g_theRenderer->CreateOrGetBitmapFont("Bisasam");
+	m_currentFont = g_theRenderer->CreateOrGetBitmapFont("Wolfenstein");
 
-	CommandRegistration::RegisterCommand("clear", Clear);
-	CommandRegistration::RegisterCommand("printint", GetInt);
-	CommandRegistration::RegisterCommand("help", Help);
-	CommandRegistration::RegisterCommand("echo_with_color", EchoWithColor);
-	CommandRegistration::RegisterCommand("save_log", SaveLog);
+	CommandRegistration::RegisterCommand("clear", Clear, "Clears the dev console" );
+	CommandRegistration::RegisterCommand("help", Help, "Show all help messages" );
+	CommandRegistration::RegisterCommand("echo_with_color", EchoWithColor, "Copies this message but in a new color" );
+	CommandRegistration::RegisterCommand("save_log", SaveLog, "Saves all console messages to a file" );
 
 
 	m_camera = new Camera();
@@ -181,21 +187,26 @@ void DevConsole::Update() {
 				m_currentCommandHistoryIndex = 0;
 			}
 
-			const Command& old = CommandRegistration::GetPreviousCommand(m_currentCommandHistoryIndex);
+			if (CommandRegistration::GetCommandHistorySize() > 0) {
+				const Command& old = CommandRegistration::GetPreviousCommand(m_currentCommandHistoryIndex);
 
-			m_inputBox.SetText(old.GetString());
+				m_inputBox.SetText(old.GetString());
+			}
 		}
 
 		if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_UP)) {
+
 			m_currentCommandHistoryIndex--;
 
-			if (m_currentCommandHistoryIndex < 0) {
+			if (m_currentCommandHistoryIndex < -1) {
 				m_currentCommandHistoryIndex = CommandRegistration::GetCommandHistorySize() - 1;
 			}
 
-			const Command& old = CommandRegistration::GetPreviousCommand(m_currentCommandHistoryIndex);
+			if (CommandRegistration::GetCommandHistorySize() > 0 && m_currentCommandHistoryIndex >= 0) {
+				const Command& old = CommandRegistration::GetPreviousCommand(m_currentCommandHistoryIndex);
 
-			m_inputBox.SetText(old.GetString());
+				m_inputBox.SetText(old.GetString());
+			}
 		}
 
 		if (g_theInputSystem->WasKeyJustPressed(InputSystem::KEYBOARD_ENTER)) {

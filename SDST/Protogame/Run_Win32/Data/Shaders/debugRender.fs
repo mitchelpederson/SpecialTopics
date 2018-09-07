@@ -7,6 +7,6 @@ out vec4 outColor;
 void main(void) {
 
 
-	outColor = passColor * IN_COLOR;
+	outColor = IN_COLOR;
 
 }

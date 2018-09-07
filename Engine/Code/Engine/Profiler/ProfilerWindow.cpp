@@ -27,8 +27,8 @@ void CloseProfiler( const std::string& command ) {
 void ProfilerWindow::Initialize() {
 	instance = new ProfilerWindow();
 
-	CommandRegistration::RegisterCommand("pf_open", OpenProfiler);
-	CommandRegistration::RegisterCommand("pf_close", CloseProfiler);
+	CommandRegistration::RegisterCommand("pf_open", OpenProfiler, "Opens the profiler window");
+	CommandRegistration::RegisterCommand("pf_close", CloseProfiler, "Closes the profiler window");
 }
 
 

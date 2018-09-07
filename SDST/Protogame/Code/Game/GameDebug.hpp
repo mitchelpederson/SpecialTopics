@@ -28,6 +28,6 @@ void DebugTimeScale( const std::string& command ) {
 void RegisterDebugTimeCommands() {
 	void (*pauseCB)( const std::string& command ) = DebugPause;
 	void (*timeScaleCB)( const std::string& command ) = DebugTimeScale;
-	CommandRegistration::RegisterCommand( "pause", pauseCB );
-	CommandRegistration::RegisterCommand( "time_scale", timeScaleCB );
+	CommandRegistration::RegisterCommand( "pause", pauseCB, "Pauses the game clock" );
+	CommandRegistration::RegisterCommand( "time_scale", timeScaleCB, "Sets the game clock's time scale" );
 }

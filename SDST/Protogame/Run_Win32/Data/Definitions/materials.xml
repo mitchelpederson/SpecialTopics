@@ -1,8 +1,15 @@
 <materials>
 
-	<material name="ship" shader="phong">
+	<material name="terrain" shader="lit">
 		<textures>
-			<texture slot="0" path="Data/Models/ship/ship-diffuse.jpg"/>
+			<texture slot="0" path="Data/Images/grass/grass01.png"/>
+			<texture slot="1" path="Data/Images/grass/grass01_n.png"/>
+		</textures>
+	</material>
+	<material name="water" shader="lit-scrolling">
+		<textures>
+			<texture slot="0" path="Data/Images/water.gif"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
 		</textures>
 	</material>
 
@@ -12,11 +19,18 @@
 		</textures>
 	</material>
 
-	<material name="asteroid" shader="phong">
+	<material name="player" shader="lit">
 		<textures>
 			<texture slot="0" path="Data/Images/white.png"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
 		</textures>
 	</material>
+
+	<material name="depth-only" shader="depth-only">
+		<textures>
+		</textures>
+	</material>
+
 
 	<material name="passthrough" shader="passthrough">
 		<textures>
@@ -34,5 +48,17 @@
 		<properties>
 			<float name="burnAmount" value="1.0"/>
 		</properties>
+	</material>
+
+	<material name="fog" shader="fog">
+		<textures>
+		</textures>
+		<properties>
+		</properties>
+	</material>
+
+	<material name="debugRender" shader="debug">
+		<textures>
+		</textures>
 	</material>
 </materials>

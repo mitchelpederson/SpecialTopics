@@ -81,8 +81,8 @@ void Profiler::Initialize() {
 		instance = new Profiler();
 	}
 
-	CommandRegistration::RegisterCommand("pf_pause", ProfilerPauseCommand);
-	CommandRegistration::RegisterCommand("pf_unpause", ProfilerUnpauseCommand);
+	CommandRegistration::RegisterCommand("pf_pause", ProfilerPauseCommand, "Pauses the profiler" );
+	CommandRegistration::RegisterCommand("pf_unpause", ProfilerUnpauseCommand, "Unpauses the profiler" );
 
 #endif
 }

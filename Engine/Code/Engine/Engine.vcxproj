@@ -273,7 +273,9 @@
     <ClCompile Include="Audio\AudioCueDefinition.cpp" />
     <ClCompile Include="Audio\AudioSystem.cpp" />
     <ClCompile Include="Blackboard.cpp" />
+    <ClCompile Include="Core\BytePacker.cpp" />
     <ClCompile Include="Core\Clock.cpp" />
+    <ClCompile Include="Core\Endianness.cpp" />
     <ClCompile Include="Core\ErrorWarningAssert.cpp" />
     <ClCompile Include="Core\Image.cpp" />
     <ClCompile Include="Core\Logger.cpp" />
@@ -310,6 +312,9 @@
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Vector4.cpp" />
+    <ClCompile Include="Net\Net.cpp" />
+    <ClCompile Include="Net\NetAddress.cpp" />
+    <ClCompile Include="Net\TCPSocket.cpp" />
     <ClCompile Include="Profiler\Profiler.cpp" />
     <ClCompile Include="Profiler\ProfilerReport.cpp" />
     <ClCompile Include="Profiler\ProfilerReportEntry.cpp" />
@@ -355,7 +360,9 @@
     <ClInclude Include="Audio\AudioCueDefinition.hpp" />
     <ClInclude Include="Audio\AudioSystem.hpp" />
     <ClInclude Include="Blackboard.hpp" />
+    <ClInclude Include="Core\BytePacker.hpp" />
     <ClInclude Include="Core\Clock.hpp" />
+    <ClInclude Include="Core\Endianness.hpp" />
     <ClInclude Include="Core\EngineCommon.hpp" />
     <ClInclude Include="Core\Entity.hpp" />
     <ClInclude Include="Core\ErrorWarningAssert.hpp" />
@@ -369,6 +376,7 @@
     <ClInclude Include="Core\Transform.hpp" />
     <ClInclude Include="Core\Vertex.hpp" />
     <ClInclude Include="Core\Window.hpp" />
+    <ClInclude Include="Core\WindowsCommon.hpp" />
     <ClInclude Include="Core\XmlUtilities.hpp" />
     <ClInclude Include="DevConsole\Command.hpp" />
     <ClInclude Include="DevConsole\DevConsole.hpp" />
@@ -395,6 +403,9 @@
     <ClInclude Include="Math\Vector2.hpp" />
     <ClInclude Include="Math\Vector3.hpp" />
     <ClInclude Include="Math\Vector4.hpp" />
+    <ClInclude Include="Net\Net.hpp" />
+    <ClInclude Include="Net\NetAddress.hpp" />
+    <ClInclude Include="Net\TCPSocket.hpp" />
     <ClInclude Include="Profiler\Profiler.hpp" />
     <ClInclude Include="Profiler\ProfilerReport.hpp" />
     <ClInclude Include="Profiler\ProfilerReportEntry.hpp" />
@@ -433,6 +444,7 @@
     <ClInclude Include="Renderer\Sprites\IsoSpriteAnimSet.hpp" />
     <ClInclude Include="Renderer\Sprites\Sprite.hpp" />
     <ClInclude Include="Renderer\Texture.hpp" />
+    <ClInclude Include="TCPSocket.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod.h" />
     <ClInclude Include="ThirdParty\fmod\fmod.hpp" />
     <ClInclude Include="ThirdParty\fmod\fmod_codec.h" />

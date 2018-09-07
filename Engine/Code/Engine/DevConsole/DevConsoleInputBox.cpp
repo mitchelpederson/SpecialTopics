@@ -16,7 +16,7 @@ void DevConsoleInputBox::Update() {
 
 void DevConsoleInputBox::Render() const {
 	g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, m_fontSize), Rgba(100, 100, 100, 100) );
-	g_theRenderer->DrawTextInBox2D( AABB2(0.f, 0.f, 100.f, m_fontSize), Vector2(0.f, 0.5f), m_characterStream, m_fontSize, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN );
+	g_theRenderer->DrawTextInBox2D( AABB2(0.f, 0.f, 100.f, m_fontSize), Vector2(0.f, 0.5f), m_characterStream, m_fontSize, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_OVERRUN );
 
 	if(m_blink) {
 		float glyphWidth = m_fontSize * 0.4f;

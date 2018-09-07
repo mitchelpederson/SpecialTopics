@@ -17,7 +17,7 @@ int WINAPI WinMain( HINSTANCE applicationInstanceHandle, HINSTANCE, LPSTR comman
 	commandLineString;
 
 	g_theApp = new App();
-	new Window(1280, 800, (void*) applicationInstanceHandle);
+	new Window(1280, 800, (void*) applicationInstanceHandle, "Protogame");
 	g_theApp->Initialize();
 	g_theApp->Run();
 

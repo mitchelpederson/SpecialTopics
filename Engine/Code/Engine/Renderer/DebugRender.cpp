@@ -23,8 +23,8 @@ void DebugRenderStartup( Renderer* renderer ) {
 	DebugRenderState::currentRenderer = renderer;
 	DebugRenderState::currentCamera = nullptr;
 	DebugRenderState::objects = new std::vector<DebugRenderObject>();
-	CommandRegistration::RegisterCommand("drclear", ClearCommand);
-	CommandRegistration::RegisterCommand("drtoggle", ToggleCommand);
+	CommandRegistration::RegisterCommand("drclear", ClearCommand, "Clears all debug draws");
+	CommandRegistration::RegisterCommand("drtoggle", ToggleCommand, "Toggles debug render");
 }
 
 

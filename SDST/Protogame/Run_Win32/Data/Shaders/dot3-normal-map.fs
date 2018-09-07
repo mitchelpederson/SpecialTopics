@@ -27,6 +27,8 @@ layout(binding = 1) uniform sampler2D gTexNormal;
 
 in vec2 passUV;
 in vec3 passNormal;
+in vec3 passTangent;
+in vec3 passBitangent;
 in vec4 passColor;
 in vec4 passWorldPos;
 
@@ -73,17 +75,12 @@ void main(void) {
 
 	// derived from a reference to my class notes and this forum post:
 	// https://www.opengl.org/discussion_boards/showthread.php/162857-Computing-the-tangent-space-in-the-fragment-shader
-	vec2 verticalDeltaUV = dFdy(passUV);
-	vec2 horizontalDeltaUV = dFdx(passUV);
-	vec3 horizontalDeltaPos = dFdx(passWorldPos.xyz);
-	vec3 verticalDeltaPos = dFdy(passWorldPos.xyz);
+	vec3 worldNormal = normalize(passNormal);
+	vec3 worldTangent = normalize(passTangent);
+	vec3 worldBitangent = normalize(passBitangent);
 
-	vec3 surfaceTangent = normalize( horizontalDeltaPos * verticalDeltaUV.t - verticalDeltaPos * horizontalDeltaUV.t );
-	vec3 surfaceBitangent = normalize( -horizontalDeltaPos * verticalDeltaUV.s + verticalDeltaPos * horizontalDeltaUV.s);
-	vec3 newNormal = normalize(cross(surfaceBitangent, surfaceTangent));
-
-	mat4 tbn = mat4(vec4(surfaceTangent, 0), vec4(surfaceBitangent, 0), vec4(newNormal, 0), vec4(0,0,0,1));
-	surfaceNormal = normalize((tbn * vec4(surfaceNormal, 0)).xyz);
+	mat3 tbn = mat3(worldTangent, worldBitangent, worldNormal);
+	surfaceNormal = tbn * surfaceNormal;
 
 	// calculate ambient light
 	vec3 surfaceLight = AMBIENT_COLOR.rgb * AMBIENT_INTENSITY;
@@ -95,7 +92,7 @@ void main(void) {
 		float lightDistance = length( LIGHT_POSITION[i] - passWorldPos.xyz );
 		vec3 directionToLight = normalize( LIGHT_POSITION[i] - passWorldPos.xyz );
 
-		float cosPhi = dot( normalize(passWorldPos.xyz - LIGHT_POSITION[i]), LIGHT_DIRECTION[i] );
+		float cosPhi = dot( normalize(passWorldPos.xyz - LIGHT_POSITION[i]), normalize(LIGHT_DIRECTION[i]) );
 		float cosHalfTheta = cos(radians(LIGHT_OUTER_ANGLE[i] * 0.5f));
 
 		if (cosPhi > cosHalfTheta) {

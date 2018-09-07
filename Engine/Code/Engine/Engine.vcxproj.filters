@@ -32,6 +32,9 @@
     <Filter Include="Physics">
       <UniqueIdentifier>{1dc2897e-dfb8-4601-a9e6-9dbed78dadc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Net">
+      <UniqueIdentifier>{4a1cc5d2-c7a4-40a8-ae8f-d3673a1ffe59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector2.cpp">
@@ -272,6 +275,21 @@
       <Filter>General</Filter>
     </ClCompile>
     <ClCompile Include="Core\Logger.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\Net.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\NetAddress.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\TCPSocket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Endianness.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\BytePacker.cpp">
       <Filter>General</Filter>
     </ClCompile>
   </ItemGroup>
@@ -559,6 +577,27 @@
       <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Core\Logger.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Net.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\WindowsCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetAddress.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="TCPSocket.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\TCPSocket.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Endianness.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\BytePacker.hpp">
       <Filter>General</Filter>
     </ClInclude>
   </ItemGroup>

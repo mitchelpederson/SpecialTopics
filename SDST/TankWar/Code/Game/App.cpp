@@ -13,6 +13,7 @@
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Profiler/Profiler.hpp"
 #include "Engine/Profiler/ProfilerWindow.hpp"
+#include "Engine/Net/Net.hpp"
 #include "Game/GameDebug.hpp"
 
 typedef void (*windows_message_handler_cb)( unsigned int msg, size_t wparam, size_t lparam ); 
@@ -70,6 +71,7 @@ void App::Run() {
 		g_theRenderer->EndFrame();
 
 	}
+	Net::Shutdown();
 	DebugRenderShutdown();
 	void (*fncptr)( unsigned int msg, size_t wparam, size_t lparam ) = GetMessages;
 	Window::GetInstance()->UnregisterHandler(fncptr);
@@ -89,6 +91,7 @@ void App::Initialize() {
 	g_audioSystem = new AudioSystem();
 	g_theGame = new TheGame();
 	g_theRenderer->Initialize();
+	Net::Startup();
 	g_theGame->Initialize();
 	Profiler::Initialize();
 	ProfilerWindow::Initialize();

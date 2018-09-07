@@ -1,5 +1,44 @@
 <shaders>
 
+	<shader name="lit" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/lit.vs" />
+		<fragment file="Data/Shaders/lit.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+	<shader name="lit-scrolling" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/lit.vs" />
+		<fragment file="Data/Shaders/lit-scrolling.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+
+	<shader name="depth-only" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/depth.vs" />
+		<fragment file="Data/Shaders/depth.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
+
+	<shader name="unlit-tex" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="true" compare="less" />
+	</shader>
 	<shader name="phong" cull="back" fill="solid" frontface="ccw" queue="opaque">
 		<vertex file="Data/Shaders/dot3.vs" />
 		<fragment file="Data/Shaders/dot3.fs" />
@@ -17,7 +56,7 @@
 			<color op="add" src="src_alpha" dest="inv_src_alpha" />
 			<alpha op="add" src="one" dest="one" />
 		</blend>
-		<depth write="true" compare="less" />
+		<depth write="false" compare="less" />
 	</shader>
 
 	<shader name="phong-normal-map" cull="back" fill="solid" frontface="ccw" queue="opaque">
@@ -83,6 +122,34 @@
 	<shader name="burn" cull="back" fill="solid" frontface="ccw" lit="false">
 		<vertex file="Data/Shaders/ScreenEffects/burn.vs" />
 		<fragment file="Data/Shaders/ScreenEffects/burn.fs" />
+		<blend>
+			<color op="multiply" src="src_alpha" dest="inv_src_alpha" />
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+
+	<shader name="ui-font" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/passthroughTex.vs" />
+		<fragment file="Data/Shaders/passthroughTex.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+	<shader name="ui" cull="back" fill="solid" frontface="ccw" queue="opaque">
+		<vertex file="Data/Shaders/passthrough.vs" />
+		<fragment file="Data/Shaders/passthrough.fs" />
+		<blend>
+			<color op="add" src="src_alpha" dest="inv_src_alpha" queue="opaque"/>
+			<alpha op="add" src="one" dest="one" />
+		</blend>
+		<depth write="false" compare="always" />
+	</shader>
+	<shader name="fog" cull="back" fill="solid" frontface="ccw" lit="false">
+		<vertex file="Data/Shaders/ScreenEffects/fog.vs" />
+		<fragment file="Data/Shaders/ScreenEffects/fog.fs" />
 		<blend>
 			<color op="multiply" src="src_alpha" dest="inv_src_alpha" />
 			<alpha op="add" src="one" dest="one" />

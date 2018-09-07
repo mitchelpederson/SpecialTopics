@@ -113,27 +113,29 @@ public:
 };
 
 class Renderer {
-public:
-
-
 
 public:
+
+	//----------------------------------------------------------------------------------------------------------------
+	// Infrastructure
 	Renderer();
-
 	void Initialize();
-
 	void BeginFrame();
 	void EndFrame();	
+	bool RenderStartup( void* hwnd );
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Generic draw calls
 	void Draw( DrawCall& drawCall );
 	void DrawRenderable( Renderable* renderable );
 	void DrawMesh( Mesh* mesh );
 	void DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimitive drawPrimitive );
 	void DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive );
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Shape draw calls
 	void DrawRegularPolygon(const Vector2& center, float radius, float degreesToRotate, int sides, Rgba color = Rgba(255, 255, 255, 255));
 	void DrawRegularPolygonLocal(const Vector2& center, float radius, int sides);
-	
 	void DrawLine(const Vector2& start, const Vector2& end, const Rgba& color);
 	void DrawLine(const Vector2& start, const Vector2& end);
 	void DrawAABB(const AABB2& bounds, const Rgba& color);
@@ -157,7 +159,6 @@ public:
 		, BitmapFont* font
 		, const Vector3& up = Vector3::UP
 		, const Vector3& right = Vector3::RIGHT);
-
 	void DrawTextInBox2D(const AABB2& drawBox
 		, const Vector2& alignment
 		, const std::string& asciiText
@@ -166,24 +167,24 @@ public:
 		, float aspectScale
 		, const BitmapFont* font
 		, TextDrawMode mode);
-
 	void DrawRegularPolygonDotted(const Vector2& center, float radius, float degreesToRotate, int sides, const Rgba& color);
 	void DrawVertexArray(const Vector2* vertices, int numberOfVertices, const Vector2& position, float radius, float degreesToRotate, const Rgba& color, bool isPolygon);
-
 	void DrawAABB3(const Vector3& center, const Vector3& halfSize, const Rgba& color);
 	void DrawLine( const Vector3& start, const Vector3& end, const Rgba& startColor, const Rgba& endColor );
-	void ActivateScreenShake(float intensity, float duration);
 
-	void SetLineWidth(float width) const;
+	//----------------------------------------------------------------------------------------------------------------
+	// Camera functions
 	void ClearScreen(const Rgba& color) const;
 	void SetOrtho(float left, float right, float bottom, float top, float nearVal, float farVal);
 	void SetProjection(const Matrix44& proj);
 	void SetCamera(Camera* cam);
 	void SetCameraToDefault();
 	void SetCameraToUI();
-	void UseTexture( unsigned int slot, const Texture& tex, Sampler* sampler = nullptr );
-	void UseCubemap( unsigned int slot, const CubeMap& cubeMap, Sampler* sampler = nullptr );
+	void ActivateScreenShake(float intensity, float duration);
 
+	//----------------------------------------------------------------------------------------------------------------
+	// GL 1 wrappers
+	void SetLineWidth(float width) const;
 	void PushMatrix() const;
 	void PopMatrix() const;
 	void TranslateMatrix(float x, float y, float z) const;
@@ -191,15 +192,28 @@ public:
 	void ScaleMatrix(float x, float y, float z) const;
 	void SetDrawColor(const Rgba& color) const;
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Shaders and Materials
 	void SetAdditiveBlending();
 	void SetAlphaBlending();
 	void SetLineWidth(float width);
-	void DisableTexture2D();
 	void UseShaderProgram(ShaderProgram* shader);
 	void SetShader( Shader* shader );
 	void BindRenderState();
 	void BindMaterial( Material const* material );
+	void UseCubemap( unsigned int slot, const CubeMap& cubeMap, Sampler* sampler = nullptr );
+	void EnableDepth( DepthCompare compare, bool shouldWrite );
+	void DisableDepth();
+	void ClearDepth( float depth = 1.f);
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Textures and samplers
+	Sampler* GetSamplerForMode( eSamplerModes mode = SAMPLER_NEAREST );
+	void DisableTexture2D();
+	void UseTexture( unsigned int slot, const Texture& tex, Sampler* sampler = nullptr );
+
+	//----------------------------------------------------------------------------------------------------------------
+	// Asset management functions
 	Texture* CreateOrGetTexture( const std::string& path );
 	CubeMap* CreateCubeMap( const std::string& path );
 	BitmapFont* CreateOrGetBitmapFont( const char* bitmapFontName );
@@ -208,16 +222,17 @@ public:
 	Texture* CreateRenderTarget( int width, int height, eTextureFormat fmt = TEXTURE_FORMAT_RGBA8 );
 	Mesh* CreateOrGetMesh( const std::string& path );
 	Material* GetMaterial( const std::string& name );
-
-	bool CopyFrameBuffer( FrameBuffer* dst, FrameBuffer* src );
 	void ReloadAllShaders();
-	bool RenderStartup( void* hwnd );
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Framebuffer management
+	bool CopyFrameBuffer( FrameBuffer* dst, FrameBuffer* src );
 	Texture* GetDefaultColorTarget();
 	Texture* GetDefaultDepthTarget();
 	FrameBuffer* GetDefaultFrameBuffer();
-	Sampler* GetSamplerForMode( eSamplerModes mode = SAMPLER_NEAREST );
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Enum conversions
 	static GLenum ToGLCompare( DepthCompare compare );
 	static GLenum ToGLCullMode( CullMode mode );
 	static GLenum ToGLWindOrder( WindOrder order );
@@ -226,10 +241,8 @@ public:
 	static GLenum ToGLBlendFactor( BlendFactor factor );
 	static GLenum ToGLDataType( RenderDataType type );
 
-	void EnableDepth( DepthCompare compare, bool shouldWrite );
-	void DisableDepth();
-	void ClearDepth( float depth = 1.f);
-
+	//----------------------------------------------------------------------------------------------------------------
+	// Uniform functions
 	void BindStandardUniforms();
 	void BindLayoutToProgram(VertexLayout const *layout);
 	void SetUniform( const std::string& name, Rgba* color, unsigned int size = 1 ) const;
@@ -237,6 +250,8 @@ public:
 	void SetUniform( const std::string& name, Vector3* vec3, unsigned int size = 1 ) const;
 	void SetUniform( const std::string& name, Vector4* vec4, unsigned int size = 1 ) const;
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Lighting functions
 	void SetAmbientLight( float intensity, const Rgba& color );
 	void SetPointLight( const Vector3& position, const Rgba& color, float intensity = 1.f, float attenuation = 0.f );
 	void SetPointLight( unsigned int index, const Vector3& position, const Rgba& color, float intensity = 1.f, float attenuation = 0.4f );
@@ -271,6 +286,8 @@ private:
 	AABB2 m_orthoBounds;
 
 	bool m_isScreenShaking;
+
+	BitmapFont* m_defaultFont = nullptr;
 
 	unsigned int default_vao;
 	//ShaderProgram* m_currentShaderProgram = nullptr;

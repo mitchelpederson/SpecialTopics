@@ -1,5 +1,4 @@
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include "Engine/Core/WindowsCommon.hpp"
 
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/Time.hpp"
@@ -36,6 +35,7 @@ HGLRC g_openGLRenderingContext;
 HMODULE g_GLLibrary = nullptr;
 
 
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLCompare( DepthCompare compare ) 
 {
 	switch(compare) {
@@ -52,6 +52,7 @@ GLenum Renderer::ToGLCompare( DepthCompare compare )
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLCullMode( CullMode mode ) {
 	switch (mode) {
 	case CULLMODE_BACK:		return GL_BACK;
@@ -60,6 +61,8 @@ GLenum Renderer::ToGLCullMode( CullMode mode ) {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLPolygonMode( FillMode mode ) {
 	switch (mode) {
 	case FILLMODE_SOLID:	return GL_FILL;
@@ -69,6 +72,8 @@ GLenum Renderer::ToGLPolygonMode( FillMode mode ) {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLWindOrder( WindOrder order ) {
 	switch (order) {
 	case WIND_CLOCKWISE:			return GL_CW;
@@ -77,6 +82,8 @@ GLenum Renderer::ToGLWindOrder( WindOrder order ) {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLBlendOp(BlendOp op) {
 	switch (op) {
 	case COMPARE_ADD:				return GL_FUNC_ADD;
@@ -89,6 +96,8 @@ GLenum Renderer::ToGLBlendOp(BlendOp op) {
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLBlendFactor( BlendFactor factor )  {
 	switch (factor) {
 	case BLEND_ONE:					return GL_ONE;
@@ -101,6 +110,7 @@ GLenum Renderer::ToGLBlendFactor( BlendFactor factor )  {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 GLenum Renderer::ToGLDataType( RenderDataType type ) {
 	switch (type) {
 	case RENDER_DATA_FLOAT:			return GL_FLOAT;
@@ -111,7 +121,7 @@ GLenum Renderer::ToGLDataType( RenderDataType type ) {
 }
 
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 static HGLRC CreateOldRenderContext( HDC hdc ) 
 {
 	// Setup the output to be able to render how we want
@@ -150,7 +160,7 @@ static HGLRC CreateOldRenderContext( HDC hdc )
 }
 
 
-//------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Creates a real context as a specific version (major.minor)
 static HGLRC CreateRealRenderContext( HDC hdc, int major, int minor ) 
 {
@@ -230,6 +240,7 @@ static HGLRC CreateRealRenderContext( HDC hdc, int major, int minor )
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 // Rendering startup - called after we have created our window
 // error checking has been removed for brevity, but you should check
 // the return values at each step.
@@ -267,7 +278,7 @@ bool Renderer::RenderStartup( void* hwnd )
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 Renderer::Renderer() : m_textures() {
 	m_isScreenShaking = false;
 
@@ -275,6 +286,7 @@ Renderer::Renderer() : m_textures() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::Initialize() {
 	glEnable( GL_BLEND );
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
@@ -296,6 +308,8 @@ void Renderer::Initialize() {
 	m_linearMipmapSampler->Create( SAMPLER_LINEAR_MIPMAP_LINEAR );
 	m_shadowSampler = new Sampler();
 	m_shadowSampler->Create( SAMPLER_SHADOW );
+
+	m_defaultFont = CreateOrGetBitmapFont("Wolfenstein");
 
 	m_defaultCamera = new Camera();
 	m_defaultUICamera = new Camera();
@@ -321,6 +335,7 @@ void Renderer::Initialize() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::BeginFrame() {
 
 	SetShader(m_defaultShader);
@@ -336,6 +351,7 @@ void Renderer::BeginFrame() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 GLenum GetGLDrawMode(DrawPrimitive mode) {
 	switch (mode) {
 	case LINES:
@@ -350,12 +366,15 @@ GLenum GetGLDrawMode(DrawPrimitive mode) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawRenderable( Renderable* renderable ) {
 	SetModelMatrix( renderable->GetModelMatrix() );
 	BindMaterial( renderable->GetMaterial() );
 	DrawMesh( renderable->GetMesh() );
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::Draw( DrawCall& drawCall ) {
 	SetModelMatrix( drawCall.m_model );
 	BindMaterial( drawCall.m_material );
@@ -363,6 +382,7 @@ void Renderer::Draw( DrawCall& drawCall ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::BindLightState() {
 	SetUniform("AMBIENT_COLOR", &m_ambientLightColor);
 	SetUniform("AMBIENT_INTENSITY", &m_ambientLightIntensity);
@@ -385,6 +405,7 @@ void Renderer::BindLightState() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMesh( Mesh* mesh ) {
 
 	glUseProgram(m_currentShader->GetProgram()->GetHandle());
@@ -428,6 +449,7 @@ void Renderer::DrawMesh( Mesh* mesh ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimitive drawPrimitive ) {
 
 	Matrix44 model;
@@ -440,6 +462,7 @@ void Renderer::DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimiti
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive ) {
 
 	Matrix44 model;
@@ -452,15 +475,14 @@ void Renderer::DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned in
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DisableTexture2D() {
 	glDisable(GL_TEXTURE_2D);
 }
 
 
-
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Calls SwapBuffers, may include debug rendering
-//
 void Renderer::EndFrame() {
 
 	CopyFrameBuffer(nullptr, m_currentCamera->m_frameBuffer);
@@ -474,9 +496,8 @@ void Renderer::EndFrame() {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Draws a quad
-//
 void Renderer::DrawAABB( const AABB2& bounds, const Rgba& color) {
 	UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthrough"));
 	Vertex3D_PCU vertices[6];
@@ -502,6 +523,7 @@ void Renderer::DrawAABB( const AABB2& bounds, const Rgba& color) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawQuad(const Matrix44& transform, const Vector2& dimensions, const Rgba& color) {
 	UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthrough"));
 	Vertex3D_PCU vertices[6];
@@ -535,6 +557,7 @@ void Renderer::DrawQuad(const Matrix44& transform, const Vector2& dimensions, co
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawQuad(const Vector3& topLeft, const Vector3& bottomLeft, const Vector3& topRight, const Vector3& bottomRight, const AABB2& uvs, const Rgba& color /* = Rgba() */) {
 
 	Vertex3D_PCU vertices[6];
@@ -560,7 +583,7 @@ void Renderer::DrawQuad(const Vector3& topLeft, const Vector3& bottomLeft, const
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 	const Vector2& texCoordsAtMins, const Vector2& texCoordsAtMaxs, const Rgba& tint ) {
 	Vertex3D_PCU vertices[6];
@@ -592,10 +615,8 @@ void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 } 
 
 
-
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Draws a regular polygon around a center point
-//
 void Renderer::DrawRegularPolygon(const Vector2& center, float radius, float degreesToRotate, int sides, Rgba color) {
 
 	Vertex3D_PCU* vertices = new Vertex3D_PCU[2 * sides];
@@ -628,6 +649,7 @@ void Renderer::DrawRegularPolygon(const Vector2& center, float radius, float deg
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawRegularPolygonLocal(const Vector2& center, float radius, int sides) {
 
 	/*Vertex3D_PCU* vertices = new Vertex3D_PCU[2 * (sides - 1)];
@@ -657,9 +679,8 @@ void Renderer::DrawRegularPolygonLocal(const Vector2& center, float radius, int 
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Sets the screen shake values 
-//
 void Renderer::ActivateScreenShake(float intensity, float duration) {
 	/*m_isScreenShaking = true;
 	m_screenShakeIntensity = intensity;
@@ -669,9 +690,8 @@ void Renderer::ActivateScreenShake(float intensity, float duration) {
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Draws a single line from point to point
-//
 void Renderer::DrawLine(const Vector2& start, const Vector2& end, const Rgba& color) {
 
 	Vertex3D_PCU vertices[2];
@@ -685,9 +705,8 @@ void Renderer::DrawLine(const Vector2& start, const Vector2& end, const Rgba& co
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Draws a regular polygon but only every other side
-//
 void Renderer::DrawRegularPolygonDotted(const Vector2& center, float radius, float degreesToRotate, int sides, const Rgba& color) {
 
 	/*Vertex3D_PCU* vertices = new Vertex3D_PCU[2 * (sides - 1)];
@@ -719,9 +738,8 @@ void Renderer::DrawRegularPolygonDotted(const Vector2& center, float radius, flo
 }
 
 
-//-----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------
 // Draws a given mesh in the form of an array of vertices
-//
 void Renderer::DrawVertexArray(const Vector2* vertices, int numberOfVertices, const Vector2& position, float radius, float degreesToRotate, const Rgba& color, bool isPolygon) {
 	/*
 	glPushMatrix();
@@ -750,18 +768,20 @@ void Renderer::DrawVertexArray(const Vector2* vertices, int numberOfVertices, co
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetLineWidth(float width) const {
 	UNIMPLEMENTED();
 	//glLineWidth( width );
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::ClearScreen(const Rgba& color) const {
 	glClear( GL_COLOR_BUFFER_BIT );
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetOrtho(float left, float right, float bottom, float top, float nearVal, float farVal) {
 	/*glLoadIdentity();
 	glOrtho(left, right, bottom, top, nearVal, farVal);*/
@@ -770,47 +790,61 @@ void Renderer::SetOrtho(float left, float right, float bottom, float top, float 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::PushMatrix() const {
 	//glPushMatrix();
 	UNIMPLEMENTED();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::PopMatrix() const {
 	//glPopMatrix();
 	UNIMPLEMENTED();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::TranslateMatrix(float x, float y, float z) const {
 	//glTranslatef(x, y, z);
 	UNIMPLEMENTED();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::ScaleMatrix(float x, float y, float z) const {
 	//glScalef(x, y, z);
 	UNIMPLEMENTED();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::RotateMatrix(float x, float y, float z, float w) const {
 	//glRotatef(x, y, z, w);
 	UNIMPLEMENTED();
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetDrawColor(const Rgba& color) const {
 	//glColor4ub(color.r, color.b, color.g, color.a);
 	UNIMPLEMENTED();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetAdditiveBlending() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetAlphaBlending() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Texture* Renderer::CreateOrGetTexture( const std::string& path ) {
 
 		
@@ -828,12 +862,14 @@ Texture* Renderer::CreateOrGetTexture( const std::string& path ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetLineWidth(float width) {
 	//glLineWidth(width);
 	UNIMPLEMENTED();
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 BitmapFont* Renderer::CreateOrGetBitmapFont(const char* bitmapFontName) {
 
 	std::string path("Data/Fonts/" + std::string(bitmapFontName) + ".png");
@@ -852,6 +888,7 @@ BitmapFont* Renderer::CreateOrGetBitmapFont(const char* bitmapFontName) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 ShaderProgram* Renderer::CreateOrGetShaderProgram( const char* shaderName ) {
 
 
@@ -878,12 +915,15 @@ ShaderProgram* Renderer::CreateOrGetShaderProgram( const char* shaderName ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::UseShaderProgram(ShaderProgram* shader) {
 	if (shader != nullptr) {
 		m_defaultShader->SetProgram( shader );
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawText2D( const Vector2& drawMins,
 						   const std::string& asciiText,
 						   float cellHeight,
@@ -912,6 +952,7 @@ void Renderer::DrawText2D( const Vector2& drawMins,
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawText(const Vector3& position , const std::string& asciiText , float cellHeight , const Rgba& tint , float aspectScale , BitmapFont* font , const Vector3& up /* = Vector3::UP  */, const Vector3& right /* = Vector3::RIGHT */) {
 	for (unsigned int character = 0; character < asciiText.length(); character++) {
 
@@ -936,6 +977,7 @@ void Renderer::DrawText(const Vector3& position , const std::string& asciiText ,
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawTextInBox2D(const AABB2& drawBox, const Vector2& alignment, const std::string& asciiText, 
 					 float cellHeight, const Rgba& tint, float aspectScale, const BitmapFont* font, TextDrawMode mode) {
 
@@ -1017,6 +1059,7 @@ void Renderer::DrawTextInBox2D(const AABB2& drawBox, const Vector2& alignment, c
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::ReloadAllShaders() {
 
 	std::map<std::string, ShaderProgram*>::iterator it = m_loadedShaders.begin();
@@ -1038,6 +1081,7 @@ void Renderer::ReloadAllShaders() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::LoadBuiltInShaders() {
 	ShaderProgram* invalid = new ShaderProgram();
 	char* invalidVertShaderText = "#version 420 core\nin vec3 POSITION;\nvoid main (void) {\ngl_Position = vec4(POSITION, 1);}";
@@ -1047,11 +1091,13 @@ void Renderer::LoadBuiltInShaders() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetProjection(const Matrix44& proj) {
 	m_currentCamera->SetProjection(proj);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawAABB3(const Vector3& center, const Vector3& halfSize, const Rgba& color) {
 
 	UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/passthrough"));
@@ -1127,11 +1173,10 @@ void Renderer::DrawAABB3(const Vector3& center, const Vector3& halfSize, const R
 	}
 
 	DrawMeshImmediate(vertices, 36, TRIANGLES);
-
-
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawCube(const Vector3& center, const Vector3& size
 	, const Rgba& color /* = Rgba(255, 255, 255, 255) */
 	, const AABB2& topUVs /* = Vector2::ZERO_TO_ONE */
@@ -1253,6 +1298,7 @@ void Renderer::DrawCube(const Vector3& center, const Vector3& size
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetCamera(Camera* cam) {
 	m_currentCamera = cam;
 	m_currentCamera->Finalize();
@@ -1261,21 +1307,27 @@ void Renderer::SetCamera(Camera* cam) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetViewport( int x, int y, int width, int height ) {
 	glViewport(x, y, width, height);
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetCameraToDefault() {
 	SetCamera(m_defaultCamera);
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetCameraToUI() {
 	SetCamera(m_defaultUICamera);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::UseTexture( unsigned int slot, const Texture& tex, Sampler* sampler ) {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindSampler(slot, GetSamplerForMode( tex.GetSamplerMode() )->GetHandle());
@@ -1290,6 +1342,7 @@ void Renderer::UseTexture( unsigned int slot, const Texture& tex, Sampler* sampl
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::UseCubemap( unsigned int slot, const CubeMap& cubeMap, Sampler* sampler ) {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	if (sampler == nullptr) {
@@ -1302,6 +1355,7 @@ void Renderer::UseCubemap( unsigned int slot, const CubeMap& cubeMap, Sampler* s
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Texture* Renderer::CreateRenderTarget( int width, int height, eTextureFormat fmt )
 {
 	Texture* tex = new Texture();
@@ -1310,6 +1364,7 @@ Texture* Renderer::CreateRenderTarget( int width, int height, eTextureFormat fmt
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Renderer::CopyFrameBuffer( FrameBuffer *dst, FrameBuffer *src )
 {
 	// we need at least the src.
@@ -1360,18 +1415,25 @@ bool Renderer::CopyFrameBuffer( FrameBuffer *dst, FrameBuffer *src )
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Texture* Renderer::GetDefaultColorTarget() {
 	return m_defaultColorTarget;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Texture* Renderer::GetDefaultDepthTarget() {
 	return m_defaultDepthTarget;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 FrameBuffer* Renderer::GetDefaultFrameBuffer() {
 	return m_defaultFrameBuffer;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::EnableDepth( DepthCompare compare, bool shouldWrite ) {
 	// enable/disable the dest
 	//glEnable( GL_DEPTH_TEST ); 
@@ -1383,7 +1445,7 @@ void Renderer::EnableDepth( DepthCompare compare, bool shouldWrite ) {
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DisableDepth() 
 {
 	// You can glDisable( GL_DEPTH_TEST ) as well, 
@@ -1394,6 +1456,7 @@ void Renderer::DisableDepth()
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::ClearDepth( float depth )
 {
 	glDepthMask( GL_TRUE );
@@ -1402,6 +1465,7 @@ void Renderer::ClearDepth( float depth )
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale, const Rgba& tint /* = Rgba() */, bool isLit /* = false */) {
 	
 	if (isLit) {
@@ -1479,11 +1543,10 @@ void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3
 	else {
 		DrawQuad(topLeft, bottomLeft, topRight, bottomRight, sprite->GetUVs(), tint);
 	}
-	
-
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetUniform(const std::string& name, Rgba* color, unsigned int size ) const {
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	
@@ -1499,6 +1562,7 @@ void Renderer::SetUniform(const std::string& name, Rgba* color, unsigned int siz
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetUniform(const std::string& name, float* param, unsigned int size) const {
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
@@ -1507,6 +1571,7 @@ void Renderer::SetUniform(const std::string& name, float* param, unsigned int si
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetUniform( const std::string& name, Vector3* vec3, unsigned int size ) const {
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
@@ -1514,6 +1579,8 @@ void Renderer::SetUniform( const std::string& name, Vector3* vec3, unsigned int 
 	}
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetUniform( const std::string& name, Vector4* vec4, unsigned int size ) const {
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
@@ -1522,6 +1589,7 @@ void Renderer::SetUniform( const std::string& name, Vector4* vec4, unsigned int 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetShader( Shader* shader ) {
 	if (nullptr == shader) {
 		shader = m_defaultShader;
@@ -1531,6 +1599,7 @@ void Renderer::SetShader( Shader* shader ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::BindRenderState() {
 	RenderState* renderState = m_currentShader->GetRenderState();
 
@@ -1557,6 +1626,7 @@ void Renderer::BindRenderState() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::BindLayoutToProgram(VertexLayout const *layout) {
 	unsigned int attribCount = layout->GetAttributeCount();
 	for (unsigned int attribIndex = 0; attribIndex < attribCount; attribIndex++) {
@@ -1575,6 +1645,7 @@ void Renderer::BindLayoutToProgram(VertexLayout const *layout) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Mesh* Renderer::CreateOrGetMesh( const std::string& path ) {
 	std::map< const std::string, Mesh* >::const_iterator meshIterator = m_loadedMeshes.find(path);
 
@@ -1593,12 +1664,14 @@ Mesh* Renderer::CreateOrGetMesh( const std::string& path ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetAmbientLight( float intensity, const Rgba& color ) {
 	m_ambientLightColor = color;
 	m_ambientLightIntensity = intensity;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetPointLight( const Vector3& position, const Rgba& color, float intensity, float attenuation ) {
 	m_lightPositions[0] = position;
 	m_lightColors[0] = color;
@@ -1608,6 +1681,8 @@ void Renderer::SetPointLight( const Vector3& position, const Rgba& color, float 
 	m_isShadowcasting[0] = 0.f;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetPointLight( unsigned int index, const Vector3& position, const Rgba& color, float intensity, float attenuation ) {
 	if (index >= MAX_LIGHTS) {
 		ERROR_AND_DIE("Tried to set a point light index higher than max!");
@@ -1622,6 +1697,8 @@ void Renderer::SetPointLight( unsigned int index, const Vector3& position, const
 	m_isShadowcasting[index] = 0.f;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetDirectionalLight( unsigned int index, const Vector3& position, const Vector3& direction, const Rgba& color, float intensity, float attenuation ) {
 	if (index >= MAX_LIGHTS) {
 		ERROR_AND_DIE("Tried to set a directional light index higher than max!");
@@ -1638,6 +1715,7 @@ void Renderer::SetDirectionalLight( unsigned int index, const Vector3& position,
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetSpotLight( unsigned int index
 	, const Vector3& position
 	, const Vector3& direction
@@ -1664,6 +1742,7 @@ void Renderer::SetSpotLight( unsigned int index
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetLight( unsigned int index, const Light& light ) {
 	m_lightPositions[index]		= light.m_position;
 	m_lightDirections[index]	= light.m_direction;
@@ -1683,12 +1762,14 @@ void Renderer::SetLight( unsigned int index, const Light& light ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetSpecular( float power, float amount ) {
 	m_specularPower = power;
 	m_specularAmount = amount;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::LoadShaders() {
 
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
@@ -1709,6 +1790,7 @@ void Renderer::LoadShaders() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::LoadMaterials() {
 
 	tinyxml2::XMLDocument* doc = new tinyxml2::XMLDocument();
@@ -1735,7 +1817,7 @@ void Renderer::LoadMaterials() {
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 Shader* Renderer::GetShader( const std::string& name ) {
 	std::map< std::string, Shader* >::const_iterator it = m_shaders.find(name);
 	if (it != m_shaders.end()) {
@@ -1747,6 +1829,7 @@ Shader* Renderer::GetShader( const std::string& name ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 Material* Renderer::GetMaterial( const std::string& name ) {
 	std::map< std::string, Material* >::const_iterator it = m_materials.find(name);
 	if (it != m_materials.end()) {
@@ -1758,6 +1841,7 @@ Material* Renderer::GetMaterial( const std::string& name ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::DisableAllLights() {
 	for (int i = 0; i < MAX_LIGHTS; i++) {
 		m_lightIntensities[i] = 0.f;
@@ -1765,6 +1849,7 @@ void Renderer::DisableAllLights() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::BindMaterial( Material const* material ) {
 	SetShader(material->shader);
 
@@ -1786,16 +1871,19 @@ void Renderer::BindMaterial( Material const* material ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetModelMatrix( const Matrix44& modelMatrix ) {
 	m_modelMatrix = modelMatrix;
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 CubeMap* Renderer::CreateCubeMap( const std::string& path ) {
 	return new CubeMap(path);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SaveScreenshot() {
 
 	unsigned int width = Window::GetInstance()->GetWidth();
@@ -1824,12 +1912,15 @@ void Renderer::SaveScreenshot() {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetFog( float fogFactor, float maxFogDistance, Rgba const& fogColor ) {
 	m_fogColor = fogColor;
 	m_fogFactor = fogFactor;
 	m_fogMaxDistance = maxFogDistance;
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Sampler* Renderer::GetSamplerForMode( eSamplerModes mode ) {
 	switch ( mode ) {
 		case SAMPLER_NEAREST:

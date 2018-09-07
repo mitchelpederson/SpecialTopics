@@ -1,0 +1,19 @@
+<audiocues>
+
+	<audiocue name="tank-shot">
+		<soundfile src="Data/Audio/tank_shot1.wav" />
+		<soundfile src="Data/Audio/tank_shot2.wav" />
+		<soundfile src="Data/Audio/tank_shot3.wav" />
+	</audiocue>
+
+	<audiocue name="explosion">
+		<soundfile src="Data/Audio/explosion1.wav" />
+		<soundfile src="Data/Audio/explosion3.wav" />
+		<soundfile src="Data/Audio/explosion4.wav" />
+		<soundfile src="Data/Audio/explosion5.wav" />
+		<soundfile src="Data/Audio/explosion6.wav" />
+		<soundfile src="Data/Audio/explosion7.wav" />
+		<soundfile src="Data/Audio/explosion8.wav" />
+	</audiocue>
+
+</audiocues>

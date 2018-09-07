@@ -44,7 +44,7 @@ void QuitGame( const std::string& command ) {
 //
 void TheGame::Initialize() {
 
-	CommandRegistration::RegisterCommand("quit", QuitGame);
+	CommandRegistration::RegisterCommand("quit", QuitGame, "Quits the game immediately" );
 
 	g_theRenderer->CreateOrGetBitmapFont("Courier");
 	terrain = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/Terrain_8x8.png"), IntVector2(8,8));
@@ -53,8 +53,6 @@ void TheGame::Initialize() {
 	m_camera->SetProjection(Matrix44::MakeProjection(45.f, 16.f / 9.f, 0.1f, 100.f));	
 	m_camera->SetColorTarget(g_theRenderer->GetDefaultColorTarget());
 	m_camera->SetDepthStencilTarget(g_theRenderer->GetDefaultDepthTarget());
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("testPostProcessEffect"));
-	m_camera->cameraEffects.push_back(g_theRenderer->GetMaterial("dashDistort"));
 	m_cameraLight = new Light();
 
 	m_gameClock = new Clock(g_masterClock);
@@ -145,7 +143,7 @@ void TheGame::Update() {
 		ProcessInput();
 	}
 
-	m_camera->Update(m_gameClock->frame.seconds);
+	m_camera->Update();
 	
 }
 
@@ -168,7 +166,10 @@ void TheGame::Render() {
 	m_forwardRenderPath->RenderSceneForCamera( m_camera, m_scene );
 
 	g_theRenderer->SetCameraToUI();
+
+	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(80, 50,0, 255));
 	DebugRenderSet3DCamera(m_camera);
+
 }
 
 

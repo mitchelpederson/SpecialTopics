@@ -36,16 +36,26 @@ private:
 };
 
 
+struct RegisteredCommand_T {
+	std::string command;
+	command_cb commandCallback;
+	std::string helpString;
+};
+
+
+
 class CommandRegistration {
 
 public:
-	static void RegisterCommand( const std::string& name, command_cb callback );
+	static void RegisterCommand( const std::string& name, command_cb callback, const std::string& help );
 	static void RunCommand( Command command );
 	static Command GetPreviousCommand( int index );
 	static int GetCommandHistorySize() { return (int) m_history.size(); }
+	static void SaveCommandHistory();
+	static void LoadCommandHistory();
 
-private:
-	static std::map<std::string, command_cb> m_registeredCommands;
+public:
+	static std::vector<RegisteredCommand_T> m_registeredCommands;
 	static std::vector<std::string> m_history;
 };
 

@@ -55,12 +55,12 @@ void Logger::Startup() {
 	isRunning = true;
 	threadHandle = CreateNewThread("Logger", LogWorker);
 
-	CommandRegistration::RegisterCommand("log_flush_test", LogFlushTest);
-	CommandRegistration::RegisterCommand("log_add_filter", AddTagToFilter);
-	CommandRegistration::RegisterCommand("log_remove_filter", RemoveTagFromFilter);
-	CommandRegistration::RegisterCommand("log_hide_all", HideAllLogs);
-	CommandRegistration::RegisterCommand("log_show_all", EnableAllLogs);
-	CommandRegistration::RegisterCommand("log_test", LogTest);
+	CommandRegistration::RegisterCommand("log_flush_test", LogFlushTest, "Immediately prints a message to the log" );
+	CommandRegistration::RegisterCommand("log_add_filter", AddTagToFilter, "Adds a new tag to the current filter" );
+	CommandRegistration::RegisterCommand("log_remove_filter", RemoveTagFromFilter, "Removes a tag from the filter" );
+	CommandRegistration::RegisterCommand("log_hide_all", HideAllLogs, "Clears the log filter and sets it to whitelist mode" );
+	CommandRegistration::RegisterCommand("log_show_all", EnableAllLogs, "Clears the log filter and sets it to blacklist mode" );
+	CommandRegistration::RegisterCommand("log_test", LogTest, "Log stress test" );
 
 	AddHook(WriteToFile, recentLogFile);
 	AddHook(WriteToFile, timestampedLogFile);
