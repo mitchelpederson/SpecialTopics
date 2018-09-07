@@ -7,6 +7,7 @@
 #include "Engine/Math/Vector2.hpp"
 #include "Engine/Blackboard.hpp"
 #include "Engine/DevConsole/DevConsole.hpp"
+#include "Engine/DevConsole/RemoteCommandService.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
 #include "Engine/Profiler/Profiler.hpp"
 #include "Engine/Profiler/ProfilerWindow.hpp"
@@ -105,6 +106,7 @@ void App::Run() {
 		g_theRenderer->BeginFrame();
 		g_theInputSystem->BeginFrame();
 		g_audioSystem->BeginFrame();
+		RemoteCommandService::ProcessFrame();
 		DevConsole::GetInstance()->Update();
 		ProfilerWindow::GetInstance()->Update();
 		g_theGame->Update();
@@ -149,6 +151,7 @@ void App::Initialize() {
 	Window::GetInstance()->RegisterHandler(fncptr);
 
 	new DevConsole();
+	new RemoteCommandService();
 	
 	m_timeAtStartup = GetCurrentTimeSeconds();
 	CommandRegistration::LoadCommandHistory();

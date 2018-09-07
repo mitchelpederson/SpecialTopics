@@ -292,6 +292,9 @@
     <ClCompile Include="Core\BytePacker.cpp">
       <Filter>General</Filter>
     </ClCompile>
+    <ClCompile Include="DevConsole\RemoteCommandService.cpp">
+      <Filter>DevConsole</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -599,6 +602,9 @@
     </ClInclude>
     <ClInclude Include="Core\BytePacker.hpp">
       <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="DevConsole\RemoteCommandService.hpp">
+      <Filter>DevConsole</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

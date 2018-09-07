@@ -2,6 +2,7 @@
 
 #include "Engine/Net/NetAddress.hpp"
 #include "Engine/Core/WindowsCommon.hpp"
+#include "Engine/Core/BytePacker.hpp"
 
 
 class TCPSocket {
@@ -23,7 +24,10 @@ public:
 
 	bool IsClosed() const;
 
+	bool HasFatalError();
+
 public:
 	SOCKET socketHandle;
 	NetAddress_T address;
+	BytePacker buffer;
 };

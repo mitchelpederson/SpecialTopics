@@ -93,8 +93,8 @@ bool TCPSocket::Listen( uint16_t port, unsigned int maxQueueSize ) {
 	}
 
 	// Make this socket non-blocking
-	//u_long nonblocking = 0;
-	//::ioctlsocket( socketHandle, FIONBIO, &nonblocking );
+	u_long nonblocking = 1;
+	::ioctlsocket( socketHandle, FIONBIO, &nonblocking );
 
 	// Bind my address to a socket
 	sockaddr_storage saddr;
@@ -138,4 +138,17 @@ TCPSocket* TCPSocket::Accept() {
 		return nullptr;
 	}
 
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool TCPSocket::HasFatalError() {
+	int errorCode = ::WSAGetLastError();
+
+	if (errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == WSAECONNRESET ) {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
