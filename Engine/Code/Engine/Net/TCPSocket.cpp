@@ -125,7 +125,7 @@ bool TCPSocket::Listen( uint16_t port, unsigned int maxQueueSize ) {
 //----------------------------------------------------------------------------------------------------------------
 TCPSocket* TCPSocket::Accept() {
 	sockaddr_storage saddr;
-	int addrlen;	
+	int addrlen = sizeof(sockaddr_storage);	
 	SOCKET otherSocket = ::accept( socketHandle, (sockaddr*) &saddr, &addrlen );
 
 	if ( otherSocket != INVALID_SOCKET ) {
@@ -145,7 +145,7 @@ TCPSocket* TCPSocket::Accept() {
 bool TCPSocket::HasFatalError() {
 	int errorCode = ::WSAGetLastError();
 
-	if (errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == WSAECONNRESET ) {
+	if (errorCode == 0 || errorCode == WSAEWOULDBLOCK || errorCode == WSAEMSGSIZE || errorCode == WSAECONNRESET ) {
 		return false;
 	}
 	else {

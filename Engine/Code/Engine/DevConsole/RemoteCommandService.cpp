@@ -28,9 +28,18 @@ void JoinHostCommand( std::string const& command ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
+void RCSSendChatMessage( std::string const& command ) {
+	std::vector<std::string> tokens = SplitString( command, ' ' );
+	RemoteCommandService::SendChatToHost( tokens[1] );
+	
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 RemoteCommandService::RemoteCommandService() {
 	CommandRegistration::RegisterCommand("rc_host", BeginHostingCommand, "Disconnects any rcs connections and sets up as a host");
 	CommandRegistration::RegisterCommand("rc_join", JoinHostCommand, "Disconnects any rcs connections and tries to connect to a new host");
+	CommandRegistration::RegisterCommand("rc_chat", RCSSendChatMessage, "Sends a message to the host");
 }
 
 
@@ -57,17 +66,26 @@ void RemoteCommandService::ProcessFrameAsHost() {
 
 	// Check for new clients
 	TCPSocket* newClient = m_localServerSocket.Accept();
-	while ( newClient != nullptr ) {
+	if ( newClient != nullptr && !newClient->HasFatalError() ) {
 		m_remoteClientConnections.push_back( newClient );
-		newClient = m_localServerSocket.Accept();
+		DevConsole::Printf("Someone connected!");
+		//newClient = m_localServerSocket.Accept();
+	}
+	else {
+		if (newClient->HasFatalError()) {
+			DevConsole::Printf("Failed to accept socket");
+		}
 	}
 
 	// Check for new messages from all clients
 	for ( unsigned int index = 0; index < m_remoteClientConnections.size(); index++ ) {
-		char* buffer[256];
-		m_remoteClientConnections[index]->Receive( buffer, 255 );
-		buffer[255] = '\0';
-		DevConsole::Printf("%s", buffer);
+		char buffer[256];
+		if (m_remoteClientConnections[index]->Receive( buffer, 255 ) > 0) {
+			if (::WSAGetLastError() == 0) {
+				buffer[255] = '\0';
+				DevConsole::Printf("%s", buffer);
+			}
+		}
 	}
 }
 
@@ -95,8 +113,10 @@ void RemoteCommandService::ConnectToHost( NetAddress_T const& otherAddr ) {
 	DisconnectAll();
 
 	if ( m_remoteServerSocket.Connect( otherAddr ) ) {
+		DevConsole::Printf("Connected to host");
 		char const* str = "Hi";
 		m_remoteServerSocket.Send(str, 3);
+		m_isClient = true;
 	}
 }
 
@@ -119,4 +139,12 @@ void RemoteCommandService::DisconnectAll() {
 
 	m_isHosting = false;
 	m_isClient = false;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void RemoteCommandService::SendChatToHost( std::string const& message ) {
+	if (m_isClient) {
+		m_remoteServerSocket.Send(message.c_str(), message.size());	
+	}
 }

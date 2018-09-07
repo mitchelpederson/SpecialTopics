@@ -1,2 +1,33 @@
 rc_host
 quit
+
+rc_host
+quit
+
+rc_host
+a01_test_server
+net_print_local_ip
+
+rc_join 192.168.1.70:29283
+
+rc_host
+
+rc_host
+quit
+
+rc_host
+
+rc_host
+
+rc_host
+iqtu
+
+rc_join 192.168.1.70:29283
+
+rc_join 192.168.1.70:29283
+
+rc_host
+quit
+
+rc_host
+quit

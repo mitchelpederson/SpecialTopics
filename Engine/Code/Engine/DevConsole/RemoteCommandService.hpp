@@ -20,11 +20,15 @@ public:
 	
 	static void ProcessFrame();
 
+	static void SendChatToHost( std::string const& message );
+
 
 private:
 
 	static void ProcessFrameAsHost();
 	static void ProcessFrameAsClient();
+
+
 
 	static TCPSocket m_localServerSocket;
 	static TCPSocket m_remoteServerSocket;
