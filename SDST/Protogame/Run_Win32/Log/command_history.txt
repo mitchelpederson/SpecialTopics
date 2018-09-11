@@ -77,3 +77,5 @@ udp_send 10.8.128.15:10084 aaaaasdf
 udp_send 10.8.128.15:10084 a
 udp_send 10.8.128.15:10084 aa
 udp_send 10.8.128.15:10084 aa
+
+a01_test_server
