@@ -291,6 +291,7 @@
     <ClCompile Include="DevConsole\Command.cpp" />
     <ClCompile Include="DevConsole\DevConsole.cpp" />
     <ClCompile Include="DevConsole\DevConsoleInputBox.cpp" />
+    <ClCompile Include="DevConsole\RCSWidget.cpp" />
     <ClCompile Include="DevConsole\RemoteCommandService.cpp" />
     <ClCompile Include="InputSystem\AnalogJoystick.cpp" />
     <ClCompile Include="InputSystem\InputSystem.cpp" />
@@ -384,6 +385,7 @@
     <ClInclude Include="DevConsole\Command.hpp" />
     <ClInclude Include="DevConsole\DevConsole.hpp" />
     <ClInclude Include="DevConsole\DevConsoleInputBox.hpp" />
+    <ClInclude Include="DevConsole\RCSWidget.hpp" />
     <ClInclude Include="DevConsole\RemoteCommandService.hpp" />
     <ClInclude Include="InputSystem\AnalogJoystick.hpp" />
     <ClInclude Include="InputSystem\InputSystem.hpp" />

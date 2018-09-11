@@ -4,6 +4,7 @@
 #include "Engine/Renderer/BitmapFont.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/DevConsole/DevConsoleInputBox.hpp"
+#include "Engine/DevConsole/RCSWidget.hpp"
 #include <string.h>
 #include <vector>	
 
@@ -24,7 +25,7 @@ public:
 	void Open();
 	void Close();
 	void ToggleOpen();
-	void RunCommand(std::string commandString);
+	void RunCommand( std::string commandString );
 	static void Clear( const std::string& command );
 	static void SaveLog( const std::string& command );
 
@@ -61,6 +62,7 @@ private:
 	std::vector<Message> m_messages;
 
 	DevConsoleInputBox m_inputBox;
+	RCSWidget m_rcsWidget;
 
 	int m_currentCommandHistoryIndex = -1;
 };

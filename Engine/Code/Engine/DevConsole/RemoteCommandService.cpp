@@ -148,3 +148,25 @@ void RemoteCommandService::SendChatToHost( std::string const& message ) {
 		m_remoteServerSocket.Send(message.c_str(), message.size());	
 	}
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool RemoteCommandService::IsConnected() {
+	return m_isClient;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool RemoteCommandService::IsHost() {
+	return m_isHosting;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+std::vector<NetAddress_T> RemoteCommandService::GetClientAddresses() {
+	std::vector<NetAddress_T> addrs;
+	for ( unsigned int index = 0; index < m_remoteClientConnections.size(); index++ ) {
+		addrs.push_back( m_remoteClientConnections[index]->address );
+	}
+	return addrs;
+}

@@ -301,6 +301,9 @@
     <ClCompile Include="Net\Socket.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+    <ClCompile Include="DevConsole\RCSWidget.cpp">
+      <Filter>DevConsole</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -617,6 +620,9 @@
     </ClInclude>
     <ClInclude Include="Net\Socket.hpp">
       <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="DevConsole\RCSWidget.hpp">
+      <Filter>DevConsole</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

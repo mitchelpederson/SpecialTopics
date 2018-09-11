@@ -284,6 +284,8 @@ void DevConsole::ProcessTypingInput() {
 		m_inputBox.InputCharacter(' ');
 	}
 
+	m_rcsWidget.Update();
+
 }
 
 
@@ -301,6 +303,8 @@ void DevConsole::Render() const {
 			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, 100.f, (m_messages.size() - messageIndex + 1.f) * m_fontSize);
 			g_theRenderer->DrawTextInBox2D( messageBoxBounds, Vector2(0.f, 0.5f), m_messages[messageIndex].message, m_fontSize, m_messages[messageIndex].color, 0.4f, m_currentFont, TEXT_DRAW_OVERRUN );
 		}
+
+		m_rcsWidget.Render();
 
 		g_theRenderer->SetShader(nullptr);
 		m_inputBox.Render();

@@ -79,3 +79,23 @@ udp_send 10.8.128.15:10084 aa
 udp_send 10.8.128.15:10084 aa
 
 a01_test_server
+
+a01_test_server
+quit
+
+help
+rc_host
+quit
+
+
+
+
+
+
+
+
+rc_host
+quit
+
+rc_join 192.168.1.149:29283
+quit

@@ -111,7 +111,7 @@ NetAddress_T NetAddress_T::GetLocal( unsigned int serviceNumber ) {
 
 			char out[256];
 			inet_ntop( ipv4->sin_family, &(ipv4->sin_addr), out, 256 );
-			DevConsole::Printf( "Local address: %s:$u", out, ipv4->sin_port );
+			//DevConsole::Printf( "Local address: %s:$u", out, ipv4->sin_port );
 			return NetAddress_T((sockaddr*) ipv4);
 		}
 
@@ -160,7 +160,7 @@ void GetAddressExample( std::string const& command ) {
 			char out[256];
 			inet_ntop( ipv4->sin_family, &(ipv4->sin_addr), out, 256 );
 			//Logger::PrintTaggedf( "Net", "My address: %s", out );
-			DevConsole::Printf( "My address: %s", out );
+			//DevConsole::Printf( "My address: %s", out );
 		}
 
 		iter = iter->ai_next;
@@ -205,7 +205,7 @@ bool GetAddressForHost( sockaddr* out, int* out_addrlen, char const* hostname, c
 			char out[256];
 			inet_ntop( ipv4->sin_family, &(ipv4->sin_addr), out, 256 );
 			//Logger::PrintTaggedf( "Net", "My address: %s", out );
-			DevConsole::Printf( "My address: %s", out );
+			//DevConsole::Printf( "My address: %s", out );
 			foundOne = true;
 			break;
 		}
@@ -215,4 +215,27 @@ bool GetAddressForHost( sockaddr* out, int* out_addrlen, char const* hostname, c
 
 	::freeaddrinfo( result );
 	return foundOne;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+std::string NetAddress_T::to_string() const {
+
+	std::string out = "";
+
+	sockaddr_in addr;
+	size_t size;
+	ToSockaddr( (sockaddr*) &addr, &size );
+
+	out += std::to_string(addr.sin_addr.S_un.S_un_b.s_b1);
+	out += ".";
+	out += std::to_string(addr.sin_addr.S_un.S_un_b.s_b2);
+	out += ".";
+	out += std::to_string(addr.sin_addr.S_un.S_un_b.s_b3);
+	out += ".";
+	out += std::to_string(addr.sin_addr.S_un.S_un_b.s_b4);
+	out += ":";
+	out += std::to_string( ::ntohs(addr.sin_port) );
+
+	return out;
 }
