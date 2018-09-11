@@ -16,7 +16,7 @@
 #include "Engine/Renderer/RenderSceneGraph.hpp"
 #include "Engine/Renderer/CubeMap.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
-
+#include "Engine/Net/UDPSocket.hpp"
 
 
 
@@ -59,6 +59,8 @@ public:
 	Clock* m_gameClock;
 	Material* particleMaterial = nullptr;
 	SpriteSheet* terrain = nullptr;
+
+	UDPTest m_udp;
 
 
 private:

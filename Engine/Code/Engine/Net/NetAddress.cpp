@@ -181,7 +181,7 @@ bool GetAddressForHost( sockaddr* out, int* out_addrlen, char const* hostname, c
 	addrinfo hints;
 	memset( &hints, 0, sizeof(hints) );
 	hints.ai_family = AF_INET;			// IPv4 address
-	hints.ai_socktype = SOCK_STREAM;	// TCP socket (SOCK_DGRAM for UDP)
+	hints.ai_socktype = SOCK_STREAM | SOCK_DGRAM;	// TCP socket (SOCK_DGRAM for UDP)
 										// hints.ai_flags = AI_PASSIVE;		// an address we can host on;
 										// hints.ai_flags |= FINDADDR_NUMERIC_ONLY; // will speed up this function since it won't have to look up the address
 

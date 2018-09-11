@@ -155,6 +155,24 @@ bool Command::GetNextQuotedString( std::string& arg ) {
 }
 
 
+bool Command::GetNextString( std::string& arg ) {
+
+	unsigned int start = m_position + 1;
+	m_position++;
+
+	while (m_command[m_position] != ' ') {
+		if (m_command[m_position] == '\0') {
+			break;
+		}
+		m_position++;
+	}
+
+
+	arg = m_command.substr(start, m_position - start);
+	return true;
+}
+
+
 //----------------------------------------------------------------------------------------------------------------
 Command CommandRegistration::GetPreviousCommand( int index ) {
 	return m_history.at(index);

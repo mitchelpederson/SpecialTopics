@@ -315,7 +315,9 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Net\Net.cpp" />
     <ClCompile Include="Net\NetAddress.cpp" />
+    <ClCompile Include="Net\Socket.cpp" />
     <ClCompile Include="Net\TCPSocket.cpp" />
+    <ClCompile Include="Net\UDPSocket.cpp" />
     <ClCompile Include="Profiler\Profiler.cpp" />
     <ClCompile Include="Profiler\ProfilerReport.cpp" />
     <ClCompile Include="Profiler\ProfilerReportEntry.cpp" />
@@ -407,7 +409,9 @@
     <ClInclude Include="Math\Vector4.hpp" />
     <ClInclude Include="Net\Net.hpp" />
     <ClInclude Include="Net\NetAddress.hpp" />
+    <ClInclude Include="Net\Socket.hpp" />
     <ClInclude Include="Net\TCPSocket.hpp" />
+    <ClInclude Include="Net\UDPSocket.hpp" />
     <ClInclude Include="Profiler\Profiler.hpp" />
     <ClInclude Include="Profiler\ProfilerReport.hpp" />
     <ClInclude Include="Profiler\ProfilerReportEntry.hpp" />

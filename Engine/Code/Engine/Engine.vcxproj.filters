@@ -295,6 +295,12 @@
     <ClCompile Include="DevConsole\RemoteCommandService.cpp">
       <Filter>DevConsole</Filter>
     </ClCompile>
+    <ClCompile Include="Net\UDPSocket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\Socket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -605,6 +611,12 @@
     </ClInclude>
     <ClInclude Include="DevConsole\RemoteCommandService.hpp">
       <Filter>DevConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\UDPSocket.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\Socket.hpp">
+      <Filter>Net</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -12,12 +12,38 @@
 #include "Engine/Core/Rgba.hpp"
 #include "Engine/Core/Image.hpp"
 #include "Engine/Audio/AudioSystem.hpp"
+#include "Engine/Net/NetAddress.hpp"
+#include "Engine/Net/UDPSocket.hpp"
 #include "Game/TheGame.hpp"
 #include "Game/GameCommon.hpp"
 
 
 TheGame* TheGame::m_instance = nullptr;
 extern bool g_isQuitting;
+
+
+//----------------------------------------------------------------------------------------------------------------
+void TestUDPStart( std::string const& command ) {
+	g_theGame->m_udp.start();
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void TestUDPSend( std::string const& command ) {
+	Command comm(command);
+
+	std::string str;
+	comm.GetNextString(str);
+	comm.GetNextString(str);
+
+	NetAddress_T addr(str.c_str());
+
+	std::string msg;
+	comm.GetNextString(msg);
+
+	g_theGame->m_udp.send_to(addr, msg.c_str(), msg.size());
+}
+
 
 //-----------------------------------------------------------------------------------------------
 // Constructor, set to first wave and initial spawn
@@ -45,6 +71,9 @@ void QuitGame( const std::string& command ) {
 void TheGame::Initialize() {
 
 	CommandRegistration::RegisterCommand("quit", QuitGame, "Quits the game immediately" );
+	CommandRegistration::RegisterCommand("udp_send", TestUDPSend, "test UDP sending");
+	CommandRegistration::RegisterCommand("udp_start", TestUDPStart, "startup UDP test socket");
+
 
 	g_theRenderer->CreateOrGetBitmapFont("Courier");
 	terrain = new SpriteSheet(g_theRenderer->CreateOrGetTexture("Data/Images/Terrain_8x8.png"), IntVector2(8,8));
@@ -144,6 +173,7 @@ void TheGame::Update() {
 	}
 
 	m_camera->Update();
+	m_udp.update();
 	
 }
 

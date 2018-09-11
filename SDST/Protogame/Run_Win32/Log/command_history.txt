@@ -31,3 +31,49 @@ quit
 
 rc_host
 quit
+
+udp_start
+udp_send 10.8.128.15:10084 hello
+quit
+
+udp_start
+udp_send 10.8.128.15:10084 hello
+quit
+
+udp_start
+udp_send 10.8.128.15:10084 hello
+udp_send 10.8.128.15:10084 hel
+udp_send 10.8.128.15:10084 hello
+quit
+
+udp_start
+udp_send 10.8.128.15:10084 hello
+
+udp_start
+udp_send 10.8.128.15:10084 hello
+udp_send 10.8.128.15:10084 he
+quit
+
+udp_send 10.8.128.15:10084 hello
+udp_start
+udp_send 10.8.128.15:52428 aaa
+udp_send 10.8.128.15:10084 aaa
+udp_send 10.8.128.15:10084 aaa
+
+udp_start
+udp_send 10.8.128.15:10084 aaa
+udp_send 10.8.128.15:10084 aaa
+udp_start
+udp_send 10.8.128.15:10084 aaa
+
+udp_start
+udp_send 10.8.128.15:10084 aaa
+quit
+
+udp_start
+udp_send 10.8.128.15:10084 aaa
+udp_send 10.8.128.15:10084 aaa
+udp_send 10.8.128.15:10084 aaaaasdf
+udp_send 10.8.128.15:10084 a
+udp_send 10.8.128.15:10084 aa
+udp_send 10.8.128.15:10084 aa
