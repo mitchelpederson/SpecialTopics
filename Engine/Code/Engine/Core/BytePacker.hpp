@@ -25,13 +25,38 @@ public:
 	void SetEndianness( eEndianness endianness );
 	void SetReadableByteCount( size_t byteCount );
 
-	bool WriteBytes( size_t byteCount, void const* data );
-	size_t ReadBytes( void* out_data, size_t maxByteCount );
-	size_t WriteSize( size_t size ); // returns bytes used
-	size_t ReadSize( size_t* out_size ); // returns bytes read, fills out_size
+	bool	WriteBytes( size_t byteCount, void const* data );
+	size_t	ReadBytes( void* out_data, size_t maxByteCount );
+	size_t	WriteSize( size_t size );							// returns bytes used
+	size_t	ReadSize( size_t* out_size );						// returns bytes read, fills out_size
+	bool	WriteString( char const* str );						// see notes for encoding
+	size_t	ReadString( char* out_str, size_t maxByteSize );
 
-	bool WriteString( char const* str );	// see notes for encoding
-	size_t ReadString( char* out_str, size_t maxByteSize );
+	// We should have a templated write and read value to reduce code redundancy.
+	// Reason being that we can have many values of different sizes that only need
+	// a different value in the size fields of both called functions.
+	template< typename T > 
+	bool WriteValue( T value ) {
+
+		if ( m_endianness != GetEndiannessForCurrentPlatform() ) {
+			ToEndianness( sizeof(T), &value, m_endianness );
+		}
+
+		return WriteBytes( sizeof(T), &value );
+	}
+
+
+	template< typename T >
+	size_t ReadValue( T* out_data ) {
+
+		size_t returnedValue = ReadBytes( out_data, sizeof(T) );
+
+		if ( m_endianness != GetEndiannessForCurrentPlatform() ) {
+			ToEndianness( sizeof(T), out_data, m_endianness );
+		}
+
+		return returnedValue;
+	}
 
 	void ResetWriteHead();		// Sets write head and read head to 0
 	void ResetReadHead();		// Sets just the read head to 0
@@ -41,6 +66,7 @@ public:
 	size_t GetWrittenByteCount() const;
 	size_t GetRemainingWritableByteCount() const;
 	size_t GetRemainingReadableByteCount() const;
+	byte_t* GetBuffer() const;
 
 
 private:

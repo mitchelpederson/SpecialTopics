@@ -174,6 +174,12 @@ bool Command::GetNextString( std::string& arg ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
+std::string Command::GetRemainingString() const {
+	return m_command.substr( m_position, m_command.size() - m_position );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 Command CommandRegistration::GetPreviousCommand( int index ) {
 	return m_history.at(index);
 }

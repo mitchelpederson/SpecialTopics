@@ -3,7 +3,7 @@
 
 
 //----------------------------------------------------------------------------------------------------------------
-TCPSocket::TCPSocket() {
+TCPSocket::TCPSocket() : recvBuffer( BIG_ENDIAN ) {
 	
 }
 
@@ -53,9 +53,13 @@ bool TCPSocket::Connect( NetAddress_T const& addr ) {
 		return false;
 	}
 
+	// Make this socket non-blocking
+	u_long nonblocking = 1;
+	::ioctlsocket( socketHandle, FIONBIO, &nonblocking );
+
 	// Attempt to connect
 	int connectResult = ::connect( socketHandle, (sockaddr*) &saddr, (int) addrlen );
-	if ( connectResult == SOCKET_ERROR ) {
+	if ( HasFatalError() ) {
 
 		int errorCode = ::WSAGetLastError();
 		::closesocket( socketHandle );
@@ -68,14 +72,14 @@ bool TCPSocket::Connect( NetAddress_T const& addr ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
-size_t TCPSocket::Send( void const* data, size_t byteSize ) {
-	return (size_t) ::send( socketHandle, (char const*) data, (int) byteSize, 0 );
+int TCPSocket::Send( void const* data, size_t byteSize ) {
+	return  ::send( socketHandle, (char const*) data, (int) byteSize, 0 );
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
-size_t TCPSocket::Receive( void* buffer, size_t maxByteSize ) {
-	return (size_t) ::recv( socketHandle, (char*) buffer, (int) maxByteSize, 0 );
+int TCPSocket::Receive( void* buffer, size_t maxByteSize ) {
+	return ::recv( socketHandle, (char*) buffer, (int) maxByteSize, 0 );
 }
 
 

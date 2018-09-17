@@ -99,3 +99,47 @@ quit
 
 rc_join 192.168.1.149:29283
 quit
+
+a01_test_connect 192.168.1.70:12345
+rc_join 192.168.1.70:29283
+quit
+
+rc_join 192.168.1.70:29283
+rc_join 192.168.1.70:29283
+quit
+
+rc_join 192.168.1.70:29283
+quit
+
+rc_host
+rc 0 aasdf
+rc aa
+rc 0 asdkfjlaa
+rc 0 help
+quit
+
+rc_host
+rc 0 asdf
+quit
+
+rc_host
+rc 0 help
+quit
+
+rc_host
+rc 0 help
+quit
+
+rc_host
+rc 0 help
+
+quit
+
+rc_host
+rc 0 help
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+help
+quit

@@ -19,8 +19,8 @@ public:
 	
 	void Close();
 
-	size_t Send( void const* data, size_t byteSize );
-	size_t Receive( void* buffer, size_t maxByteSize );
+	int Send( void const* data, size_t byteSize );
+	int Receive( void* buffer, size_t maxByteSize );
 
 	bool IsClosed() const;
 
@@ -29,5 +29,5 @@ public:
 public:
 	SOCKET socketHandle;
 	NetAddress_T address;
-	BytePacker buffer;
+	BytePacker recvBuffer;
 };

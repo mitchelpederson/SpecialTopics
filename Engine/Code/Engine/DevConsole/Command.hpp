@@ -18,6 +18,7 @@ public:
 
 	std::string GetFirstToken();
 	std::string GetString() const;
+	std::string GetRemainingString() const;
 
 	bool GetNextInt( int& arg );
 	bool GetNextFloat( float& arg );

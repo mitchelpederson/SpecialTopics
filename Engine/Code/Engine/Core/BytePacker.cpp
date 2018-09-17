@@ -6,12 +6,15 @@
 BytePacker::BytePacker( eEndianness endianness /* = LITTLE_ENDIAN */, eBytePackerOptions options /* = (BYTEPACKER_OWNS_MEMORY | BYTEPACKER_CAN_GROW) */ ) 
 	: m_endianness( endianness )
 	, m_options( options )
+	, m_data( new byte_t[ 16 ] )
+	, m_dataByteCount( 16 )
 {}
 
 
 //----------------------------------------------------------------------------------------------------------------
 BytePacker::BytePacker( size_t bufferSize, eEndianness endianness /* = LITTLE_ENDIAN */, eBytePackerOptions options /* = BYTEPACKER_OWNS_MEMORY */ ) 
 	: m_endianness( endianness )
+	, m_data( new byte_t[ bufferSize ] )
 	, m_dataByteCount( bufferSize )
 	, m_options( options )
 {}
@@ -111,9 +114,9 @@ bool BytePacker::WriteBytes( size_t byteCount, void const* data ) {
 
 		byte_t* temp = m_data;
 
-		m_data = new byte_t[ m_dataByteCount + byteCount ];
+		m_data = new byte_t[ m_dataByteCount * 2 ];
 		memcpy( m_data, temp, m_dataByteCount );
-		m_dataByteCount += byteCount;
+		m_dataByteCount *= 2;
 
 		delete[] temp;
 	}
@@ -136,8 +139,8 @@ size_t BytePacker::ReadBytes( void* out_data, size_t maxByteCount ) {
 	}
 
 	// If the max byte count would extend past the write head, shrink it
-	if (m_writeHeadByteIndex - m_readHeadByteIndex > GetRemainingWritableByteCount()) {
-		maxByteCount = m_writeHeadByteIndex - m_readHeadByteIndex;
+	if ( maxByteCount > GetRemainingReadableByteCount()) {
+		maxByteCount = GetRemainingReadableByteCount();
 	}
 
 	// Copy the maximum from the read head position
@@ -185,7 +188,7 @@ size_t BytePacker::ReadString( char* out_str, size_t maxByteSize ) {
 		ReadBytes(&out_str[charIndex], 1);
 		charIndex++;
 	}
-	out_str[charIndex] = '\0';
+	out_str[length] = '\0';
 	return charIndex;
 }
 
@@ -242,4 +245,10 @@ size_t BytePacker::GetRemainingWritableByteCount() const {
 //----------------------------------------------------------------------------------------------------------------
 size_t BytePacker::GetRemainingReadableByteCount() const {
 	return m_dataByteCount - m_readHeadByteIndex - 1;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+byte_t* BytePacker::GetBuffer() const {
+	return m_data;
 }
