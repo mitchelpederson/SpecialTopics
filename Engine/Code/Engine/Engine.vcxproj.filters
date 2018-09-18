@@ -304,6 +304,9 @@
     <ClCompile Include="DevConsole\RCSWidget.cpp">
       <Filter>DevConsole</Filter>
     </ClCompile>
+    <ClCompile Include="Net\NetSession.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -623,6 +626,15 @@
     </ClInclude>
     <ClInclude Include="DevConsole\RCSWidget.hpp">
       <Filter>DevConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetSession.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetMessage.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetConnection.hpp">
+      <Filter>Net</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -143,3 +143,115 @@ rc_join 192.168.1.70:29283
 rc help
 help
 quit
+
+rc_join 192.168.1.70:29283
+rc help
+
+
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+ 0 help
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+0 help
+
+rc_join 192.168.1.70:29283
+rc help
+0 help
+
+rc_host
+help
+rc 0 help
+quit
+
+rc_join 192.168.1.70:29283
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+
+help
+rc help
+
+rc
+requires a command to send
+rc 0 help
+
+rchelp
+rc help
+
+
+
+
+rc "help"
+
+
+hel
+
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+rca help
+help
+hel
+hel
+help
+quit
+
+rc_host
+hel
+help
+help
+help
+rc help
+rc 0 help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+ut_color:filename \[max_depth=0.1 units_per_pixel=.001][-]: Converts depth map to normal map
+rocess_path[-]: Print the name of the currently running process.
+090c0]src::filename \[dst:filename][-]: Trims the alpha p
+able profiling
+eryone, including me.
+[-] [9090c0]<host::addr>[-]: Join a specific address.  If it fails, will host at the given port.
+ the title of the game window.
+pnp_add_map[-] [9090c0]uint:internal_port uint:external_port[-]: Add a UDP port mapping to my local address.
+quit
+
+rc_join 192.168.1.70:29283
+help 
+rc help
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+fff00]rcs_join[-] [9090c0]<host::addr>[-]: Join a specific address.  If it fails, will host at the giv
+rc help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+rc_join 192.168.1.70:29283
+rc help
+[ffff00]audio_play[-] [9090c0]name[-]: Play a one-off sound.
+rc set_title_ aaaaa
+Failed to run remote command: set_title_ aaaa
+rc set_title aaaaa
+quit
+
+rc_join 192.168.1.70:29283
+rc help
+quit
+
+rc_join 192.168.1.70:29283
+hel
+help
+rc help
+quit

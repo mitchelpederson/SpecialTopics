@@ -26,6 +26,9 @@ public:
 	bool GetNextQuotedString( std::string& arg );
 	bool GetNextRgba( Rgba& arg );
 
+	bool PeekNextString( std::string& arg ) const;
+	bool PeekNextInt( int& arg ) const;
+
 
 private:
 	std::string m_name;

@@ -86,7 +86,7 @@ bool Command::GetNextInt( int& arg ) {
 			arg = std::stoi(m_tokens[m_currentArg], &(size_t) m_position);
 		}
 		catch (std::exception except) {
-			DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
+			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
 			return false;
 		}
 	}
@@ -99,8 +99,32 @@ bool Command::GetNextInt( int& arg ) {
 		return false;
 	}
 
-	DevConsole::Printf("Successfully read argument: %d", arg);
+	//DevConsole::Printf("Successfully read argument: %d", arg);
 	m_currentArg++;
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool Command::PeekNextInt( int& arg ) const {
+
+	int currentArg = m_currentArg;
+
+	if (m_tokens.size() > currentArg) {
+		try {
+			arg = std::stoi(m_tokens[ currentArg ]);
+		}
+		catch (std::exception except) {
+			DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
+			return false;
+		}
+	}
+	else {
+		DevConsole::Printf(Rgba(255, 0, 0, 255), "There is no argument, please type a number after printint");
+		return false;
+	}
+
+	//DevConsole::Printf("Successfully read argument: %d", arg);
 	return true;
 }
 
@@ -155,9 +179,10 @@ bool Command::GetNextQuotedString( std::string& arg ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 bool Command::GetNextString( std::string& arg ) {
 
-	unsigned int start = m_position + 1;
+	unsigned int start = m_position;
 	m_position++;
 
 	while (m_command[m_position] != ' ') {
@@ -169,13 +194,45 @@ bool Command::GetNextString( std::string& arg ) {
 
 
 	arg = m_command.substr(start, m_position - start);
+
+	while (m_command[m_position] == ' ') {
+		if (m_command[m_position] == '\0') {
+			break;
+		}
+		m_position++;
+	}
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool Command::PeekNextString( std::string& arg ) const {
+	unsigned int start = m_position;
+	unsigned int position = m_position + 1;
+
+	while (m_command[ position ] != ' ') {
+		if (m_command[ position ] == '\0') {
+			break;
+		}
+		position++;
+	}
+
+
+	arg = m_command.substr(start, position - start);
+
+	while (m_command[ position ] == ' ') {
+		if (m_command[ position ] == '\0') {
+			break;
+		}
+		position++;
+	}
 	return true;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 std::string Command::GetRemainingString() const {
-	return m_command.substr( m_position, m_command.size() - m_position );
+	return m_command.substr( m_position, m_command.size() - m_position);
 }
 
 

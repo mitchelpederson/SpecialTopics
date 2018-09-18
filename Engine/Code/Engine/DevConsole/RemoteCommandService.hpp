@@ -22,14 +22,16 @@ public:
 	static void ProcessFrame();
 
 	static void SendChatToHost( std::string const& message );
-	static void SendCommandToClient( Command const& command, bool echo = true, unsigned int clientIndex = 0 );
-	static void SendCommandToHost( Command const& message, bool echo = true );
+	static void SendCommandToClient( Command const& command, bool echo = false, unsigned int clientIndex = 0 );
+	static void SendCommandToHost( Command const& message, bool echo = false );
+	static void BroadcastCommand( Command const& message, bool echo = false, bool runLocally = false );
 
 	static bool IsConnected();
 	static bool IsHost();
 
 	static std::vector<NetAddress_T> GetClientAddresses();
 
+	static std::string RemoveRemoteCommandTokenFromCommand( std::string const& command );
 
 private:
 
@@ -38,6 +40,7 @@ private:
 	static void ProcessClientAsHost( unsigned int clientIndex );
 
 	static void SendCommandToSocket( TCPSocket& destination, Command const& command, bool echo = true );
+
 
 	static TCPSocket m_localServerSocket;
 	static TCPSocket m_remoteServerSocket;

@@ -21,11 +21,17 @@ void BeginHostingCommand( std::string const& command ) {
 //----------------------------------------------------------------------------------------------------------------
 void JoinHostCommand( std::string const& command ) {
 	std::vector<std::string> tokens = SplitString( command, ' ' );
-	NetAddress_T addr( tokens[1].c_str() );
 
-	DevConsole::Printf( "Trying to connect to %s", tokens[1].c_str() );
+	if (tokens.size() > 1) {
+		NetAddress_T addr( tokens[1].c_str() );
 
-	RemoteCommandService::ConnectToHost( NetAddress_T( tokens[1].c_str() ) );
+		DevConsole::Printf( "Trying to connect to %s", tokens[1].c_str() );
+
+		RemoteCommandService::ConnectToHost( NetAddress_T( tokens[1].c_str() ) );
+	} else {
+		DevConsole::Printf( "Make sure to type in an IP address..." );
+	}
+	
 }
 
 
@@ -33,7 +39,6 @@ void JoinHostCommand( std::string const& command ) {
 void RCSSendChatMessage( std::string const& command ) {
 	std::vector<std::string> tokens = SplitString( command, ' ' );
 	RemoteCommandService::SendChatToHost( tokens[1] );
-	
 }
 
 
@@ -54,6 +59,7 @@ void RCSSendCommandToClient( std::string const& command ) {
 
 	int index = 0;
 	int substrOffset = 3;
+	comm.GetNextInt( index );
 	if ( comm.GetNextInt( index ) ) {
 		if (index < 10) {
 			substrOffset += 2;
@@ -62,9 +68,7 @@ void RCSSendCommandToClient( std::string const& command ) {
 		}
 	}
 
-	std::string sentCommStr = command.substr( substrOffset );
-	Command sentComm( sentCommStr );
-	RemoteCommandService::SendCommandToClient( sentComm, false, index );
+	RemoteCommandService::SendCommandToClient( comm, false, index );
 
 }
 
@@ -78,12 +82,7 @@ void RCSSendCommandToHost( std::string const& command ) {
 	}
 
 	Command comm( command );
-
-	int substrOffset = 3;
-
-	std::string sentCommStr = command.substr( substrOffset );
-	Command sentComm( sentCommStr );
-	RemoteCommandService::SendCommandToHost( sentComm, false );
+	RemoteCommandService::SendCommandToHost( comm, false );
 }
 
 
@@ -99,11 +98,34 @@ void RCSSendCommand( std::string const& command ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
+void RCSBroadcastCommand( std::string const& commandString ) {
+	if ( RemoteCommandService::IsHost() ) {
+		RemoteCommandService::BroadcastCommand( commandString, false );
+	}
+	else {
+		RemoteCommandService::SendCommandToHost( commandString );
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void RCSBroadcastCommandAndRunLocally( std::string const& commandString ) {
+	RCSBroadcastCommand( commandString );
+	std::string commandStringReduced = RemoteCommandService::RemoveRemoteCommandTokenFromCommand( commandString );
+	Command command( commandStringReduced );
+	CommandRegistration::RunCommand( command );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 RemoteCommandService::RemoteCommandService() {
 	CommandRegistration::RegisterCommand("rc_host", BeginHostingCommand, "Disconnects any rcs connections and sets up as a host");
 	CommandRegistration::RegisterCommand("rc_join", JoinHostCommand, "Disconnects any rcs connections and tries to connect to a new host");
-	CommandRegistration::RegisterCommand("rc_chat", RCSSendChatMessage, "Sends a message to the host");
+	//CommandRegistration::RegisterCommand("rc_chat", RCSSendChatMessage, "Sends a message to the host");
 	CommandRegistration::RegisterCommand("rc", RCSSendCommand, "Sends a command from a host to a client");
+	CommandRegistration::RegisterCommand("rca", RCSBroadcastCommandAndRunLocally, "Makes all other ");
+	CommandRegistration::RegisterCommand("rcb", RCSBroadcastCommand, "Sends a command from a host to a client");
+
 }
 
 
@@ -150,18 +172,22 @@ void RemoteCommandService::ProcessFrameAsHost() {
 
 				BytePacker packedMessage( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
 				uint16_t messageSize;
-				uint8_t shouldEcho;
+				uint8_t isEcho;
 				char message[256] = "";
 
 				packedMessage.ReadValue<uint16_t>(&messageSize);
-				packedMessage.ReadValue<uint8_t>(&shouldEcho);
+				packedMessage.ReadValue<uint8_t>(&isEcho);
 				size_t messageStringSize = packedMessage.ReadString(message, 255);
 				message[messageStringSize + 1] = '\0';
 
-				Command command( message );
-				CommandRegistration::RunCommand( command );
-
-				Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, shouldEcho, message);
+				if (isEcho != 0) {
+					Command command( message );
+					CommandRegistration::RunCommand( command );
+				} else {
+					DevConsole::Printf("[%s] %s", m_remoteClientConnections[index]->address.to_string().c_str(), message );
+				}
+				
+				Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, isEcho, message);
 
 			}
 		} else if ( receiveResult == 0 ) {
@@ -181,17 +207,21 @@ void RemoteCommandService::ProcessFrameAsClient() {
 
 			BytePacker packedMessage( bytesReceived, (byte_t*) buffer, BIG_ENDIAN );
 			uint16_t messageSize;
-			uint8_t shouldEcho;
+			uint8_t isEcho;
 			char message[256] = "";
 			packedMessage.ReadValue<uint16_t>(&messageSize);
-			packedMessage.ReadValue<uint8_t>(&shouldEcho);
+			packedMessage.ReadValue<uint8_t>(&isEcho);
 			size_t messageStringSize = packedMessage.ReadString(message, 255);
 			message[messageStringSize + 1] = '\0';
 
-			Command command( message );
-			CommandRegistration::RunCommand( command );
+			if (isEcho == 0) {
+				Command command( message );
+				CommandRegistration::RunCommand( command );
+			} else {
+				//DevConsole::Printf("[%s] %s", m_remoteServerSocket.address.to_string().c_str(), message );
+			}
 
-			Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, shouldEcho, message);
+			Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, isEcho, message);
 		}
 	} else if ( bytesReceived == 0 ) {
 		DisconnectAll();
@@ -217,8 +247,11 @@ void RemoteCommandService::ProcessClientAsHost( unsigned int clientIndex ) {
 			size_t messageStringSize = packedMessage.ReadString(message, 255);
 			message[messageStringSize + 1] = '\0';
 
-			Command command( message );
-			CommandRegistration::RunCommand( command );
+			// We need to remove the rc(a/b) part of the command before we can process it 
+			std::string commandStringReduced = RemoveRemoteCommandTokenFromCommand( message );
+
+			Command commandMinusRC( commandStringReduced );
+			CommandRegistration::RunCommand( commandMinusRC );
 
 			Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, shouldEcho, message);
 		}
@@ -265,8 +298,6 @@ void RemoteCommandService::ConnectToHost( NetAddress_T const& otherAddr ) {
 
 	if ( m_remoteServerSocket.Connect( otherAddr ) ) {
 		DevConsole::Printf("Connected to host");
-		char const* str = "Hi";
-		m_remoteServerSocket.Send(str, 3);
 		m_isClient = true;
 	}
 }
@@ -336,10 +367,15 @@ std::vector<NetAddress_T> RemoteCommandService::GetClientAddresses() {
 //----------------------------------------------------------------------------------------------------------------
 void RemoteCommandService::SendCommandToSocket( TCPSocket& destination, Command const& command, bool shouldEcho /* = true */ ) {
 
+	std::string commandAsString = command.GetString();
+
+	std::string commandMinusRC = RemoveRemoteCommandTokenFromCommand( commandAsString );
+
+
 	BytePacker packer( BIG_ENDIAN );
 
-	packer.WriteValue<bool>(shouldEcho);
-	packer.WriteString( command.GetString().c_str() );
+	packer.WriteValue<bool>(false);
+	packer.WriteString( commandMinusRC.c_str() );
 
 	size_t packedLength = packer.GetWrittenByteCount() + 1;
 	if (packedLength > 0xFFFF) {
@@ -352,4 +388,36 @@ void RemoteCommandService::SendCommandToSocket( TCPSocket& destination, Command 
 
 	destination.Send( &shortLength, 2 );
 	destination.Send( packer.GetBuffer(), packedLength );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void RemoteCommandService::BroadcastCommand( Command const& message, bool echo /* = true */, bool runLocally /* = false */ ) {
+	for ( unsigned int index = 0; index < m_remoteClientConnections.size(); index++ ) {
+		TCPSocket* client = m_remoteClientConnections[index];
+
+		if ( !client->IsClosed() ) {
+			SendCommandToSocket( *client, message, echo );
+		}
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+std::string RemoteCommandService::RemoveRemoteCommandTokenFromCommand( std::string const& message ) {
+	Command command( message );
+	std::string commandStringReduced = "";
+	command.GetNextString(commandStringReduced);
+
+	// If the command has an index, also skip it
+	if (commandStringReduced == "rc") {
+		int index = 0;
+
+		if ( command.PeekNextInt(index) ) {
+			std::string indexString = "";
+			command.GetNextString( indexString );
+		}
+	}
+
+	return command.GetRemainingString();
 }
