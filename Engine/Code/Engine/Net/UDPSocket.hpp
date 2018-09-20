@@ -25,7 +25,8 @@ public:
 	bool start() 
 	{
 		// get an address to use; 
-		m_socket.Bind(NetAddress_T::GetLocal( 10084 ), 0);
+		return m_socket.Bind(NetAddress_T::GetLocal( 10084 ), 0);
+
 	}
 
 	void stop()

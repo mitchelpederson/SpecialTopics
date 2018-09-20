@@ -188,7 +188,7 @@ size_t BytePacker::ReadString( char* out_str, size_t maxByteSize ) {
 		ReadBytes(&out_str[charIndex], 1);
 		charIndex++;
 	}
-	out_str[length] = '\0';
+	out_str[length + 1] = '\0';
 	return charIndex;
 }
 
@@ -238,13 +238,13 @@ size_t BytePacker::GetWrittenByteCount() const {
 
 //----------------------------------------------------------------------------------------------------------------
 size_t BytePacker::GetRemainingWritableByteCount() const {
-	return m_dataByteCount - m_writeHeadByteIndex - 1;
+	return m_dataByteCount - m_writeHeadByteIndex;
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 size_t BytePacker::GetRemainingReadableByteCount() const {
-	return m_dataByteCount - m_readHeadByteIndex - 1;
+	return m_dataByteCount - m_readHeadByteIndex;
 }
 
 

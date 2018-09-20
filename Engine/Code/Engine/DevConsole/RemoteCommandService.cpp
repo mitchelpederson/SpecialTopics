@@ -178,13 +178,13 @@ void RemoteCommandService::ProcessFrameAsHost() {
 				packedMessage.ReadValue<uint16_t>(&messageSize);
 				packedMessage.ReadValue<uint8_t>(&isEcho);
 				size_t messageStringSize = packedMessage.ReadString(message, 255);
-				message[messageStringSize + 1] = '\0';
+				message[messageStringSize] = '\0';
 
-				if (isEcho != 0) {
+				if (isEcho == 0) {
 					Command command( message );
 					CommandRegistration::RunCommand( command );
 				} else {
-					DevConsole::Printf("[%s] %s", m_remoteClientConnections[index]->address.to_string().c_str(), message );
+					DevConsole::Printf("[%s]: %s", m_remoteClientConnections[index]->address.to_string().c_str(), message );
 				}
 				
 				Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, isEcho, message);
