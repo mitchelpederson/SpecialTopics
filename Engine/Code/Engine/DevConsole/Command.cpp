@@ -115,12 +115,12 @@ bool Command::PeekNextInt( int& arg ) const {
 			arg = std::stoi(m_tokens[ currentArg ]);
 		}
 		catch (std::exception except) {
-			DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
+			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
 			return false;
 		}
 	}
 	else {
-		DevConsole::Printf(Rgba(255, 0, 0, 255), "There is no argument, please type a number after printint");
+		//DevConsole::Printf(Rgba(255, 0, 0, 255), "There is no argument, please type a number after printint");
 		return false;
 	}
 

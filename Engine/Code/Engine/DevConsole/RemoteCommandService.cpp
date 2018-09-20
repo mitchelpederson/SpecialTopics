@@ -67,6 +67,9 @@ void RCSSendCommandToClient( std::string const& command ) {
 			substrOffset += 3;
 		}
 	}
+	else {
+		index = 0;
+	}
 
 	RemoteCommandService::SendCommandToClient( comm, false, index );
 
@@ -165,17 +168,22 @@ void RemoteCommandService::ProcessFrameAsHost() {
 
 	// Check for new messages from all clients
 	for ( unsigned int index = 0; index < m_remoteClientConnections.size(); index++ ) {
-		char buffer[256];
-		int receiveResult = m_remoteClientConnections[index]->Receive( buffer, 255 );
-		if ( receiveResult > 0) {
-			if (::WSAGetLastError() == 0) {
+		int receiveResult = 1;
 
-				BytePacker packedMessage( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
+		while ( receiveResult > 0) {
+			char buffer[256];
+			receiveResult = m_remoteClientConnections[index]->Receive( buffer, 2 );
+			if (receiveResult > 0 && ::WSAGetLastError() == 0) {
+				
+				BytePacker packedSize( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
 				uint16_t messageSize;
+				packedSize.ReadValue<uint16_t>(&messageSize);
+
+				receiveResult = m_remoteClientConnections[index]->Receive( buffer, messageSize );
+				BytePacker packedMessage( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
 				uint8_t isEcho;
 				char message[256] = "";
 
-				packedMessage.ReadValue<uint16_t>(&messageSize);
 				packedMessage.ReadValue<uint8_t>(&isEcho);
 				size_t messageStringSize = packedMessage.ReadString(message, 255);
 				message[messageStringSize] = '\0';
@@ -189,9 +197,9 @@ void RemoteCommandService::ProcessFrameAsHost() {
 				
 				Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, isEcho, message);
 
+			} else {
+				// DisconnectClient( index );
 			}
-		} else if ( receiveResult == 0 ) {
-			DisconnectClient( index );
 		} 
 	}
 }
@@ -199,33 +207,39 @@ void RemoteCommandService::ProcessFrameAsHost() {
 
 //----------------------------------------------------------------------------------------------------------------
 void RemoteCommandService::ProcessFrameAsClient() {
-	byte_t buffer[0xFFFF];
-	int bytesReceived = m_remoteServerSocket.Receive( (void*) buffer, 0xFFFF );
+	int receiveResult = 1;
 
-	if ( bytesReceived > 0) {
-		if (::WSAGetLastError() == 0) { 
+	while ( receiveResult > 0) {
+		char buffer[256];
+		receiveResult = m_remoteServerSocket.Receive( buffer, 2 );
+		if (receiveResult > 0 && ::WSAGetLastError() == 0) {
 
-			BytePacker packedMessage( bytesReceived, (byte_t*) buffer, BIG_ENDIAN );
+			BytePacker packedSize( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
 			uint16_t messageSize;
+			packedSize.ReadValue<uint16_t>(&messageSize);
+
+			receiveResult = m_remoteServerSocket.Receive( buffer, messageSize );
+			BytePacker packedMessage( receiveResult, (byte_t*) buffer, BIG_ENDIAN );
 			uint8_t isEcho;
 			char message[256] = "";
-			packedMessage.ReadValue<uint16_t>(&messageSize);
+
 			packedMessage.ReadValue<uint8_t>(&isEcho);
 			size_t messageStringSize = packedMessage.ReadString(message, 255);
-			message[messageStringSize + 1] = '\0';
+			message[messageStringSize] = '\0';
 
 			if (isEcho == 0) {
 				Command command( message );
 				CommandRegistration::RunCommand( command );
 			} else {
-				//DevConsole::Printf("[%s] %s", m_remoteServerSocket.address.to_string().c_str(), message );
+				DevConsole::Printf("[%s]: %s", m_remoteServerSocket.address.to_string().c_str(), message );
 			}
 
 			Logger::PrintTaggedf("RCS", "size: %u; should echo: %u; message: %s", messageSize, isEcho, message);
+
+		} else {
+			//DisconnectAll();
 		}
-	} else if ( bytesReceived == 0 ) {
-		DisconnectAll();
-	}
+	} 
 }
 
 
