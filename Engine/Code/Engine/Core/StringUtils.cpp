@@ -62,3 +62,15 @@ std::vector<std::string> SplitString( const std::string& toSplit, char delimiter
 
 	return tokens;
 }
+
+
+std::string PrintUint16Binary( uint16_t num ) {
+	std::string binary = "";
+
+	for (int i = 15; i >= 0; i--) {
+		int bit = num >> i;
+		binary += std::to_string(bit & 1);
+	}
+
+	return binary;
+}

@@ -50,6 +50,9 @@ unsigned int Stopwatch::DecrementAll() {
 
 
 bool Stopwatch::HasElapsed() const {
+	if (m_intervalHPC == 0) {
+		return false;
+	}
 	if (m_reference->total.hpc - m_startHPC >= m_intervalHPC) {
 		return true;
 	}

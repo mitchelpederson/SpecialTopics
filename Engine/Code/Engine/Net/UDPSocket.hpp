@@ -10,7 +10,7 @@ class UDPSocket : public Socket {
 public:
 	UDPSocket();
 	~UDPSocket();
-	bool Bind( NetAddress_T const& address, uint16_t portRange );
+	bool Bind( NetAddress_T& address, uint16_t portRange );	 // Bind may modify the address if it has to increase the port
 	size_t SendTo( NetAddress_T const& address, void const* data, size_t byteCount );
 	size_t ReceiveFrom( NetAddress_T& out_address, void* out_buffer, size_t const maxReadSize );
 
@@ -47,7 +47,7 @@ public:
 		size_t read = m_socket.ReceiveFrom( from_addr, buffer, 1500 - 48 ); 
 
 		if (read > 0U) {
-			unsigned int maxBytes = Min( read, 128 ); 
+			size_t maxBytes = Min<size_t>( read, 128 ); 
 			std::string output = "0x"; 
 			char* buffer = new char[1500-48];
 			char* iter = buffer;

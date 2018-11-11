@@ -17,6 +17,7 @@ public:
 	bool FromSockaddr( sockaddr const* sa );
 
 	std::string to_string() const;
+	bool operator==( NetAddress_T const& other ) const;
 
 
 public:

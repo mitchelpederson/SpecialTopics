@@ -239,3 +239,12 @@ std::string NetAddress_T::to_string() const {
 
 	return out;
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetAddress_T::operator==( NetAddress_T const& other ) const {
+	if ( other.ip4_address == ip4_address && other.port == port ) {
+		return true;
+	} 
+	return false;
+}

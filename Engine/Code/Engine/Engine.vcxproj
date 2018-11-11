@@ -291,6 +291,7 @@
     <ClCompile Include="DevConsole\Command.cpp" />
     <ClCompile Include="DevConsole\DevConsole.cpp" />
     <ClCompile Include="DevConsole\DevConsoleInputBox.cpp" />
+    <ClCompile Include="DevConsole\NetSessionWidget.cpp" />
     <ClCompile Include="DevConsole\RCSWidget.cpp" />
     <ClCompile Include="DevConsole\RemoteCommandService.cpp" />
     <ClCompile Include="InputSystem\AnalogJoystick.cpp" />
@@ -316,9 +317,13 @@
     <ClCompile Include="Math\Vector4.cpp" />
     <ClCompile Include="Net\Net.cpp" />
     <ClCompile Include="Net\NetAddress.cpp" />
+    <ClCompile Include="Net\NetConnection.cpp" />
+    <ClCompile Include="Net\NetMessage.cpp" />
+    <ClCompile Include="Net\NetPacket.cpp" />
     <ClCompile Include="Net\NetSession.cpp" />
     <ClCompile Include="Net\Socket.cpp" />
     <ClCompile Include="Net\TCPSocket.cpp" />
+    <ClCompile Include="Net\TrackedPacket.cpp" />
     <ClCompile Include="Net\UDPSocket.cpp" />
     <ClCompile Include="Profiler\Profiler.cpp" />
     <ClCompile Include="Profiler\ProfilerReport.cpp" />
@@ -386,6 +391,7 @@
     <ClInclude Include="DevConsole\Command.hpp" />
     <ClInclude Include="DevConsole\DevConsole.hpp" />
     <ClInclude Include="DevConsole\DevConsoleInputBox.hpp" />
+    <ClInclude Include="DevConsole\NetSessionWidget.hpp" />
     <ClInclude Include="DevConsole\RCSWidget.hpp" />
     <ClInclude Include="DevConsole\RemoteCommandService.hpp" />
     <ClInclude Include="InputSystem\AnalogJoystick.hpp" />
@@ -414,9 +420,11 @@
     <ClInclude Include="Net\NetAddress.hpp" />
     <ClInclude Include="Net\NetConnection.hpp" />
     <ClInclude Include="Net\NetMessage.hpp" />
+    <ClInclude Include="Net\NetPacket.hpp" />
     <ClInclude Include="Net\NetSession.hpp" />
     <ClInclude Include="Net\Socket.hpp" />
     <ClInclude Include="Net\TCPSocket.hpp" />
+    <ClInclude Include="Net\TrackedPacket.hpp" />
     <ClInclude Include="Net\UDPSocket.hpp" />
     <ClInclude Include="Profiler\Profiler.hpp" />
     <ClInclude Include="Profiler\ProfilerReport.hpp" />

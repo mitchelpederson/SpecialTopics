@@ -26,6 +26,7 @@ public:
 	void SetReadableByteCount( size_t byteCount );
 
 	bool	WriteBytes( size_t byteCount, void const* data );
+	bool	WriteBytesAt( size_t byteCount, void const* data, size_t pos );
 	size_t	ReadBytes( void* out_data, size_t maxByteCount );
 	size_t	WriteSize( size_t size );							// returns bytes used
 	size_t	ReadSize( size_t* out_size );						// returns bytes read, fills out_size
@@ -56,6 +57,22 @@ public:
 		}
 
 		return returnedValue;
+	}
+
+
+	template< typename T >
+	bool WriteValueAt( T value, size_t pos ) {
+		size_t realWriteHeadIndex = m_writeHeadByteIndex;
+		m_writeHeadByteIndex = pos;
+
+		if ( !WriteValue<T>( value ) ) {
+			return false;
+		}
+
+		if ( m_writeHeadByteIndex < realWriteHeadIndex ) {
+			m_writeHeadByteIndex = realWriteHeadIndex;
+		}
+		return true;
 	}
 
 	void ResetWriteHead();		// Sets write head and read head to 0

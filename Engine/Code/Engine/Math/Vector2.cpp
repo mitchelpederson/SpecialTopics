@@ -1,4 +1,5 @@
 #include "Engine/Math/Vector2.hpp"
+#include "Engine/Math/IntVector2.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <math.h>
 #include <string>
@@ -15,6 +16,14 @@ const Vector2 Vector2::ZERO_TO_ONE = Vector2(0.f, 1.f);
 Vector2::Vector2( const Vector2& copy )
 	: x( copy.x )
 	, y( copy.y )
+{
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+Vector2::Vector2( const IntVector2& copyFrom ) 
+	: x( (int) copyFrom.x )
+	, y( (int) copyFrom.y )
 {
 }
 

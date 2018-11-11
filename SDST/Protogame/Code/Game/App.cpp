@@ -74,27 +74,7 @@ void App::Run() {
 	//----------------------------------------------------------------------------------------------------------------
 	// Unit tests
 	{
-		size_t dat = 432151;
-		uint16_t smallboy = 99;
-		BytePacker bp;
-		bp.WriteBytes(2, &smallboy);
-		bp.WriteSize( dat );
-		size_t dat2;
-		size_t outboy;
-		bp.ReadBytes(&outboy, 2);
-		bp.ReadSize( &dat2 );
-
-		size_t readSize;
-
-		DevConsole::Printf("outboy: %u, ReadSize: %u", outboy, dat2);
-
-		char const* str = "abcdefg";
-		bp.WriteString(str);
-
-		char* inStr = new char[10];
-		bp.ReadString(inStr, 10);
-
-		DevConsole::Printf("inStr: %s", inStr);
+		
 	}
 	// Unit tests end
 	//----------------------------------------------------------------------------------------------------------------

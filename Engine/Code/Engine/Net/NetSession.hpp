@@ -13,13 +13,37 @@
 #pragma once
 #include "Engine/Net/NetMessage.hpp"
 #include "Engine/Net/NetConnection.hpp"
+#include "Engine/Math/FloatRange.hpp"
+#include "Engine/Core/Stopwatch.hpp"
 
 #include <map>
 
 #define GAME_PORT 10084
 #define CLIENT_SYNC_MAX_TIME 10
+#define MAX_CLIENTS 32
+#define MTU (1500-48)
+#define UNRELIABLE_RESEND_TIME 0.1f
+#define MAX_RELIABLES_PER_PACKET 32
 
-typedef bool (*net_message_cb)( NetMessage const& message, NetConnection const& sender );
+typedef bool (*net_message_cb)( NetMessage& message, NetConnection& sender );
+
+enum eNetMessageFlag {
+	NETMSG_OPTION_CONNECTIONLESS = 0x01,
+	NETMSG_OPTION_RELIABLE = 0x02,
+	NETMSG_OPTION_IN_ORDER = 0x04
+};
+
+
+struct NetCommand {
+	uint8_t id = 0xFF;
+	std::string name = "null";
+	net_message_cb callback = nullptr;
+	uint16_t flags = 0;
+
+	bool RequiresConnection()	{ return !(flags & NETMSG_OPTION_CONNECTIONLESS); }
+	bool IsReliable()			{ return flags & NETMSG_OPTION_RELIABLE; }
+};
+
 
 enum eNetSessionState {
 	NET_STATE_INIT,
@@ -27,6 +51,26 @@ enum eNetSessionState {
 	NET_STATE_JOINED,
 	NET_STATE_HOSTING,
 	NET_STATE_DISCONNECTING
+};
+
+
+enum eNetCoreMessage {
+	NETMSG_PING = 0,
+	NETMSG_PONG,
+	NETMSG_HEARTBEAT,
+	NETMSG_CORE_COUNT
+};
+
+
+struct PacketInLatencySim_T {
+	NetPacket* packet;
+	NetAddress_T addr;
+	float timestamp;
+
+	~PacketInLatencySim_T() {
+		delete packet;
+		packet = nullptr;
+	}
 };
 
 
@@ -40,7 +84,8 @@ public:
 	//----------------------------------------------------------------------------------------------------------------
 	// Initialization
 	bool AddBinding( unsigned short session );
-	void RegisterMessage( std::string const& name, net_message_cb* callback );
+	void RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags = 0 );
+	void RegisterCoreMessages();
 
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -48,68 +93,68 @@ public:
 	void ValidateConnections(); // Will try to ping clients that haven't been heard from in a while and disconnect them if they time out
 	void ProcessOutgoing();		// Tries to send all messages in the queue - At the end of Game's update
 	void ProcessIncoming();		// Does receives, unpacks the messages and fires the callbacks if needed - beginning of game update
-
+	void ProcessPacket( PacketInLatencySim_T* packet );
+	void AddPacketToLatencyQueue( NetPacket* packet, NetAddress_T addr );
+	void ProcessLatencyQueue();
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Session control
-	
-	// If we are a client, this will ask the host to send us an updated list of all the
-	//   clients in the session. 
-	void RequestConnectionInformationFromHost(); 
-
-	// If we are a host, this will send info about all clients to everyone so that they all know
-	//   about each other.
-	void BroadcastNewConnectionInfo();
-
-	// If we are a client and we received session info from the host about what other clients there
-	//   are, then we will update m_connections to match. This may result in attempting to form
-	//   new connections and deleting old ones that timed out or were closed
-	void UpdateClientInformation( NetMessage const& clientInfoMessage );
-
-	// If we are a client, this will tell the host that we disconnected. Doesn't worry about other clients, as
-	//   the host will update them on the next client sync.
-	// If we are a host, this will message to all clients that the session is ending.
-	void Disconnect(); 
-
-
-	//----------------------------------------------------------------------------------------------------------------
-	// Registered control messages
-
-	// Simple ping to see if someone timed out
-	static bool AskIfConnected( NetMessage const& message, NetConnection const& destination ); 
-
-	// clientInfo holds all other client information for the session
-	static bool SendClientInfoUpdateToClient( NetMessage const& clientInfo, NetConnection const& destination );
-	
-	// Tells someone else that I want to disconnect
-	static bool NotifyDisconnection( NetMessage const& message, NetConnection const& destination );
-
-	//----------------------------------------------------------------------------------------------------------------
-	// Sending messages
-	void SendMessageTo( NetMessage const& message, NetConnection const& destination );
-	void BroadcastMessageToSession( NetMessage const& message );
+	NetConnection* AddConnection( unsigned int index, NetAddress_T address );
+	NetConnection* GetConnection( unsigned int index );
+	void SetNetIndex( uint8_t index );
+	static void SetTickRateCommand( std::string const& command );
+	void SetConnectionTickRate( int index, float rate );
+	void SetHeartbeatRate( float hz );
 
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Processing received messages
-	net_message_cb* GetCallbackForMessage( NetMessage const& message ); // can return nullptr if registered message isn't found
+	static net_message_cb GetCallbackForMessage( uint8_t index ); // can return nullptr if registered message isn't found
+	static uint8_t GetMessageIndexForName( std::string const& name );
+	static NetCommand GetCommand( uint8_t index );
+
+
+	//----------------------------------------------------------------------------------------------------------------
+	// Packet/Message Validation
+	bool IsValidConnectionIndex( uint8_t connectionIndex );
 
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Session information queries
-	NetConnection*	GetConnectionByIndex( unsigned int index );
 	unsigned int	GetNumberOfUsers() const;
+	uint8_t			GetMyConnectionIndex() const;
+	NetAddress_T	GetMyAddress() const;
+	UDPSocket*		GetSocket() const;
+	float			GetTimeSinceLastMessageOnConnection( unsigned int connIndex );
+	NetConnection*	GetMyConnection() const;
+
+	
+	//----------------------------------------------------------------------------------------------------------------
+	// Control message callbacks
+	static bool OnHeartbeat( NetMessage& message, NetConnection& sender );
+
+
+	//----------------------------------------------------------------------------------------------------------------
+	// Sim control
+	void SetSimLatency( float min, float max );
+	void SetSimLossRate( float rate );
+	static void SetSimLossRateCommand( std::string const& command );
+	static void SetSimLatencyCommand( std::string const& command );
+	float GetSimLossRate() const;
+	FloatRange GetSimLatency() const;
 
 
 private:
-	// If we are hosting, this is our connection info.
-	// If we are joined, this is the connection to the host.
-	NetConnection* m_hostConnection = nullptr; 
+	uint8_t								m_myConnection;
+	UDPSocket*							m_socket = nullptr;
+	std::vector< NetConnection* >		m_connections;			// All of the clients I know about in either state
+	static std::vector< NetCommand >	m_registeredMessages;	// The messages we know how to handle with cbs
+	eNetSessionState					m_state;
 
-	std::vector< NetConnection* > m_connections;				 // All of the clients I know about in either state
-	std::map<std::string, net_message_cb*> m_registeredMessages; // The messages we know how to handle with cbs
-	std::queue< NetMessage* > m_outgoingMessages;				 // Stores outgoing messages to be handled in ProcessOutgoing()
-	eNetSessionState m_state;
+	std::vector< PacketInLatencySim_T* > m_incomingPackets;
 
-	float m_timeOfLastClientSync;	// periodically send or request a client info sync
+	static FloatRange m_simLatency;
+	static float m_simLossRate;		// [0, 1], 0 being no loss and 1 being complete loss
+	static float m_tickRate;
+	static Stopwatch m_sessionTick;
 };

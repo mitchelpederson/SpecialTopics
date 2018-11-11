@@ -34,7 +34,8 @@ std::string Command::GetString() const {
 std::string Command::GetFirstToken() {
 	std::vector<std::string> tokens = SplitString(m_command, ' ');
 
-	m_position = (int) tokens[0].length();
+	m_position = (int) tokens[0].size() + 1;
+	m_currentArg = 1;
 
 	return tokens[0];
 }
@@ -83,7 +84,9 @@ bool Command::GetNextInt( int& arg ) {
 
 	if (m_tokens.size() > m_currentArg) {
 		try {
-			arg = std::stoi(m_tokens[m_currentArg], &(size_t) m_position);
+			size_t s = 0;
+			arg = std::stoi(m_tokens[m_currentArg], &s);
+			m_position += m_tokens[m_currentArg].size() + 1;
 		}
 		catch (std::exception except) {
 			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
@@ -100,6 +103,35 @@ bool Command::GetNextInt( int& arg ) {
 	}
 
 	//DevConsole::Printf("Successfully read argument: %d", arg);
+	m_currentArg++;
+	return true;
+}
+
+
+bool Command::GetNextFloat( float& arg ) {
+	arg = -1;
+
+	if (m_tokens.size() > m_currentArg) {
+		try {
+			size_t s = 0;
+			arg = std::stof(m_tokens[m_currentArg], &s);
+			m_position += m_tokens[m_currentArg].size() + 1;
+		}
+		catch (std::exception except) {
+			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an float");
+			return false;
+		}
+	}
+	else {
+		DevConsole::Printf(Rgba(255, 0, 0, 255), "There is no argument to read!");
+		return false;
+	}
+
+	if (arg == -1) {
+		return false;
+	}
+
+	//DevConsole::Printf("Successfully read argument: %f", arg);
 	m_currentArg++;
 	return true;
 }
@@ -232,7 +264,12 @@ bool Command::PeekNextString( std::string& arg ) const {
 
 //----------------------------------------------------------------------------------------------------------------
 std::string Command::GetRemainingString() const {
-	return m_command.substr( m_position, m_command.size() - m_position);
+	if ( m_position < m_command.size() ) {
+		return m_command.substr( m_position, m_command.size() - m_position);
+	}
+	else {
+		return "";
+	}
 }
 
 

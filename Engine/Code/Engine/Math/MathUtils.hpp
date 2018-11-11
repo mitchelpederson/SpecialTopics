@@ -72,9 +72,41 @@ float	SmoothStop4( float t ); // 4th-degree smooth start (a.k.a. “quartic ease o
 float	SmoothStep3( float t ); // 3rd-degree smooth start/stop (a.k.a. “smoothstep”)
 
 
+// Cyclic
+template <typename T>
+bool CyclicLess( T a, T b ) {
+	T diff = b - a;
+	T check = (~T(0));
+	check = check >> 1;
+	if ( diff < check ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 	// Max/Min
 int		Max(float a, float b, float c, float d);
-float	Min(float a, float b);
+
+template <typename T>
+T Min( T a, T b ) {
+	if (a < b) {
+		return a;
+	} else {
+		return b;
+	}
+}
+
+
+template <typename T>
+T Max( T a, T b ) {
+	if (a > b) {
+		return a;
+	} else {
+		return b;
+	}
+}
 
 bool	Quadratic( float& out_one, float& out_two, float a, float b, float c );
 

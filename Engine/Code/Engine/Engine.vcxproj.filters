@@ -307,6 +307,21 @@
     <ClCompile Include="Net\NetSession.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+    <ClCompile Include="Net\NetConnection.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\NetPacket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\NetMessage.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="DevConsole\NetSessionWidget.cpp">
+      <Filter>DevConsole</Filter>
+    </ClCompile>
+    <ClCompile Include="Net\TrackedPacket.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -634,6 +649,15 @@
       <Filter>Net</Filter>
     </ClInclude>
     <ClInclude Include="Net\NetConnection.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetPacket.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="DevConsole\NetSessionWidget.hpp">
+      <Filter>DevConsole</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\TrackedPacket.hpp">
       <Filter>Net</Filter>
     </ClInclude>
   </ItemGroup>

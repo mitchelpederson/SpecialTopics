@@ -479,3 +479,13 @@ float Min(float a, float b) {
 		return b;
 	}
 }
+
+
+unsigned int Min(unsigned int a, unsigned int b) {
+	if (a < b) {
+		return a;
+	}
+	else {
+		return b;
+	}
+}

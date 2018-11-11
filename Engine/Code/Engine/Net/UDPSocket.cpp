@@ -16,7 +16,7 @@ UDPSocket::~UDPSocket() {
 
 
 //----------------------------------------------------------------------------------------------------------------
-bool UDPSocket::Bind( NetAddress_T const& address, uint16_t portRange ) {
+bool UDPSocket::Bind( NetAddress_T& address, uint16_t portRange ) {
 
 	// Datagram socket over IPv4 and UDP
 	SOCKET mySocket = ::socket( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
@@ -29,14 +29,23 @@ bool UDPSocket::Bind( NetAddress_T const& address, uint16_t portRange ) {
 	
 	sockaddr_storage sockAddress;
 	size_t sockAddressLength;
-	address.ToSockaddr( (sockaddr*) &sockAddress, &sockAddressLength );
+	
 
+	unsigned int bindAttempt = 0;
+	int result = 1;
 
-	int result = ::bind( mySocket, (sockaddr*) &sockAddress, (int) sockAddressLength );
-	if (result == 0) {
-		m_handle = (SOCKET) mySocket;
-		m_address = address;
-		return true;
+	while ( result != 0 && bindAttempt < portRange ) {
+		
+		address.ToSockaddr( (sockaddr*) &sockAddress, &sockAddressLength );
+		result = ::bind( mySocket, (sockaddr*) &sockAddress, (int) sockAddressLength );
+		if (result == 0) {
+			m_handle = (SOCKET) mySocket;
+			m_address = address;
+			return true;
+		}
+
+		address.port++;
+		bindAttempt++;
 	}
 
 	return false;

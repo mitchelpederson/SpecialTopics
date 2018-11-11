@@ -6,8 +6,8 @@
 BytePacker::BytePacker( eEndianness endianness /* = LITTLE_ENDIAN */, eBytePackerOptions options /* = (BYTEPACKER_OWNS_MEMORY | BYTEPACKER_CAN_GROW) */ ) 
 	: m_endianness( endianness )
 	, m_options( options )
-	, m_data( new byte_t[ 16 ] )
-	, m_dataByteCount( 16 )
+	, m_data( new byte_t[ 1 ] )
+	, m_dataByteCount( 1 )
 {}
 
 
@@ -23,11 +23,13 @@ BytePacker::BytePacker( size_t bufferSize, eEndianness endianness /* = LITTLE_EN
 //----------------------------------------------------------------------------------------------------------------
 BytePacker::BytePacker( size_t bufferSize, void* buffer, eEndianness endianness /* = LITTLE_ENDIAN */, eBytePackerOptions options /* = 0 */ ) 
 	: m_endianness( endianness )
-	, m_data( (byte_t*) buffer )
 	, m_dataByteCount( bufferSize )
 	, m_writeHeadByteIndex( bufferSize )
 	, m_options( options )
-{}
+{
+	m_data = new byte_t[ bufferSize ];
+	memcpy(m_data, buffer, bufferSize);
+}
 
 
 //----------------------------------------------------------------------------------------------------------------
@@ -56,6 +58,12 @@ size_t BytePacker::WriteSize( size_t size ) {
 	size_t remainder = size;
 	byte_t sevenBitsMask = 0x7F;
 	size_t bytesWritten = 0;
+
+	if ( size == 0 ) {
+		byte_t byte = 0;
+		WriteBytes( 1, &byte );
+		return 1;
+	}
 
 	while ( remainder != 0 ) {
 		// Extract the seven bits, high bit will be 0
@@ -105,7 +113,7 @@ size_t BytePacker::ReadSize( size_t* out_size ) {
 bool BytePacker::WriteBytes( size_t byteCount, void const* data ) {
 
 	// if the data is within the max but greater than the currently allocated, allocate 
-	if ( m_writeHeadByteIndex + byteCount >= m_dataByteCount ) {
+	while ( m_writeHeadByteIndex + byteCount >= m_dataByteCount ) {
 
 		// If we can't grow, then failed to write.
 		if (!CanGrow()) {
@@ -251,4 +259,19 @@ size_t BytePacker::GetRemainingReadableByteCount() const {
 //----------------------------------------------------------------------------------------------------------------
 byte_t* BytePacker::GetBuffer() const {
 	return m_data;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool BytePacker::WriteBytesAt( size_t byteCount, void const* data, size_t pos ) {
+	size_t realWriteHeadIndex = m_writeHeadByteIndex;
+	m_writeHeadByteIndex = pos;
+	if ( !WriteBytes( byteCount, data ) ) {
+		return false;
+	}
+
+	if ( m_writeHeadByteIndex < realWriteHeadIndex ) {
+		m_writeHeadByteIndex = realWriteHeadIndex;
+	}
+	return true;
 }

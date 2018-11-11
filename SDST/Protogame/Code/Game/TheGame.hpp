@@ -17,7 +17,8 @@
 #include "Engine/Renderer/CubeMap.hpp"
 #include "Engine/Renderer/SpriteSheet.hpp"
 #include "Engine/Net/UDPSocket.hpp"
-
+#include "Engine/Net/NetSession.hpp"
+#include "Engine/DevConsole/NetSessionWidget.hpp"
 
 
 enum DevModeShader {
@@ -31,6 +32,14 @@ enum DevModeShader {
 	DEV_SHADER_VERTEX_TANGENTS,
 	DEV_SHADER_VERTEX_BITANGENTS,
 	NUM_DEV_SHADERS
+};
+
+
+enum eNetGameMessage {
+	NETMSG_GAME_TEST = NETMSG_CORE_COUNT,
+
+	NETMSG_UNRELIABLE_TEST = 128,
+	NETMSG_RELIABLE_TEST = 129
 };
 
 //-----------------------------------------------------------------------------------------------
@@ -60,7 +69,19 @@ public:
 	Material* particleMaterial = nullptr;
 	SpriteSheet* terrain = nullptr;
 
-	UDPTest m_udp;
+	NetSession* netSession = nullptr;
+	NetSessionWidget* netSessionWidget = nullptr;
+
+	int unreliableTestMax = 0;
+	int unreliableTestCount = 0;
+	uint8_t unreliableTestConnection = 0xFF;
+	Stopwatch* unreliableTestStopwatch = nullptr;
+
+
+	int reliableTestMax = 0;
+	int reliableTestCount = 0;
+	uint8_t reliableTestConnection = 0xFF;
+	Stopwatch* reliableTestStopwatch = nullptr;
 
 
 private:

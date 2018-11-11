@@ -61,4 +61,13 @@
 		<textures>
 		</textures>
 	</material>
+
+	<material name="ui-font" shader="ui-font">
+		<textures>
+		</textures>
+	</material>
+	<material name="ui" shader="ui">
+		<textures>
+		</textures>
+	</material>
 </materials>
