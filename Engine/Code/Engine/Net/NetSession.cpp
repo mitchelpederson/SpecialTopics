@@ -303,12 +303,13 @@ bool NetSession::AddBinding( unsigned short session ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
-void NetSession::RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags /* = 0 */ ) {
+void NetSession::RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags /* = 0 */, uint8_t channel /* = 0 */ ) {
 	NetCommand comm;
 	comm.id = index;
 	comm.name = name;
 	comm.callback = callback;
 	comm.flags = flags;
+	comm.channel = channel;
 
 	if (m_registeredMessages.size() < index + 1) {
 		m_registeredMessages.resize( index + 1 );

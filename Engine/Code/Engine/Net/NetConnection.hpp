@@ -21,9 +21,34 @@
 #define MAX_TRACKED_HISTORY_SIZE 128
 #define DEFAULT_HEARTBEAT 2.f
 #define RELIABLE_WINDOW 32
+#define MAX_MESSAGE_CHANNELS 8
 
 
 class NetSession;
+
+
+class NetMessageChannel {
+public:
+	uint16_t m_nextSequenceID = 0;
+	uint16_t m_nextExpectedSequenceID = 0;
+	std::list<NetMessage*> m_outOfOrderMessages;
+
+	uint16_t GetAndIncrementNextSequenceID() {
+		uint16_t id = m_nextSequenceID;
+		m_nextSequenceID++;
+		return id;
+	}
+
+	~NetMessageChannel() {
+		std::list<NetMessage*>::iterator it = m_outOfOrderMessages.begin(); 
+		while (it != m_outOfOrderMessages.end()) {
+			delete *it;
+			m_outOfOrderMessages.erase(it);
+			it = m_outOfOrderMessages.begin();
+		}
+	}
+};
+
 
 class NetConnection {
 
@@ -70,6 +95,9 @@ private:
 	uint16_t GetOldestUnconfirmedReliable();
 	bool CanSendNewReliable();
 	void AddToReceivedReliablesList( uint16_t reliable );
+	void SetSequenceIDOnMessage( NetMessage* msg );
+	NetMessageChannel& GetChannelForMessage( NetMessage* msg );
+	void ProcessChannelOutOfOrders( NetMessageChannel& channel );
 
 private:
 	uint8_t m_connectionIndex;
@@ -97,5 +125,7 @@ private:
 	std::list<uint16_t> m_receivedReliables;
 	uint16_t m_oldestUnconfirmedReliable = 0;
 	uint16_t m_highestReceivedReliable = 0;
+
+	NetMessageChannel m_channels[ MAX_MESSAGE_CHANNELS ];
 
 };

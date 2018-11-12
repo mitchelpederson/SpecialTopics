@@ -255,3 +255,826 @@ hel
 help
 rc help
 quit
+
+rc_host
+rc help
+rc 0 help
+[ffff00]add_connection[-] [9090c0]idx address:port[-]: Add a connection to the session.
+cale:float][-]: Scales the time.
+ map
+ts all known commands
+t the result
+s the game.
+one except me.
+en port.
+<msg>[-]: Send ping to a known c
+nt:int <process:path> <args:string>[-]: Spawn a number of processes by name.
+_add_map[-] [9090c0]uint:internal_port uint:external_port[-]: Add a UDP port mapping to my local address.
+help
+quit
+
+rc_host
+help
+help
+help
+rc 0 help
+rca help
+help
+rcb ehlp
+quit
+
+rc_host
+help
+rc help
+rc 0 help
+quit
+
+rc_host
+rc 0 help
+rc help
+
+rc_host
+rc help
+quit
+
+rc_join 10.8.155.109:29283
+rc_host
+rc_join 10.8.155.109:29283
+rc help
+quit
+
+rc_join 10.8.155.109:29283
+rc help
+rc_join 10.8.155.109:29283
+rc help
+quit
+
+rc_host
+quit
+
+rc_host
+rc help
+quit
+
+rc_join 10.8.155.109:29283
+rc help
+quit
+
+rc_join 10.8.155.109:29283
+rc help
+help
+help
+quit
+
+rc_join 10.8.155.109:29283
+rc help
+help
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+help
+connect 0 127.0.0.1:10084
+quit
+
+connect 0 127.0.0.1:10084
+connect 0 127.0.0.1:10084
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+quit
+
+connect 0 10.8.154.57:10084
+connect 1 10.8.154.57:10085
+ping 0 hi
+quit
+
+connect 0 10.8.154.57:10084
+connect 1 10.8.154.57:10085
+quit
+
+connect 192.168.1.144:10084
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+ping 0 hi
+ping 0 hi
+ping 0 hi
+ping 0 hi
+ping 0 hi
+ping 0 hi
+quit
+
+connect 0 192.168.1.144:10084
+quit
+
+rc_join 192.168.1.144:29283
+elp
+elp
+quit
+
+rc_join 192.168.1.144:29283
+rca help
+elp
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+ping 0 hello
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+add 0 1 2
+add 1 1 2
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+ping 0 hello
+quit
+
+connect 0 192.168.1.144:10084
+connect 1 192.168.1.144:10085
+net_id 1
+ping 0 hello
+quit
+
+connect 0 10.8.138.72:10084
+connect 1 10.8.138.72:10085
+quit
+
+connect 0 10.8.138.72:10084
+connect 1 10.8.138.72:10085
+ping 0 hello
+net_id 1
+ping 0 hello
+quit
+
+connect 0 10.8.138.72:10084
+connect 1 10.8.138.72:10085
+ping 0 hello
+net_id 1
+quit
+
+connect 0 10.8.138.72:10084
+connect 1 10.8.138.72:10085
+net_id 1
+quit
+
+rc_join 10.8.138.71:29283
+rc help
+rc 0 help
+help
+rcb help
+rca help
+help
+rc help
+rc_join 10.8.138.72:29283
+rc help
+quit
+
+rc_join 10.8.138.72:29283
+rca add_connection 0 10.8.138.72:10084
+add_connection 0 10.8.138.72:10084
+add_connection 1 10.8.138.72:10085
+rca add_connection 1 10.8.138.72:10085
+add_connection 1 10.8.138.72:10085
+add 0 1 2
+ping 0 hello
+quit
+
+add_connection 0 10.8.156.96:10084
+add_connection 1 10.8.138.72:10084
+add 0 4 5
+quit
+
+help
+add_conncetion 0 192.168.1.144:10084
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+ping 0
+ping 0
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+ping 0 hello
+ping 0 hello
+ping 0 hell1
+ping 1
+ping 1
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+add 1 1 2
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+net_id 1
+add 0 1 2
+ping 0 hello
+quit
+
+add_connection 0 192.168.1.144:10084
+add_connection 1 192.168.1.144:10085
+quit
+
+quit
+
+connect 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+add_connection 0 10.8.137.179:10084
+net_id 1
+ping 0 hello
+help
+net_sim_latency 0.5 1
+ping 0 hello
+ping 0 hello
+ping 0 hello
+ping 0 hello
+ping 0 hello
+ping 0 hello
+ping 0 hello
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+net_id 1
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+net_id 1
+ping 0 hello
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+add_connection 2 10.8.137.179:10086
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+add_connection 2 10.8.137.179:10086
+net_id 2
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 1 10.8.137.179:10085
+add_connection 2 10.8.137.179:10086
+net_id 1
+quit
+
+add_connection 0 10.8.137.179:10084
+add_connection 2 10.8.137.179:10086
+add_connection 1 10.8.137.179:10085
+net_id 1
+quit
+
+add_connection 1 10.8.137.179:10085
+add_connection 0 10.8.140.27:10084
+ping 0 hi
+ping 0 hi
+ping 0 hi
+quit
+
+add_connection 0 10.8.140.27:10084
+quit
+
+add_connection 0 10.8.140.27:10084
+ping 0
+ping 0
+add_connection 1 10.8.140.27:10085
+help
+net_print_local_ip
+quit
+
+add_connection 0 10.8.140.27:10084
+quit
+
+add_connection 0 10.8.140.27:10084
+quit
+
+add_connection 0 10.8.140.27:10084
+ping 0 hello
+ping 0 hello
+ping 0 hello
+ping 0 hello
+quit
+
+add_connection 0 10.8.140.27:10084
+ping 0 hello
+add 0 1 2
+quit
+
+add_connection 0 10.8.140.27:10084
+add_connection 1 10.8.140.27:10085
+net_id 1
+ping 0 he
+ping 0 he
+quit
+
+add_connection 1 10.8.140.27:10085
+quit
+
+add_connection 0 10.8.140.27:10084
+add_connection 1 10.8.140.27:10085
+quit
+
+add_connection 0 10.8.140.27:10084
+add_connection 1 10.8.140.27:10085
+quit
+
+quit
+
+quit
+
+quit
+
+add_connection 0 10.8.135.89:10084
+quit
+
+quit
+
+add_connection 0 10.8.135.89:10084
+add_connection 1 10.8.135.89:10085
+add_connection 5 10.8.135.89:10089
+add_connection 3 10.8.135.89:10087
+quit
+
+add_connection 0 10.8.135.89:10084
+add_connection 5 10.8.135.89:10089
+add_connection 3 10.8.135.89:10087
+add_connection 1 10.8.135.89:10085
+help
+net_sim_lag 0.5 1.0
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 1 10.8.159.39:10085
+net_id 1
+add_connection 0 10.8.159.39:10084
+quit
+
+add_connection 0 10.8.159.39:10084
+quit
+
+add_connection 0 10.8.159.39:10084
+net_id 1
+add_connection 1 10.8.159.39:10085
+quit
+
+add_connection 1 10.8.159.39:10085
+add_connection 0 10.8.159.39:10084
+quit
+
+add_connection 0 10.8.158.89:10084
+add_connection 1 10.8.158.89:10085
+add 1 1 2
+quit
+
+add_connection 1 10.8.158.86:10085
+add_connection 0 10.8.158.86:10084
+qiut
+quit
+
+add_connection 0 10.8.158.86:10084
+add_connection 1 10.8.158.86:10085
+quit
+
+add_connection 0 10.8.158.86:10084
+add_connection 1 10.8.158.86:10085
+net_id 1
+add 0 1 2
+add 0 1 4
+
+add_connection 0 10.8.158.86:10084
+add_connection 1 10.8.158.86:10085
+quit
+
+add_connection 0 10.8.158.86:10084
+add_connection 1 10.8.158.86:10085
+net_id 1
+add 0 1 2
+quit
+
+add_connection 1 10.8.158.86:10085
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+add 1 1 2
+quit
+
+add_connection 1 10.8.158.86:10085
+quit
+
+add_connection 1 10.8.158.86:10084
+net_id 0
+quit
+
+add_connection 1 192.168.1.145:10085
+quit
+
+add_connection 0 192.168.1.145:10084
+net_id 1
+net_loss 0.5
+net_sim_set_loss 0.5
+help
+net_ism_loss 0.5
+net_sim_loss 0.5
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+net_id 1
+add_connection 0 192.168.1.70:10084
+quit
+
+net_id 1
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 1 192.168.1.70:10085
+quit
+
+add_connection 1 10.8.131.29:10085
+help
+net_sim-lag 0.2 1.0
+net_sim_lag 0.2 1.0
+quit
+
+add_connection 1 10.8.131.29:10085
+net_sim_lag 0.0 0.0
+quit
+
+net_id 1
+add_connection 0 10.8.131.29:10084
+quit
+
+add_connection 1 192.168.43.39:10085
+quit
+
+add_connection 0 192.168.43.39:10084
+net_id 1
+quit
+
+add_connection 1 192.168.43.39:10085
+quit
+
+add_connection 1 10.8.141.122:10085
+unreliable_test 0
+unreliable_test 0
+unreliable_test 21
+unreliable_test 1
+quit
+
+quit
+
+quit
+
+add_connection 1 10.8.141.122:10085
+unreliable_test 1
+quit
+
+add_connection 0 10.8.141.122:10084
+unreliable_test 0
+unreliable_test 0
+net_id 1
+unreliable_test 0
+unreliable_test 0
+quit
+
+add_connection 0 10.8.141.122:10084
+net_id 1
+quit
+
+add_connection 0 10.8.141.122:10084
+net_id 1
+net_sim_lag 0.5 1.0
+quit
+
+add_connection 1 192_168.1.146:10084
+quit
+
+add_connection 1 192_168.1.146:10085
+reliable_test 1 20
+reliable_test 1 20
+unreliable_test 1 20
+add_connection 1 192.168.1.146:10085
+quit
+
+add_connection 1 192.168.1.146:10085
+reliable_test 1 20
+reliable_test 1 20
+quit
+
+add_connection 0 192.168.1.146:10084
+quit
+
+add_connection 0 192.168.1.146:10084
+net_id 1
+unreliable_test 0 10
+unreliable_test 0 100
+quit
+
+add_connection 0 192.168.1.146:10084
+net_id 1
+reliable_test 0 20
+reliable_test 0 20
+reliable_test 0 20
+quit
+
+add_connection 0 192.168.1.146:10084
+net_id 1
+reliable_test 0 2
+quit
+
+add_connection 1 192.168.1.146:10085
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+net_id 1
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 10.8.135.41:10084
+ping 0
+ping 0
+quit
+
+add_connection 0 10.8.135.41:10084
+quit
+
+add_connection 0 10.8.135.41:10084
+quit
+
+add_connection 0 10.8.135.41:10084
+reliable_test 0 1
+quit
+
+add_connection 0 10.8.135.41:10084
+reliable_test 0 1
+quit
+
+add_connection 0 10.8.135.41:10084
+reliable_test 0 1
+quit
+
+add_connection 0 10.8.135.41:10084
+reliable_test 0 1
+reliable_test 0 1
+reliable_test 0 1
+reliable_test 0 1
+reliable_test 0 1
+reliable_test 0 1
+reliable_test 0 1
+quit
+
+add_connection 0 192.168.1.70:10084
+quit
+
+add_connection 0 192.168.1.70:10084
+unreliable_test 0 1
+reliable_test 0 1
+reliable_test 0 10
+reliable_test 0 100
+net_sim_lag 0.5 1.0
+net_sim loss 0.3
+net_sim_loss 0.3
+reliable_test 0 100
+reliable_test 0 100
+reliable_test 0 100
+reliable_test 0 1000
+quit
+
+add_connection 0 192.168.1.70:10084
+net_sim_lag 0.2 0.4
+net_sim_loss 0.2
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+net_sim_loss 0.95
+net_sim_lag 0.2 0.4
+reliable_test 0 100
+net_sim_loss 0.8
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+reliable_test 0 100
+net_sim_loss 0.9
+net_sim_lag 0.2 0.5
+reliable_test 0 100
+reliable_test 0 300
+reliable_test 0 3000
+net_sim_loss 0.1
+reliable_test 0 65000
+net_sim_lag 0.0 0.0
+net_sim_loss 0.0
+quit
+
+add_connection 0 192.168.6.108:10084
+net_sim_loss 0.9
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+net_sim_loss 0.9
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+net_sim_loss 0.6
+net_sim_lag 0.4 0.9
+reliable_test 0 100
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+net_sim_loss 0.6
+net_sim_lag 0.4 0.9
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.6.108:10084
+reliable_test 0 100
+net_sim_loss 0.6
+net_sim_lag 0.3 0.7
+reliable_test 0 100
+quit
+
+add_connection 0 192.168.1.70:10084
+in_order_test 0 100
+help
+quit
+
+add_connection 0 192.168.1.70:10084
+in_order_test 0 100
+neT_sim_lag 0.2 0.5
+net_sim_lag 0.2 0.5
+net_sim_loss0 .7
+net_sim_loss 0.7
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+in_order_test 0 10
+in_order_test 0 100
+net_sim_lag 0.5 1.0
+net_sim_loss 0.7
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+in_order_test 0 100
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+in_order_test 0 100
+net_sim_lag 0.05 1.0
+net_sim_loss 0.5
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+net_sim_lag 0.05 1.0
+net_sim_loss 0.5
+reliable_test 0 100
+in_order_test 0 100
+quit
+
+add_connection 0 10.8.152.42:10084
+net_sim_loss 0.7
+net_sim_lag 0.2 2.0
+in_order_test 0 1000
+quit

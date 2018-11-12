@@ -30,7 +30,7 @@ typedef bool (*net_message_cb)( NetMessage& message, NetConnection& sender );
 enum eNetMessageFlag {
 	NETMSG_OPTION_CONNECTIONLESS = 0x01,
 	NETMSG_OPTION_RELIABLE = 0x02,
-	NETMSG_OPTION_IN_ORDER = 0x04
+	NETMSG_OPTION_IN_ORDER = 0x06	// In order traffic is always reliable
 };
 
 
@@ -39,9 +39,11 @@ struct NetCommand {
 	std::string name = "null";
 	net_message_cb callback = nullptr;
 	uint16_t flags = 0;
+	uint8_t channel = 0;
 
 	bool RequiresConnection()	{ return !(flags & NETMSG_OPTION_CONNECTIONLESS); }
-	bool IsReliable()			{ return flags & NETMSG_OPTION_RELIABLE; }
+	bool IsReliable()			{ return (flags & NETMSG_OPTION_RELIABLE) == NETMSG_OPTION_RELIABLE; }
+	bool IsInOrder()			{ return (flags & NETMSG_OPTION_IN_ORDER) == NETMSG_OPTION_IN_ORDER; }
 };
 
 
@@ -84,7 +86,7 @@ public:
 	//----------------------------------------------------------------------------------------------------------------
 	// Initialization
 	bool AddBinding( unsigned short session );
-	void RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags = 0 );
+	void RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags = 0, uint8_t channel = 0 );
 	void RegisterCoreMessages();
 
 

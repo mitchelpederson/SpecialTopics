@@ -208,6 +208,38 @@ void ReliableTestCommand( std::string const& command ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
+bool OnInOrderTest( NetMessage& message, NetConnection& sender ) {
+	unsigned int count;
+	unsigned int max;
+	message.ReadValue<unsigned int>(&count);
+	message.ReadValue<unsigned int>(&max);
+	DevConsole::Printf(Rgba(100, 100, 100, 255), "Received in-order from connection %u (%u, %u)", sender.GetConnectionIndex(), count, max );
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void InOrderTestCommand( std::string const& command ) {
+	Command comm(command);
+	comm.GetFirstToken();
+
+	int connection;
+	int count;
+	if ( !comm.GetNextInt( connection ) ) {
+		return;
+	}
+
+	if ( !comm.GetNextInt( count ) ) {
+		return;
+	}
+
+	g_theGame->inOrderTestCount = 0;
+	g_theGame->inOrderTestMax = count;
+	g_theGame->inOrderTestConnection = connection;
+}
+
+
 //-----------------------------------------------------------------------------------------------
 // Constructor, set to first wave and initial spawn
 //
@@ -243,6 +275,7 @@ void TheGame::Initialize() {
 	CommandRegistration::RegisterCommand("net_set_connection_send_rate", SetConnectionSendRateCommand, "index float - Sets the send rate on a specific connection");
 	CommandRegistration::RegisterCommand("unreliable_test", UnreliableTestCommand, "index count - tests unreliable messages");
 	CommandRegistration::RegisterCommand("reliable_test", ReliableTestCommand, "index count - tests reliable messages");
+	CommandRegistration::RegisterCommand("in_order_test", InOrderTestCommand, "index count - tests in-order messages");
 
 
 	g_theRenderer->CreateOrGetBitmapFont("Courier");
@@ -286,6 +319,8 @@ void TheGame::Initialize() {
 	netSession->AddBinding( 10084 );
 	netSession->RegisterMessage( NETMSG_UNRELIABLE_TEST, "unreliable_test", OnUnreliableTest );
 	netSession->RegisterMessage( NETMSG_RELIABLE_TEST, "reliable_test", OnReliableTest, NETMSG_OPTION_RELIABLE );
+	netSession->RegisterMessage( NETMSG_IN_ORDER_TEST, "in_order_test", OnInOrderTest, NETMSG_OPTION_IN_ORDER );
+
 	netSessionWidget = new NetSessionWidget( netSession );
 
 
@@ -294,6 +329,9 @@ void TheGame::Initialize() {
 
 	reliableTestStopwatch = new Stopwatch(m_gameClock);
 	reliableTestStopwatch->SetTimer( 1.f / 30.f );
+
+	inOrderTestStopwatch = new Stopwatch(m_gameClock);
+	inOrderTestStopwatch->SetTimer( 1.f / 30.f );
 
 }
 
@@ -384,6 +422,19 @@ void TheGame::Update() {
 		}
 
 		reliableTestCount++;
+	}
+
+
+	if ( inOrderTestStopwatch->CheckAndReset() && inOrderTestCount < inOrderTestMax ) {
+
+		if ( g_theGame->netSession->IsValidConnectionIndex( inOrderTestConnection ) ) {
+			NetMessage message( NETMSG_IN_ORDER_TEST );
+			message.WriteValue<unsigned int>(inOrderTestCount);
+			message.WriteValue<unsigned int>(inOrderTestMax);
+			g_theGame->netSession->GetConnection( inOrderTestConnection )->Send( message );
+		}
+
+		inOrderTestCount++;
 	}
 
 	netSession->ProcessOutgoing();

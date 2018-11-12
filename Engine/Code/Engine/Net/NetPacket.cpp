@@ -33,7 +33,10 @@ void NetPacket::WriteHeader( NetPacketHeader_T header ) {
 void NetPacket::WriteMessage( NetMessage const& message ) {
 
 	uint8_t headerSize;
-	if ( message.IsReliable() ) {
+
+	if ( message.IsInOrder() ) {
+		headerSize = 5;
+	} else if ( message.IsReliable() ) {
 		headerSize = 3;
 	} else {
 		headerSize = 1;
@@ -43,6 +46,9 @@ void NetPacket::WriteMessage( NetMessage const& message ) {
 	WriteValue<uint8_t>( message.GetMessageIndex() );
 	if ( message.IsReliable() ) {
 		WriteValue<uint16_t>( message.GetReliableID() );
+	}
+	if ( message.IsInOrder() ) {
+		WriteValue<uint16_t>( message.GetSequenceID() );
 	}
 	WriteBytes( message.GetMessageLength(), message.GetBuffer() );
 }
@@ -66,7 +72,21 @@ NetMessage* NetPacket::ReadMessage( NetSession* session ) {
 	uint8_t messageIndex;
 	ReadValue<uint8_t>( &messageIndex );
 
-	if ( NetSession::GetCommand(messageIndex).IsReliable() ) {
+	if ( NetSession::GetCommand( messageIndex ).IsInOrder() ) {
+		uint16_t reliableID;
+		ReadValue<uint16_t>( &reliableID );
+
+		uint16_t sequenceID;
+		ReadValue<uint16_t>( &sequenceID );
+
+		char* buffer = new char[size - 5U];
+		ReadBytes( buffer, size - 5U );
+
+		NetMessage* message = new NetMessage( messageIndex, (byte_t*) buffer, size - 5U, reliableID, sequenceID );
+		return message;
+	}
+
+	else if ( NetSession::GetCommand( messageIndex ).IsReliable() ) {
 
 		uint16_t reliableID;
 		ReadValue<uint16_t>( &reliableID );

@@ -39,7 +39,8 @@ enum eNetGameMessage {
 	NETMSG_GAME_TEST = NETMSG_CORE_COUNT,
 
 	NETMSG_UNRELIABLE_TEST = 128,
-	NETMSG_RELIABLE_TEST = 129
+	NETMSG_RELIABLE_TEST = 129,
+	NETMSG_IN_ORDER_TEST = 130
 };
 
 //-----------------------------------------------------------------------------------------------
@@ -72,17 +73,21 @@ public:
 	NetSession* netSession = nullptr;
 	NetSessionWidget* netSessionWidget = nullptr;
 
-	int unreliableTestMax = 0;
-	int unreliableTestCount = 0;
-	uint8_t unreliableTestConnection = 0xFF;
-	Stopwatch* unreliableTestStopwatch = nullptr;
+	int			unreliableTestMax = 0;
+	int			unreliableTestCount = 0;
+	uint8_t		unreliableTestConnection = 0xFF;
+	Stopwatch*	unreliableTestStopwatch = nullptr;
 
 
-	int reliableTestMax = 0;
-	int reliableTestCount = 0;
-	uint8_t reliableTestConnection = 0xFF;
-	Stopwatch* reliableTestStopwatch = nullptr;
+	int			reliableTestMax = 0;
+	int			reliableTestCount = 0;
+	uint8_t		reliableTestConnection = 0xFF;
+	Stopwatch*	reliableTestStopwatch = nullptr;
 
+	int			inOrderTestMax = 0;
+	int			inOrderTestCount = 0;
+	uint8_t		inOrderTestConnection = 0xFF;
+	Stopwatch*	inOrderTestStopwatch = nullptr;
 
 private:
 

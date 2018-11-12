@@ -67,7 +67,7 @@ int NetConnection::SendPacket( UDPSocket* socketToSendFrom ) {
 
 			if ( g_masterClock->total.seconds - m_unconfirmedReliables[i]->GetTimeLastSent() > UNRELIABLE_RESEND_TIME ) {
 				
-				if (m_unconfirmedReliables[i]->GetWrittenByteCount() + 5 + packet->GetWrittenByteCount() >= MTU) {
+				if (m_unconfirmedReliables[i]->GetWrittenByteCount() + (m_unconfirmedReliables[i]->IsInOrder() ? 7 : 5) + packet->GetWrittenByteCount() >= MTU) {
 					break;
 				}
 
@@ -90,7 +90,7 @@ int NetConnection::SendPacket( UDPSocket* socketToSendFrom ) {
 			msg->SetReliableID( m_lastSentReliable + 1 );
 			m_lastSentReliable++;
 
-			if (reliablesInPacket > MAX_RELIABLES_PER_PACKET || packet->GetWrittenByteCount() + msg->GetWrittenByteCount() + 5 >= MTU ) {
+			if (reliablesInPacket > MAX_RELIABLES_PER_PACKET || packet->GetWrittenByteCount() + msg->GetWrittenByteCount() + (msg->IsInOrder() ? 7 : 5) >= MTU ) {
 				break;
 			}
 
@@ -176,7 +176,10 @@ int NetConnection::SendPacketImmediate( UDPSocket* socketToSendFrom, NetMessage&
 void NetConnection::Send( NetMessage& message ) {
 
 	NetMessage* msg = new NetMessage( message );
-	if ( msg->IsReliable()) {
+	if ( msg->IsInOrder() ) {
+		SetSequenceIDOnMessage( msg );
+	}
+	if ( msg->IsReliable() ) {
 		m_unsentReliables.push( msg );
 	} else {
 		m_outgoingUnreliables.push( msg );
@@ -201,7 +204,10 @@ void NetConnection::ProcessIncoming( NetPacket& packet ) {
 	int actualSize = 8;
 	for ( int i = 0; i < packetHeader.messageCount; i++) {
 		NetMessage* message = packet.ReadMessage( m_session );
-		if ( message->IsReliable() ) {
+
+		if ( message->IsInOrder() ) {
+			actualSize += message->GetMessageLength() + 7;
+		} else if ( message->IsReliable() ) {
 			actualSize += message->GetMessageLength() + 5;
 		} else {
 			actualSize += message->GetMessageLength() + 3;
@@ -281,8 +287,25 @@ void NetConnection::ProcessIncoming( NetPacket& packet ) {
 					if ( it == m_receivedReliables.end() ) {
 
 						if ( m_highestReceivedReliable - message->GetReliableID() < RELIABLE_WINDOW ) {
-							messageCommand.callback( *message, *this );
-							AddToReceivedReliablesList( message->GetReliableID() );
+							
+							if ( message->IsInOrder() ) {
+								NetMessageChannel& channel = GetChannelForMessage( message );
+								
+								if ( message->GetSequenceID() == channel.m_nextExpectedSequenceID ) {
+									messageCommand.callback( *message, *this );
+									channel.m_nextExpectedSequenceID++;
+								} 
+
+								else {
+									channel.m_outOfOrderMessages.push_back( message );
+									AddToReceivedReliablesList( message->GetReliableID() );
+								}
+							}
+
+							else {
+								messageCommand.callback( *message, *this );
+								AddToReceivedReliablesList( message->GetReliableID() );
+							}
 						}
 					}
 				}
@@ -294,6 +317,11 @@ void NetConnection::ProcessIncoming( NetPacket& packet ) {
 		else {
 			DevConsole::Printf("Message index was not valid");
 		}
+	}
+
+	for ( uint8_t i = 0; i < MAX_MESSAGE_CHANNELS; i++ ) {
+
+		ProcessChannelOutOfOrders( m_channels[i] );
 	}
 
 	m_timeAtLastReceive = g_masterClock->total.seconds;
@@ -496,6 +524,45 @@ void NetConnection::AddToReceivedReliablesList( uint16_t reliableID ) {
 		if (*it < m_highestReceivedReliable - RELIABLE_WINDOW) {
 			it = m_receivedReliables.erase(it);
 		} else {
+			it++;
+		}
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetConnection::SetSequenceIDOnMessage( NetMessage* msg ) {
+
+	NetCommand const& def = NetSession::GetCommand( msg->GetMessageIndex() );
+	msg->SetSequenceID( m_channels[def.channel].GetAndIncrementNextSequenceID() );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+NetMessageChannel& NetConnection::GetChannelForMessage( NetMessage* msg ) {
+	return m_channels[ NetSession::GetCommand( msg->GetMessageIndex() ).channel ];
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetConnection::ProcessChannelOutOfOrders( NetMessageChannel& channel ) {
+
+	std::list<NetMessage*>::iterator it = channel.m_outOfOrderMessages.begin();
+
+	while ( it != channel.m_outOfOrderMessages.end() ) {
+
+		if ( (*it)->GetSequenceID() == channel.m_nextExpectedSequenceID ) {
+			NetCommand& command = NetSession::GetCommand( (*it)->GetMessageIndex() );
+			command.callback( **it, *this );
+
+			delete *it;
+			channel.m_outOfOrderMessages.erase( it );
+			it = channel.m_outOfOrderMessages.begin();
+
+			channel.m_nextExpectedSequenceID++;
+		}
+
+		else {
 			it++;
 		}
 	}
