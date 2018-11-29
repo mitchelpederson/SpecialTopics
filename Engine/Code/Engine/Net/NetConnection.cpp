@@ -2,6 +2,7 @@
 
 #include "Engine/Net/NetConnection.hpp"
 #include "Engine/Net/NetSession.hpp"
+
 #include "Engine/Core/EngineCommon.hpp"
 
 //----------------------------------------------------------------------------------------------------------------
@@ -10,10 +11,29 @@ NetConnection::NetConnection( NetSession* session, uint8_t connectionIndex, NetA
 	, m_connectionIndex( connectionIndex )
 	, m_session( session )
 	, m_sendTick( g_masterClock )
+	, m_joinRequestResend( g_masterClock )
 	, m_heartbeat( g_masterClock )
 {
 	m_sendTick.SetTimer( 0.1f );
 	m_heartbeat.SetTimer( DEFAULT_HEARTBEAT );
+	m_joinRequestResend.SetTimer( JOIN_REQUEST_RESEND_TIME );
+	m_timeAtLastReceive = g_masterClock->total.seconds;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+NetConnection::NetConnection( NetSession* session, NetConnectionInfo_T const& info ) 
+	: m_remoteAddress( info.addr )
+	, m_connectionIndex( info.sessionIndex )
+	, m_session( session )
+	, m_sendTick( g_masterClock )
+	, m_joinRequestResend( g_masterClock )
+	, m_heartbeat( g_masterClock )
+	, m_id( info.id )
+{
+	m_sendTick.SetTimer( 0.1f );
+	m_heartbeat.SetTimer( DEFAULT_HEARTBEAT );
+	m_joinRequestResend.SetTimer( JOIN_REQUEST_RESEND_TIME);
 	m_timeAtLastReceive = g_masterClock->total.seconds;
 }
 
@@ -25,9 +45,35 @@ NetConnection::~NetConnection() {
 
 
 //----------------------------------------------------------------------------------------------------------------
+void NetConnection::Update() {
+	switch ( m_state ) {
+	case CONNECTION_DISCONNECTED: break;
+	case CONNECTION_BOUND: break;
+
+	// When connecting, we need to resend the join request every 100 ms.
+	case CONNECTION_CONNECTING: 
+		if ( m_joinRequestResend.CheckAndReset() ) {
+			NetMessage joinRequest( NETMSG_JOIN_REQUEST );
+			joinRequest.WriteString( m_id.c_str() );
+			m_session->GetHostConnection()->Send( joinRequest );
+		}
+		break;
+
+	case CONNECTION_CONNECTED: break;
+	case CONNECTION_JOINING: break;
+	case CONNECTION_READY: break;
+	default: break;
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 void NetConnection::UpdateHeartbeat() {
 	if (m_heartbeat.CheckAndReset()) {
 		NetMessage heartbeat( m_session->GetMessageIndexForName( "heartbeat" ) );
+		if ( m_session->AmIHost() ) {
+			heartbeat.WriteValue<double>( m_session->m_sessionClock->total.hp_seconds );
+		}
 		Send( heartbeat );
 	}
 }
@@ -566,4 +612,70 @@ void NetConnection::ProcessChannelOutOfOrders( NetMessageChannel& channel ) {
 			it++;
 		}
 	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetConnection::SetConnectionIndex( uint8_t index ) {
+	m_connectionIndex = index;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsConnected() {
+	return m_state >= CONNECTION_CONNECTED;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsDisconnected() {
+	return m_state == CONNECTION_DISCONNECTED;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsReady() {
+	return m_state == CONNECTION_READY;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsMe() {
+	return m_session->GetMyConnection() == this;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsHost() {
+	return m_session->GetHostConnection() == this;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::IsClient() {
+	return m_session->GetMyConnection() != this;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetConnection::SetConnectionState( eNetConnectionState state ) {
+	m_state = state;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+std::string NetConnection::GetID() {
+	return m_id;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+eNetConnectionState NetConnection::GetState() {
+	return m_state;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool NetConnection::HasTimedOut() {
+	return (g_masterClock->total.seconds - m_timeAtLastReceive) > CONNECTION_TIMEOUT_DURATION;
 }

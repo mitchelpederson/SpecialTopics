@@ -1078,3 +1078,118 @@ net_sim_loss 0.7
 net_sim_lag 0.2 2.0
 in_order_test 0 1000
 quit
+
+quit
+
+host
+host 
+quit
+
+host 
+quit
+
+host
+quit
+
+host
+quit
+
+host
+quit
+
+join 192.168.1.70:10084 hi
+quit
+
+host
+net_sim_lag 1.0 2.0
+quit
+
+host
+quit
+
+quit
+
+join 192.168.1.70:10084 hi
+quit
+
+host
+quit
+
+join 10.8.158.14:10084 mitchel
+quit
+
+host
+quit
+
+join 10.8.158.14:10084 mitchel
+quit
+
+net_sim_lag 0.5 1.0
+join 10.8.158.14:10084 mitchel
+quit
+
+host
+quit
+
+host
+quit
+
+host
+quit
+
+join 10.8.157.72:10084 hello
+quit
+
+net_sim_lag 0.5 1.0
+join 10.8.157.72:10084 hello
+quit
+
+join 10.8.157.72:10085 hello
+disconnect
+qiot
+quit
+
+host
+hostquit
+quit
+
+join 10.8.157.72:10084 hello
+disconnect
+join 10.8.157.72:10084 hello
+quit
+
+host
+quit
+
+host
+disconncet
+disconnect
+quit
+
+host
+quit
+
+join 10.8.139.92:10084 hi
+quit
+
+host
+quit
+
+quit
+
+join 10.8.139.92:10084 hi
+quit
+
+host
+quit
+
+host
+quit
+
+host
+quit
+
+host
+net_sim_lag 0.05 0.1
+net_sim_loss 0.08
+quit

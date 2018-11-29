@@ -22,9 +22,17 @@
 #define DEFAULT_HEARTBEAT 2.f
 #define RELIABLE_WINDOW 32
 #define MAX_MESSAGE_CHANNELS 8
+#define JOIN_REQUEST_RESEND_TIME 0.1f
+#define CONNECTION_TIMEOUT_DURATION 10.f;
 
 
 class NetSession;
+
+struct NetConnectionInfo_T {
+	NetAddress_T addr;
+	std::string id;
+	uint8_t sessionIndex;
+};
 
 
 class NetMessageChannel {
@@ -50,10 +58,21 @@ public:
 };
 
 
+enum eNetConnectionState {
+	CONNECTION_DISCONNECTED = 0,  
+	CONNECTION_BOUND,             
+	CONNECTION_CONNECTING,  
+	CONNECTION_CONNECTED,
+	CONNECTION_JOINING,           
+	CONNECTION_READY
+};
+
+
 class NetConnection {
 
 public:
 	NetConnection( NetSession* session, uint8_t connectionIndex, NetAddress_T const& address );
+	NetConnection( NetSession* session, NetConnectionInfo_T const& info );
 	~NetConnection();
 
 	void	Send( NetMessage& message );
@@ -61,6 +80,8 @@ public:
 	int		SendPacketImmediate( UDPSocket* socketToSendFrom, NetMessage& message, bool isAckConfirm = false );
 	void	Receive( NetMessage* message );
 	void	ProcessIncoming( NetPacket& packet );
+
+	void	Update();
 
 	void	UpdateHeartbeat();
 	void	SetSendRate( float rate );
@@ -71,11 +92,22 @@ public:
 	void			IncrementNextAckToSend();
 	void			ConfirmPacketReceived( uint16_t ack );
 
+	// Host/Join
+	void			SetConnectionIndex( uint8_t index );
+	void			SetConnectionState( eNetConnectionState state );
+	bool			IsConnected();
+	bool			IsDisconnected();
+	bool			IsReady();
+	bool			IsMe();
+	bool			IsHost();
+	bool			IsClient();
+
 
 	float GetTimeSinceLastReceivedMessage() const;
 	std::string GetAddressAsString() const;
 	NetAddress_T GetAddress() const;
 	bool HasTickElapsed();
+	bool HasTimedOut();
 	uint16_t GetNextSentAck();
 	uint16_t GetLastRecvdAck();
 	uint16_t GetPreviousRecvdAckBitfield();
@@ -85,6 +117,8 @@ public:
 	float GetTimeAtLastReceive();
 	float GetTimeAtLastSend();
 	uint16_t GetNumUnconfirmedReliables();
+	std::string GetID();
+	eNetConnectionState GetState();
 
 public:
 	NetSession* m_session = nullptr;
@@ -100,7 +134,12 @@ private:
 	void ProcessChannelOutOfOrders( NetMessageChannel& channel );
 
 private:
-	uint8_t m_connectionIndex;
+
+	eNetConnectionState m_state = CONNECTION_DISCONNECTED;
+
+	std::string m_id = "";
+
+	uint8_t m_connectionIndex = 0xFF;
 	NetAddress_T m_remoteAddress;
 	float m_timeAtLastReceive = 0.f;
 	float m_timeAtLastSend = 0.f;
@@ -108,6 +147,7 @@ private:
 	float m_loss = 0.f;
 	Stopwatch m_sendTick;
 	Stopwatch m_heartbeat;
+	Stopwatch m_joinRequestResend;
 
 	std::queue<NetMessage*> m_unsentReliables;
 	std::vector<NetMessage*> m_unconfirmedReliables;
