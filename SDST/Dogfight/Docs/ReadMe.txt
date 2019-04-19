@@ -1,35 +1,36 @@
-Asteroids Gold by Mitchel Pederson
+Dogfight (Post-Stall Maneuvers) by Mitchel Pederson
 
-Known Issues:
+Engine: My custom engine written at SMU Guildhall
 
-Occasional issue with performance. I didn't encounter it in release mode, so it might just be my laptop. I used the performance analyzer in Visual Studio a couple times and it seems that the constant creation of new Disc2 objects for collision detection was a large percentage of the time, but other tests just showed OpenGL function calls.
+The focus of the project was to create a multiplayer game that works over LAN, and to refresh myself on 3D math & rendering concepts.
 
-
-How To Use:
-
-Controller:
-Left stick - Aim and thrust
-A	   - Shoot
-
-Keyboard: 
-P - toggle pause
-T - hold to slow down time
-I - add an asteroid
-O - remove an asteroid
-N - respawn if the ship is destroyed
-
-Space - shoot
-E/Up Arrow - Thrust forward
-S/Left Arrow - rotate counter-clockwise
-F/Right Arrow - rotate clockwise
-
-F1 - toggle developer mode
+Features:
+- Multiplayer over LAN across multiple machines in a star network pattern. Host is authoritative and clients use dead reckoning to stay as in sync with the host as possible, sending only player inputs to the host. See mitchelpederson.com for more details
+- 3D plane physics based on the four fources of flight, but simplified for gameplay purposes
+- Large terrain mesh generation handled asynchronously to prevent hitches when regenerating
 
 
-Deep Learning:
+Controls:
 
-Throughout all of the Asteroids project, I found myself spending a lot of time thinking about prioritization. This became especially obvious to me in this last phase of it, as I ended up nearly running out of time to implement all of the required features. Due to being sick and missing class, I was behind. Fortunately the assignment document contains a very detailed list of tasks. I used the same process I talked about in my previous deep learning but really emphasized priority of features this time around, thinking in terms of what MUST be completed, what SHOULD and what I was willing to sacrifice on in points if I ran out of time. 
+Keyboard:
+WASD - Pitch & Roll
+IJKL - Yaw & Throttle
+Shift - Hold to increase effect of throttle (I + Shift = max throttle)
+Q - Fire Gun
+E - Acquire/Change lock
+Space - Fire Missile
 
-For this specific assignment, I maximized the number of points for the amount of time I would have to spend on it. This led me to tackle the engine features before even thinking about juice. I knew I would start putting all my time into unnecessary features like UFOs and seeking missiles if I did not explicitly tell myself not to focus on that. For example, I completed all of the refactoring first, as I knew that would affect all of my future projects if I did not do it properly from the start and would make things like the Renderer and InputSystem more difficult to implement. 
+Xbox Controller:
+Left Stick - Pitch & Roll
+Right Stick - Look around
+LT/RT - Throttle
+LB/RB - Yaw
+A - Fire Guns
+B - Fire Missile
+Y - Acquire/Change lock
 
-In the future I will continue to try and apply strict prioritization first. It is easy to do when a list of tasks and requirements are cleanly laid out for me but when that is not available, I will make a strong effort to quantize things before touching any code. I realize this is also a strong motivation for using Scrum, so I am excited to finally put it into practice for TGP.
+
+Asset credits:
+Eurofighter jet model - jasonowen https://free3d.com/3d-model/uk-eurofighter-typhoon-93005.html
+Sidewinder missile model - piojoman https://www.turbosquid.com/FullPreview/Index.cfm/ID/924208
+
