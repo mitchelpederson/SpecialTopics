@@ -1,7 +1,9 @@
+#include "Game/EngineBuildPreferences.hpp"
 #include "Engine/Math/Vector3.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include <math.h>
 
+#ifdef X_RIGHT_Y_UP_Z_FORWARD
 const Vector3 Vector3::UP		= Vector3( 0.f,  1.f,  0.f);
 const Vector3 Vector3::FORWARD	= Vector3( 0.f,  0.f,  1.f);
 const Vector3 Vector3::RIGHT	= Vector3( 1.f,  0.f,  0.f);
@@ -10,6 +12,18 @@ const Vector3 Vector3::NORTH	= Vector3( 0.f,  0.f,  1.f);
 const Vector3 Vector3::SOUTH	= Vector3( 0.f,  0.f, -1.f);
 const Vector3 Vector3::WEST		= Vector3( 1.f,  0.f,  0.f);
 const Vector3 Vector3::EAST		= Vector3(-1.f,  0.f,  0.f);
+#endif
+
+#ifdef X_FORWARD_Y_LEFT_Z_UP
+const Vector3 Vector3::UP		= Vector3( 0.f,  0.f,  1.f);
+const Vector3 Vector3::FORWARD	= Vector3( 1.f,  0.f,  0.f);
+const Vector3 Vector3::RIGHT	= Vector3( 0.f, -1.f,  0.f);
+const Vector3 Vector3::ZERO		= Vector3( 0.f,  0.f,  0.f);
+const Vector3 Vector3::NORTH	= Vector3( 1.f,  0.f,  0.f);
+const Vector3 Vector3::SOUTH	= Vector3(-1.f,  0.f,  0.f);
+const Vector3 Vector3::WEST		= Vector3( 0.f,  1.f,  0.f);
+const Vector3 Vector3::EAST		= Vector3( 0.f, -1.f,  0.f);
+#endif
 
 Vector3::Vector3() {
 

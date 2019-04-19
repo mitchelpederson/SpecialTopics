@@ -15,11 +15,14 @@ void DevConsoleInputBox::Update() {
 
 
 void DevConsoleInputBox::Render() const {
-	g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, m_fontSize), Rgba(100, 100, 100, 100) );
-	g_theRenderer->DrawTextInBox2D( AABB2(0.f, 0.f, 100.f, m_fontSize), Vector2(0.f, 0.5f), m_characterStream, m_fontSize, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_OVERRUN );
+	float w = (float) Window::GetInstance()->GetWidth();
+
+	g_theRenderer->DrawAABB( AABB2(0.f, 0.f, w, m_fontSize), Rgba(100, 100, 100, 100) );
+	g_theRenderer->BindMaterial(g_theRenderer->GetMaterial("ui-font"));
+	g_theRenderer->DrawTextInBox2D( AABB2(0.f, 0.f, w, m_fontSize), Vector2(0.f, 0.5f), m_characterStream, m_fontSize, Rgba(), 1.f, g_theRenderer->CreateOrGetBitmapFont("Wolfenstein"), TEXT_DRAW_OVERRUN );
 
 	if(m_blink) {
-		float glyphWidth = m_fontSize * 0.4f;
+		float glyphWidth = m_fontSize;
 		g_theRenderer->DrawAABB( AABB2(glyphWidth * m_cursorLocation, 0.f, glyphWidth * (m_cursorLocation + 1.f), m_fontSize), Rgba(255,255,255,200) );
 	}
 }
@@ -79,4 +82,14 @@ bool DevConsoleInputBox::IsEmpty() {
 void DevConsoleInputBox::SetText( const std::string& text ) {
 	m_characterStream = text;
 	m_cursorLocation = (int) m_characterStream.size();
+}
+
+
+const std::string& DevConsoleInputBox::GetText() {
+	return m_characterStream;
+}
+
+
+float DevConsoleInputBox::GetFontSize() {
+	return m_fontSize;
 }

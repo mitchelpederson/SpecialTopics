@@ -1,5 +1,4 @@
-#define WIN32_LEAN_AND_MEAN		// Always #define this before #including <windows.h>
-#include <windows.h>			// #include this (massive, platform-specific) header in very few places
+#include "Engine/Core/WindowsCommon.hpp"
 #include <Xinput.h>
 #pragma comment( lib, "xinput9_1_0" ) // Link in the xinput.lib static library // #Eiserloh: Xinput 1_4 doesn't work in Windows 7; use 9_1_0 explicitly for broadest compatibility
 #include "Engine/Math/MathUtils.hpp"
@@ -139,4 +138,8 @@ float XboxController::GetLeftTrigger() const {
 
 float XboxController::GetRightTrigger() const {
 	return m_rightTriggerNormalized;
+}
+
+bool XboxController::IsConnected() const {
+	return m_isConnected;
 }

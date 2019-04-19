@@ -8,7 +8,16 @@
 #include "Engine/Renderer/Mesh.hpp"
 #include "Engine/Renderer/MeshBuilder.hpp"
 #include "Engine/Renderer/Camera.hpp"
-#include <vector>
+#include <deque>
+
+
+class ParticleEmitter;
+struct Particle;
+
+typedef void (*particle_update_cb)( Particle* particle, float deltaTime );
+typedef void (*emitter_pre_render_cb)( ParticleEmitter* pe, Camera* camera );
+typedef void (*emitter_update_cb)( ParticleEmitter* pe );
+
 
 
 struct Particle {
@@ -19,12 +28,14 @@ struct Particle {
 	float timeBorn;
 	float timeWillDie;
 	float size = 0.5f;
+	particle_update_cb Update = Particle::DefaultUpdate;
 
-	void Update( float deltaTime ) {
-		Vector3 acceleration = force * (1.f / mass);
-		velocity = velocity + (acceleration * deltaTime);
-		position = position + (velocity * deltaTime);
-		force = Vector3::ZERO;
+
+	static void DefaultUpdate( Particle* particle, float deltaTime ) {
+		Vector3 acceleration = particle->force * (1.f / particle->mass);
+		particle->velocity = particle->velocity + (acceleration * deltaTime);
+		particle->position = particle->position + (particle->velocity * deltaTime);
+		particle->force = Vector3::ZERO;
 	}
 
 	bool IsDead( float currentTime ) {
@@ -48,7 +59,9 @@ public:
 
 	ParticleEmitter();
 	ParticleEmitter( Clock* clock );
-	void Update();
+	~ParticleEmitter();
+
+	static void DefaultUpdate( ParticleEmitter* pe );
 	void SpawnParticle();
 	void SpawnBurst();
 	bool IsSafeToDestroy() const;
@@ -58,16 +71,19 @@ public:
 	void SetColorOverTime( const Rgba& startColor, const Rgba& endColor );
 	void SetLifetime( float min, float max );
 
-	void PreRender( Camera* cam );
+	static void DefaultPreRender( ParticleEmitter* pe, Camera* cam );
 
 
 public:
+	emitter_update_cb Update = ParticleEmitter::DefaultUpdate;
+	emitter_pre_render_cb PreRender = ParticleEmitter::DefaultPreRender;
+	particle_update_cb UpdateParticle = Particle::DefaultUpdate;
 
 	// Rendering stuff
 	Transform transform;
 	Renderable* renderable = nullptr;
 	Mesh* mesh = nullptr;
-	std::vector<Particle> particles;
+	std::deque<Particle> particles;
 	Clock* clock = nullptr;
 
 	// Emitter Parameters
@@ -75,6 +91,7 @@ public:
 	IntRange burstSize = IntRange(1, 1);
 	float timeAtLastSpawn = -100.f;
 	float spawnConeAngle = 30.f;
+	bool spawnInWorldSpace = false;
 
 	// Particle Parameters
 	FloatRange particleLifespan = FloatRange(1.f, 10.f);
@@ -87,3 +104,5 @@ public:
 private:
 	
 };
+
+

@@ -20,13 +20,17 @@ public:
 	void SetNormal( const Vector3& normal );
 	void SetTangent( const Vector3& tangent );
 	unsigned int PushVertex( const Vector3& position );
+	void PushIndex( unsigned int index );
 	unsigned int PushQuad( const Vector3& bl, const Vector3& br, const Vector3& tr, const Vector3& tl);
+	unsigned int PushTexturedQuad( const Vector3& bl, const Vector3& br, const Vector3& tr, const Vector3& tl, const AABB2& uvs );
 
 	unsigned int GetVertexCount() const;
 	unsigned int GetIndexCount() const;
 	const std::vector<VertexMaster>& GetVertices();
 	const std::vector<unsigned int>& GetIndices();
 	DrawInstructions GetDrawInstructions();
+
+	VertexMaster& GetVertexByIndex( int index );
 
 
 public:
@@ -45,7 +49,6 @@ public:
 
 	void AddCube( const Vector3& center, const Vector3& size, const Rgba& color = Rgba(255, 255, 255, 255), const AABB2& topUVs = AABB2::ZERO_TO_ONE, const AABB2& sideUVs = AABB2::ZERO_TO_ONE, const AABB2& bottomUVs = AABB2::ZERO_TO_ONE );
 	void AddSphere( const Vector3& position, float radius, unsigned int wedges, unsigned int slices, const Rgba& color = Rgba() ); 
-
 
 	void LoadMeshFromOBJ( const std::string& path );
 

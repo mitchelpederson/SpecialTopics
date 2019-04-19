@@ -3,6 +3,7 @@
 #include "Engine/Net/Socket.hpp"
 #include "Engine/Net/NetAddress.hpp"
 #include "Engine/Math/MathUtils.hpp"
+#include "Engine/Core/EngineCommon.hpp"
 
 
 class UDPSocket : public Socket {
@@ -25,7 +26,8 @@ public:
 	bool start() 
 	{
 		// get an address to use; 
-		return m_socket.Bind(NetAddress_T::GetLocal( 10084 ), 0);
+		NetAddress_T localAddr = NetAddress_T::GetLocal( GAME_PORT );
+		return m_socket.Bind( localAddr, 0);
 
 	}
 
@@ -47,24 +49,23 @@ public:
 		size_t read = m_socket.ReceiveFrom( from_addr, buffer, 1500 - 48 ); 
 
 		if (read > 0U) {
-			size_t maxBytes = Min<size_t>( read, 128 ); 
 			std::string output = "0x"; 
-			char* buffer = new char[1500-48];
-			char* iter = buffer;
-			strcpy_s(buffer, output.size(), output.c_str()); 
+			char* packetBuffer = new char[1500-48];
+			char* iter = packetBuffer;
+			strcpy_s(packetBuffer, output.size(), output.c_str()); 
 
 			iter += 2U; // skip the 0x
 			for (unsigned int i = 0; i < read; ++i) {
-				sprintf_s( iter, 3U, "%02X", buffer[i] ); 
+				sprintf_s( iter, 3U, "%02X", packetBuffer[i] ); 
 				iter += 2U; 
 			}
 			*iter = NULL; 
 			//output.recalculate_sizes(); 
 
-			DevConsole::Printf( "Received: %s", buffer ); 
+			DevConsole::Printf( "Received: %s", packetBuffer ); 
 
-			delete buffer;
-			buffer = nullptr;
+			delete packetBuffer;
+			packetBuffer = nullptr;
 			iter = nullptr;
 		}
 	}

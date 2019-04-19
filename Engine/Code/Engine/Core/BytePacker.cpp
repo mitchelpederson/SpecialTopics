@@ -179,6 +179,7 @@ bool BytePacker::WriteString( char const* str ) {
 		}
 		strIndex++;
 	}
+	return true;
 }
 
 

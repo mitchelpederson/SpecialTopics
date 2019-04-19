@@ -31,10 +31,10 @@ private:
 	static bool isOpen;
 	static eViewMode currentProfilerViewMode;
 
-	AABB2 generalRenderBox = AABB2(2.f, 80.f, 98.f, 98.f);
-	AABB2 entryRenderBox = AABB2(2.f, 2.f, 98.f, 78.f);
-	AABB2 historyRenderBox = AABB2(40.f, 82.f, 98.f, 98.f);
-	float textHeight = 2.f;
+	AABB2 generalRenderBox = AABB2(0.02f, 0.8f, 0.98f, 0.98f);
+	AABB2 entryRenderBox = AABB2(0.02f, 0.02f, 0.98f, 0.78f);
+	AABB2 historyRenderBox = AABB2(0.4f, 0.82f, 0.98f, 0.98f);
+	float textHeight = 0.02f;
 	float maxFrameTimeInHistory = 0.0001f;
 	unsigned int lastFrameThatSetMax = 0;
 	unsigned int frameCount = 0;

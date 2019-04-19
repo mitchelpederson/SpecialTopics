@@ -41,6 +41,8 @@ Shader::Shader(  const tinyxml2::XMLElement& xml ) {
 		m_state->cullMode = CULLMODE_BACK;
 	} else if (cull == "front") {
 		m_state->cullMode = CULLMODE_FRONT;
+	} else if (cull == "none") {
+		m_state->cullMode = CULLMODE_NONE;
 	}
 
 	if (fill == "solid") {

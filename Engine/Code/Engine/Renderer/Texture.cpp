@@ -213,6 +213,7 @@ bool Texture::IsCubemap() const {
 Texture* Texture::CreateDuplicateTarget( Texture* copy ) {
 	Texture* duplicate = new Texture();
 	duplicate->CreateRenderTarget(copy->GetDimensions().x, copy->GetDimensions().y, copy->m_format);
+	duplicate->SetSamplerMode( copy->GetSamplerMode() );
 	return duplicate;
 }
 

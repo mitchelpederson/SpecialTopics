@@ -57,7 +57,7 @@ private:
 	bool m_isOpen = false;
 	static DevConsole* m_instance;
 	Camera* m_camera = nullptr;
-	float m_fontSize = 2.5f;
+	float m_fontSize = 20.f;
 	BitmapFont* m_currentFont = nullptr;
 	std::vector<Message> m_messages;
 

@@ -298,8 +298,8 @@ void RemoteCommandService::SendCommandToHost( Command const& message, bool echo 
 void RemoteCommandService::BeginHosting( unsigned int service ) {
 	DisconnectAll();
 
-	if ( !m_localServerSocket.Listen( service, 32 ) ) {
-		ERROR_RECOVERABLE( "Could not start RCS on service %u", service );
+	if ( !m_localServerSocket.Listen( (uint16_t) service, 32 ) ) {
+		ERROR_RECOVERABLE( "Could not start RCS" );
 	}
 	m_isHosting = true;
 	m_isClient = false;
@@ -327,7 +327,7 @@ void RemoteCommandService::DisconnectAll() {
 		m_remoteServerSocket.Close();
 	}
 
-	for ( int i = m_remoteClientConnections.size() - 1; i >= 0; i-- ) {
+	for ( int i = (int) m_remoteClientConnections.size() - 1; i >= 0; i-- ) {
 		if ( !m_remoteClientConnections[i]->IsClosed()) {
 			m_remoteClientConnections[i]->Close();
 		}

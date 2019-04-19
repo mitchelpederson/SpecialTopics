@@ -43,7 +43,7 @@ NetAddress_T::NetAddress_T( char const* string ) {
 	}
 	// If neither, something went really wrong
 	else {
-		ERROR_AND_DIE("NetAddress_T( char const* string ) could not split the string correctly (input:  %s)", string);
+		ERROR_AND_DIE("NetAddress_T( char const* string ) could not split the string correctly");
 	}
 }
 
@@ -119,6 +119,8 @@ NetAddress_T NetAddress_T::GetLocal( unsigned int serviceNumber ) {
 	}
 
 	::freeaddrinfo( result );
+
+	return NetAddress_T();
 }
 
 
@@ -202,8 +204,8 @@ bool GetAddressForHost( sockaddr* out, int* out_addrlen, char const* hostname, c
 			memcpy( out, ipv4, sizeof(sockaddr_in) );
 			*out_addrlen = sizeof(sockaddr_in);
 
-			char out[256];
-			inet_ntop( ipv4->sin_family, &(ipv4->sin_addr), out, 256 );
+			char outAddrStr[256];
+			inet_ntop( ipv4->sin_family, &(ipv4->sin_addr), outAddrStr, 256 );
 			//Logger::PrintTaggedf( "Net", "My address: %s", out );
 			//DevConsole::Printf( "My address: %s", out );
 			foundOne = true;

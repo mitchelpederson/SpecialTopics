@@ -46,7 +46,7 @@ void CommandRegistration::RegisterCommand( const std::string& name, command_cb c
 
 	for (unsigned int index = 0; index < m_registeredCommands.size(); index++) {
 		if (m_registeredCommands[index].command == name) {
-			ERROR_RECOVERABLE("Tried to add another command with the same name as [%s]", name.c_str());
+			ERROR_RECOVERABLE( "Tried to add command with a duplicate name." );
 			return;
 		}
 	}
@@ -86,7 +86,7 @@ bool Command::GetNextInt( int& arg ) {
 		try {
 			size_t s = 0;
 			arg = std::stoi(m_tokens[m_currentArg], &s);
-			m_position += m_tokens[m_currentArg].size() + 1;
+			m_position += (int) m_tokens[m_currentArg].size() + 1;
 		}
 		catch (std::exception except) {
 			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an integer");
@@ -115,7 +115,7 @@ bool Command::GetNextFloat( float& arg ) {
 		try {
 			size_t s = 0;
 			arg = std::stof(m_tokens[m_currentArg], &s);
-			m_position += m_tokens[m_currentArg].size() + 1;
+			m_position += (int) m_tokens[m_currentArg].size() + 1;
 		}
 		catch (std::exception except) {
 			//DevConsole::Printf(Rgba(255, 0, 0, 255), "The first argument must be an float");

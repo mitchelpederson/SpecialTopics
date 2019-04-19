@@ -54,7 +54,8 @@ enum DepthCompare
 
 enum CullMode {
 	CULLMODE_BACK,
-	CULLMODE_FRONT
+	CULLMODE_FRONT,
+	CULLMODE_NONE
 };
 
 
@@ -131,6 +132,7 @@ public:
 	void DrawMesh( Mesh* mesh );
 	void DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimitive drawPrimitive );
 	void DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive );
+	void DrawMeshImmediate( MeshBuilder* builder );
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Shape draw calls
@@ -174,6 +176,7 @@ public:
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Camera functions
+	void SetClearScreenColor( const Rgba& color );
 	void ClearScreen(const Rgba& color) const;
 	void SetOrtho(float left, float right, float bottom, float top, float nearVal, float farVal);
 	void SetProjection(const Matrix44& proj);
@@ -228,6 +231,7 @@ public:
 	// Framebuffer management
 	bool CopyFrameBuffer( FrameBuffer* dst, FrameBuffer* src );
 	Texture* GetDefaultColorTarget();
+	Texture* GetDefaultBloomColorTarget();
 	Texture* GetDefaultDepthTarget();
 	FrameBuffer* GetDefaultFrameBuffer();
 
@@ -245,10 +249,10 @@ public:
 	// Uniform functions
 	void BindStandardUniforms();
 	void BindLayoutToProgram(VertexLayout const *layout);
-	void SetUniform( const std::string& name, Rgba* color, unsigned int size = 1 ) const;
-	void SetUniform( const std::string& name, float* param, unsigned int size = 1 ) const;
-	void SetUniform( const std::string& name, Vector3* vec3, unsigned int size = 1 ) const;
-	void SetUniform( const std::string& name, Vector4* vec4, unsigned int size = 1 ) const;
+	void SetUniform( const std::string& name, const Rgba* color, unsigned int size = 1 ) const;
+	void SetUniform( const std::string& name, const float* param, unsigned int size = 1 ) const;
+	void SetUniform( const std::string& name, const Vector3* vec3, unsigned int size = 1 ) const;
+	void SetUniform( const std::string& name, const Vector4* vec4, unsigned int size = 1 ) const;
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Lighting functions
@@ -266,6 +270,7 @@ public:
 	void SetModelMatrix( const Matrix44& modelMatrix );
 	void SetViewport( int x, int y, int width, int height );
 	void SaveScreenshot();
+	Matrix44 GetClipToScreenSpace( Camera* worldCam );
 
 private:
 	void LoadBuiltInShaders();
@@ -275,6 +280,8 @@ private:
 	float m_timeScreenShakeStarts;
 	float m_screenShakeLength;
 	float m_screenShakeIntensity;
+
+	Rgba m_screenClearColor = Rgba(0,0,0,255);
 
 	std::map< const std::string, Texture* > m_textures;
 	std::map< std::string, BitmapFont* > m_loadedFonts;
@@ -301,6 +308,7 @@ private:
 	Sampler* m_linearMipmapSampler = nullptr;
 	Sampler* m_shadowSampler = nullptr;
 	Texture* m_defaultColorTarget = nullptr;
+	Texture* m_defaultBloomColorTarget = nullptr;
 	Texture* m_defaultDepthTarget = nullptr;
 	FrameBuffer* m_defaultFrameBuffer = nullptr;
 	int m_currentTextureID;

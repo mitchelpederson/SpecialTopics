@@ -2,6 +2,9 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Renderer/RenderSceneGraph.hpp"
 
+
+constexpr int BLOOM_PASSES = 10;
+
 struct DrawCall {
 
 	Matrix44 m_model;
@@ -22,6 +25,7 @@ class ForwardRenderPath {
 public:
 
 	ForwardRenderPath( Renderer* r );
+	~ForwardRenderPath();
 
 	void Render( RenderSceneGraph* scene );
 	void RenderSceneForCamera( Camera* camera, RenderSceneGraph* scene );
@@ -32,10 +36,14 @@ private:
 	void SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera* camera );
 	void EnableLightsForDrawCall( const DrawCall& drawCall, RenderSceneGraph* scene );
 	void ApplyCameraEffects( Camera* camera );
+	void ApplyBloom( Camera* camera );
 	void RenderShadowCastingObjectsForLight( Light* light, RenderSceneGraph* scene, Camera* currentCamera );
 
 
 	Renderer* renderer;
 	Camera* m_effectCamera = nullptr;
+
+	Texture* m_bloomScratchTargetSrc = nullptr;
+	Texture* m_bloomScratchTargetDest = nullptr;
 
 };

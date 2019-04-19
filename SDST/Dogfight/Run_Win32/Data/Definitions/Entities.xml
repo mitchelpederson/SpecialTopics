@@ -1,0 +1,33 @@
+<entities>
+
+	<entity id="0" name="eurofighter" >
+		<gameplay flightStyle="plane" isWeapon="false" maxHealth="100.0" collisionRadius="5.0" canReceiveLock="true" lifespan="100000.0" />
+		<visuals meshPath="Data/Models/Eurofighter/Eurofighter.obj" materialName="eurofighter" trailLifespan="15.0" trailColor="255,255,255,200" />
+		<physics thrustRange="6000.0~440000.0" maxVelocity="700.0" stallSpeed="50.0" mass="16000.0" crossSectionArea="50.0~3000.0" 
+				 dragCoefficient="0.023~0.07" rollDrag="0.6" yawDrag="1.0" pitchDrag="1.2" maxRollSpeed="70.0" />
+	</entity>
+
+	<entity id="1" name="eurofighter-dummy" >
+		<gameplay flightStyle="plane" isWeapon="false" maxHealth="100.0" collisionRadius="1.0" canReceiveLock="true" lifespan="100000.0" />
+		<visuals meshPath="Data/Models/Eurofighter/Eurofighter.obj" materialName="eurofighter" trailLifespan="15.0" trailColor="255,255,255,200" />
+		<physics thrustRange="6000.0~440000.0" maxVelocity="200.0" stallSpeed="50.0" mass="16000.0" crossSectionArea="50.0~3000.0" 
+				 dragCoefficient="0.023~0.07" rollDrag="0.8" yawDrag="1.0" pitchDrag="1.2" maxRollSpeed="50.0" />
+	</entity>
+
+	<entity id="10" name="sidewinder" >
+		<gameplay flightStyle="missile" isWeapon="true" maxHealth="100.0" collisionRadius="10.0" lifespan="12.0" canReceiveLock="false"/>
+		<visuals meshPath="Data/Models/Sidewinder/missile.obj" materialName="gun-bullet" trailLifespan="4.0" trailColor="255,255,0,200"/>
+		<physics thrustRange="500000.0~2000000.0" maxVelocity="1000.0" stallSpeed="1.0" mass="1000.0" crossSectionArea="5.0~100.0" 
+				 dragCoefficient="0.02" rollDrag="0.8" yawDrag="1.2" pitchDrag="1.0" maxRollSpeed="90.0" />
+	</entity>
+
+
+	<entity id="20" name="machinegun-bullet" >
+		<gameplay flightStyle="dumb" isWeapon="true" maxHealth="100.0" collisionRadius="10.0" lifespan="1.0" canReceiveLock="false"/>
+		<visuals meshPath="Data/Models/Sidewinder/missile.obj" materialName="gun-bullet" trailLifespan="0.0" trailColor="255,255,0,255"/>
+		<physics thrustRange="2000000.0~2000000.0" maxVelocity="1000.0" stallSpeed="1.0" mass="100.0" crossSectionArea="5.0~10.0" 
+				 dragCoefficient="0.001" rollDrag="0.8" yawDrag="1.2" pitchDrag="1.0" maxRollSpeed="1.0" />
+	</entity>
+	
+	
+</entities>

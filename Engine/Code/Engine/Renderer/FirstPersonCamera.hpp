@@ -17,10 +17,17 @@ public:
 	void RotateRelative( float pitchDegrees, float yawDegrees );
 	void Update() override;
 
+	void ShakeCamera( float startIntensity, float duration ); // intensity is the max translation in each direction
+
 public:
 	float aspectRatio = 1.6667f;
 	float nearZ = 1.f;
 	float farZ = 1000.f;
+
+private:
+	float maxShakeIntensity = 0.f;
+	float shakeDuration = 0.f;
+	float timeAtShakeStart = 0.f;
 
 };
 

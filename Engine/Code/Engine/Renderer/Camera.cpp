@@ -7,25 +7,34 @@
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Renderer/MeshBuilder.hpp"
 
+
+//----------------------------------------------------------------------------------------------------------------
 Camera::Camera()
 	: m_cameraMatrix()
 	, m_viewMatrix()
 	, m_projMatrix() {
 	m_frameBuffer = new FrameBuffer();
-	m_frameBuffer->SetColorTarget(g_theRenderer->GetDefaultColorTarget());
-	m_frameBuffer->SetDepthStencilTarget(g_theRenderer->GetDefaultDepthTarget());
+	m_frameBuffer->SetColorTarget( g_theRenderer->GetDefaultColorTarget() );
+	//m_frameBuffer->SetBloomTarget( g_theRenderer->GetDefaultBloomColorTarget() );
+	m_frameBuffer->SetDepthStencilTarget( g_theRenderer->GetDefaultDepthTarget() );
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 Camera::~Camera() {
 
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Camera::Update() {
-
+	if (skybox != nullptr) {
+		skybox->SetModelMatrix( m_cameraMatrix );
+	}
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Camera::LookAt( const Vector3& position, const Vector3& target, const Vector3& up /* = Vector3::UP */ ) {
 
 	Vector3 direction = target - position;
@@ -43,6 +52,8 @@ void Camera::LookAt( const Vector3& position, const Vector3& target, const Vecto
 
 }
 
+
+//----------------------------------------------------------------------------------------------------------------
 void Camera::Translate( const Vector3& position ) {
 	Matrix44 trans = Matrix44::MakeTranslation(position);
 	trans.Append(m_cameraMatrix);
@@ -50,12 +61,14 @@ void Camera::Translate( const Vector3& position ) {
 }
 
 
-
+//----------------------------------------------------------------------------------------------------------------
 void Camera::SetProjection( Matrix44 proj ) {
 	m_projMatrix = proj;
+	m_projMatrix.Append(m_axisSwapMatrix);
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Camera::SetProjectionOrtho( float size, float zNear, float zFar ) {
 
 	float height = Window::GetInstance()->GetHeight() / size;
@@ -81,9 +94,17 @@ void Camera::SetProjectionOrtho( float size, float zNear, float zFar ) {
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
 void Camera::SetColorTarget( Texture* colorTarget ) {
 	m_frameBuffer->SetColorTarget( colorTarget );
 }
+
+
+//----------------------------------------------------------------------------------------------------------------
+void Camera::SetBloomTarget( Texture* bloomTarget ) {
+	m_frameBuffer->SetBloomTarget( bloomTarget );
+}
+
 
 void Camera::SetDepthStencilTarget( Texture* depthTarget ) {
 	m_frameBuffer->SetDepthStencilTarget( depthTarget );
@@ -103,24 +124,21 @@ void Camera::Finalize() {
 	m_frameBuffer->BindTargets();
 }
 
-
 Vector3 Camera::GetForward() const {
-	Vector3 kBasis( m_cameraMatrix.Kx, m_cameraMatrix.Ky, m_cameraMatrix.Kz );
-	return kBasis.GetNormalized();
+	return m_cameraMatrix.GetForward();
 }
 
 Vector3 Camera::GetRight() const {
-	Vector3 iBasis( m_cameraMatrix.Ix, m_cameraMatrix.Iy, m_cameraMatrix.Iz );
-	return iBasis.GetNormalized();
+	return m_cameraMatrix.GetRight();
 }
 
 Vector3 Camera::GetUp() const {
-	Vector3 iBasis( m_cameraMatrix.Jx, m_cameraMatrix.Jy, m_cameraMatrix.Jz );
-	return iBasis.GetNormalized();
+	return m_cameraMatrix.GetUp();
 }
 
 Matrix44 Camera::GetViewProjection() const {
 	Matrix44 vp = m_projMatrix;
+	//vp.Append(m_axisSwapMatrix);
 	vp.Append(m_viewMatrix);
 	return vp;
 }
@@ -151,4 +169,19 @@ void Camera::SetSkybox( CubeMap* skyboxTexture ) {
 		mb.BuildCube(cube, Vector3::ZERO, Vector3(10.f, 10.f, 10.f));
 		skybox->SetMesh(cube);
 	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool Camera::IsBloomEnabled() const {
+	return m_isBloomEnabled;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void Camera::SetBloomEnabled( bool isEnabled ) {
+	m_isBloomEnabled = isEnabled;
+	if ( m_frameBuffer->m_bloomTarget == nullptr ) {
+		m_frameBuffer->SetBloomTarget( g_theRenderer->GetDefaultBloomColorTarget() );
+	} 
 }

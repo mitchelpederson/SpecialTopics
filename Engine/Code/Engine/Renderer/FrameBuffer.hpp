@@ -9,8 +9,9 @@ public:
 
 	// should just update members
 	// finalize does the actual binding
-	void SetColorTarget( Texture *colorTarget ); 
-	void SetDepthStencilTarget( Texture *depthTarget ); 
+	void SetColorTarget( Texture* colorTarget ); 
+	void SetBloomTarget( Texture* bloomTarget );
+	void SetDepthStencilTarget( Texture* depthTarget ); 
 
 	bool BindTargets();
 	int GetHeight();
@@ -24,6 +25,7 @@ public:
 
 public:
 	unsigned int m_handle; 
-	Texture *m_colorTarget; 
-	Texture *m_depthStencilTarget; 
+	Texture* m_colorTarget = nullptr; 
+	Texture* m_bloomTarget = nullptr;
+	Texture* m_depthStencilTarget = nullptr; 
 };

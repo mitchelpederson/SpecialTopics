@@ -20,6 +20,7 @@ public:
 
 	// will be implemented later
 	void SetColorTarget( Texture* colorTarget );
+	void SetBloomTarget( Texture* bloomTarget );
 	void SetDepthStencilTarget( Texture* depthTarget );
 	void SetFrameBuffer( FrameBuffer* frameBuffer );
 
@@ -32,6 +33,8 @@ public:
 	// projection settings
 	void SetProjection( Matrix44 proj ); 
 	void SetProjectionOrtho( float size, float near, float far ); 
+	void SetBloomEnabled( bool isEnabled );
+	bool IsBloomEnabled() const;
 
 	Vector3 GetForward() const;
 	Vector3 GetRight() const;
@@ -45,11 +48,13 @@ public:
 	Matrix44 m_cameraMatrix;  // where is the camera?
 	Matrix44 m_viewMatrix;    // inverse of camera (used for shader)
 	Matrix44 m_projMatrix;    // projection
+	Matrix44 m_axisSwapMatrix;
 
 	Transform transform;
 	FrameBuffer* m_frameBuffer = nullptr;
 
 	Renderable* skybox = nullptr;
+	bool m_isBloomEnabled = false;
 
 	std::vector<Material*> cameraEffects;
 };

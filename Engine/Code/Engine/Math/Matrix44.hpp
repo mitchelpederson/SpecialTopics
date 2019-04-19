@@ -43,6 +43,9 @@ public:
 	static Matrix44 MakeScale( const Vector3& scale );
 	static Matrix44 MakeViewFromCamera( const Matrix44& cameraRot, const Vector3& cameraPos );
 
+	Vector3 GetI() const;
+	Vector3 GetJ() const;
+	Vector3 GetK() const;
 	Vector3 GetUp() const;
 	Vector3 GetRight() const;
 	Vector3 GetForward() const;

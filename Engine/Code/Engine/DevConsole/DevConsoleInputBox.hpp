@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Math/AABB2.hpp"
+
 #include <string>
 
 class DevConsoleInputBox {
@@ -17,6 +19,8 @@ public:
 	bool IsEmpty();
 
 	void SetText( const std::string& text );
+	const std::string& GetText();
+	float GetFontSize();
 
 private:
 	std::string m_characterStream = "";
@@ -26,5 +30,5 @@ private:
 	float m_blinkDelay = 0.4f;
 	float m_ageAtLastBlink = 0.f;
 	float m_age = 0.f;
-	float m_fontSize = 2.5f;
+	float m_fontSize = 20.f;
 }; 

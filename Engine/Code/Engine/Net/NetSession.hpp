@@ -13,6 +13,7 @@
 #pragma once
 #include "Engine/Net/NetMessage.hpp"
 #include "Engine/Net/NetConnection.hpp"
+#include "Engine/Net/NetObjectSystem.hpp"
 #include "Engine/Math/FloatRange.hpp"
 #include "Engine/Core/Stopwatch.hpp"
 
@@ -26,10 +27,12 @@
 #define UNRELIABLE_RESEND_TIME 0.1f
 #define MAX_RELIABLES_PER_PACKET 32
 #define JOIN_TIMEOUT 10.f
-#define MAX_NET_TIME_DILATION 0.1f
+#define MAX_NET_TIME_DILATION 0.1
 
 
 typedef bool (*net_message_cb)( NetMessage& message, NetConnection& sender );
+typedef bool (*session_join_cb)( void* data );
+typedef bool (*session_leave_cb)( void* data );
 
 enum eNetMessageFlag {
 	NETMSG_OPTION_CONNECTIONLESS = 0x01,
@@ -83,6 +86,10 @@ enum eNetCoreMessage {
 	NETMSG_JOIN_FINISHED,
 	NETMSG_UPDATE_CONN_STATE,
 	NETMSG_HANGUP,
+
+	NETMSG_OBJECT_CREATE,
+	NETMSG_OBJECT_DESTROY,
+	NETMSG_OBJECT_UPDATE,
 	NETMSG_CORE_COUNT
 };
 
@@ -113,6 +120,7 @@ public:
 	// Initialization
 	void RegisterMessage( uint8_t index, std::string const& name, net_message_cb callback, uint16_t flags = 0, uint8_t channel = 0 );
 	void RegisterCoreMessages();
+	void RegisterLeaveAndJoinCallbacks( session_join_cb joinCB, session_leave_cb leaveCB );
 
 
 	//----------------------------------------------------------------------------------------------------------------
@@ -152,6 +160,9 @@ public:
 	void ClearError();
 	eNetSessionError GetLastNetError();
 
+	//----------------------------------------------------------------------------------------------------------------
+	// Sends
+	void SendToAllOtherConnections( NetMessage& msg );
 
 	//----------------------------------------------------------------------------------------------------------------
 	// Processing received messages
@@ -187,6 +198,9 @@ public:
 	uint8_t			GetNextFreeSessionID() const;
 	eNetSessionState GetState() const;
 
+	session_join_cb GetJoinCB();
+	session_leave_cb GetLeaveCB();
+
 	
 	//----------------------------------------------------------------------------------------------------------------
 	// Control message callbacks
@@ -210,6 +224,7 @@ public:
 	void InitializeTimesFromHost( double hostTime );
 	double GetNetTime();
 	double GetHostTime();
+	float GetCurrentDilation();
 
 
 private:
@@ -219,6 +234,7 @@ private:
 public:
 	static NetSession* instance;
 	static Clock* m_sessionClock;
+	NetObjectSystem* netObjectSystem = nullptr;
 
 
 private:
@@ -235,6 +251,9 @@ private:
 
 	std::vector< PacketInLatencySim_T* > m_incomingPackets;
 
+	session_join_cb m_joinCallback = nullptr;
+	session_leave_cb m_leaveCallback = nullptr;
+
 	static Stopwatch m_joinTimer;
 
 	static FloatRange m_simLatency;
@@ -246,5 +265,5 @@ private:
 	static double m_lastReceivedHostTime;
 	static double m_desiredClientTime;
 	static double m_currentClientTime;
-	static float m_deltaTimeDilation;
+	static double m_deltaTimeDilation;
 };

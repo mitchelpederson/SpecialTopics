@@ -1,6 +1,4 @@
-#define WIN32_LEAN_AND_MEAN		// Always #define this before #including <windows.h>
-#include <windows.h>			// #include this (massive, platform-specific) header in very few places
-
+#include "Engine/Core/WindowsCommon.hpp"
 #include "Engine/Core/Window.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
@@ -55,6 +53,62 @@ LRESULT CALLBACK GameWndProc( HWND hwnd,
 			g_theInputSystem->OnKeyReleased(asKey);
 
 			//return true;
+			break;
+		}
+
+		case WM_INPUT:
+		{
+			UINT dwSize = 40;	
+
+			GetRawInputData( (HRAWINPUT) lParam, RID_INPUT, NULL, &dwSize, sizeof( RAWINPUTHEADER ) );
+			LPBYTE lpb = new BYTE[dwSize];
+
+			GetRawInputData( (HRAWINPUT) lParam, RID_INPUT, lpb, &dwSize, sizeof( RAWINPUTHEADER ) );
+			RAWINPUT* raw = (RAWINPUT*) lpb;
+
+			if ( raw->header.dwType == RIM_TYPEMOUSE ) {
+				int xPosRelative = raw->data.mouse.lLastX;
+				int yPosRelative = raw->data.mouse.lLastY;
+				g_theInputSystem->OnMouseMove( xPosRelative, yPosRelative );
+
+			}
+
+			break;
+		}
+
+		case WM_LBUTTONDOWN:
+		{
+			g_theInputSystem->OnLeftMouseDown();
+			break;
+		}
+
+		case WM_LBUTTONUP:
+		{
+			g_theInputSystem->OnLeftMouseUp();
+			break;
+		}
+
+		case WM_RBUTTONDOWN:
+		{
+			g_theInputSystem->OnRightMouseDown();
+			break;
+		}
+
+		case WM_RBUTTONUP:
+		{
+			g_theInputSystem->OnRightMouseUp();
+			break;
+		}
+
+		case WM_MBUTTONDOWN:
+		{
+			g_theInputSystem->OnMiddleMouseDown();
+			break;
+		}
+
+		case WM_MBUTTONUP:
+		{
+			g_theInputSystem->OnMiddleMouseUp();
 			break;
 		}
 	}
@@ -143,6 +197,15 @@ Window::Window( int width, int height, void* hinstance, const char* appName ) {
 	// Begin GL context stuff
 	g_theRenderer->RenderStartup( m_hwnd );
 
+
+	RAWINPUTDEVICE Rid[1];
+	Rid[0].usUsagePage = 0x01;
+	Rid[0].usUsage = 0x02;
+	Rid[0].dwFlags = RIDEV_INPUTSINK;
+	Rid[0].hwndTarget = (HWND) m_hwnd;
+	if ( !RegisterRawInputDevices( Rid, 1, sizeof( Rid[0] ) ) ) {
+		ERROR_RECOVERABLE("failed to register mouse input device");
+	}
 }
 
 

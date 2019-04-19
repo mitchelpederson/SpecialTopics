@@ -5,6 +5,7 @@
 
 Renderer*						DebugRenderState::currentRenderer = nullptr;
 Camera*							DebugRenderState::currentCamera = nullptr;
+Clock*							DebugRenderState::currentClock = nullptr;
 std::vector<DebugRenderObject>* DebugRenderState::objects = nullptr;
 bool							DebugRenderState::isActive = true;
 
@@ -22,6 +23,7 @@ void ToggleCommand( const std::string& command ) {
 void DebugRenderStartup( Renderer* renderer ) {
 	DebugRenderState::currentRenderer = renderer;
 	DebugRenderState::currentCamera = nullptr;
+	DebugRenderState::currentClock = g_masterClock;
 	DebugRenderState::objects = new std::vector<DebugRenderObject>();
 	CommandRegistration::RegisterCommand("drclear", ClearCommand, "Clears all debug draws");
 	CommandRegistration::RegisterCommand("drtoggle", ToggleCommand, "Toggles debug render");
@@ -51,21 +53,7 @@ void DebugRenderAndUpdate() {
 		}
 		r->BindMaterial(r->GetMaterial("debugRender"));
 		std::vector<DebugRenderObject>& objects = *DebugRenderState::objects;
-
-
-		// Update section
-		for (unsigned int index = 0; index < objects.size(); index++) {
-			const DebugRenderObject& current = objects.at(index);
-			float timeSinceSpawn = g_masterClock->total.seconds - current.spawnTime;
-
-			if (timeSinceSpawn >= current.lifetime) {
-				delete objects[index].mesh;
-				objects[index].mesh = nullptr;
-				objects[index] = objects[objects.size()-1];
-				objects.pop_back();
-			}
-		}
-
+		
 		for (unsigned int index = 0; index < objects.size(); index++) {
 			const DebugRenderObject& current = objects.at(index);
 
@@ -77,13 +65,30 @@ void DebugRenderAndUpdate() {
 			r->DrawMesh(current.mesh);
 		}
 
-		
+		// Update section
+		for (unsigned int index = 0; index < objects.size(); index++) {
+			const DebugRenderObject& current = objects.at(index);
+			float timeSinceSpawn = g_masterClock->total.seconds - current.spawnTime;
+
+			if ( current.lifetime == 0.f || timeSinceSpawn >= current.lifetime) {
+				delete objects[index].mesh;
+				objects[index].mesh = nullptr;
+				objects[index] = objects[objects.size()-1];
+				objects.pop_back();
+			}
+		}
+
 	}
 }
 
 
 void DebugRenderSet3DCamera( Camera *camera ) {
 	DebugRenderState::currentCamera = camera;
+}
+
+
+void DebugRenderSetClock( Clock* clock ) {
+	DebugRenderState::currentClock = clock;
 }
 
 
@@ -134,7 +139,15 @@ void DebugRenderWireCube(float lifetime, const Vector3& position, const Rgba& st
 	builder.BuildWireCube(cubeMesh, position, Vector3(0.5f, 0.5f, 0.5f));
 	cubeMesh->SetDrawPrimitive(LINES);
 	DebugRenderState::objects->push_back(DebugRenderObject(start_color, end_color, lifetime, g_masterClock->total.seconds, mode, cubeMesh));
+}
 
+
+void DebugRenderWireAABB3(float lifetime, const AABB3& aabb3, const Rgba& start_color /* = Rgba(0, 255, 0, 255) */, const Rgba& end_color /* = Rgba(255, 0, 0, 255) */, DebugRenderMode mode /* = DEBUG_RENDER_USE_DEPTH */) {
+	MeshBuilder builder;
+	Mesh* boxMesh = new Mesh();
+	builder.BuildWireCube( boxMesh, aabb3.GetCenter(), aabb3.GetDimensions() );
+	boxMesh->SetDrawPrimitive(LINES);
+	DebugRenderState::objects->push_back( DebugRenderObject( start_color, end_color, lifetime, g_masterClock->total.seconds, mode, boxMesh) );
 }
 
 

@@ -4,9 +4,7 @@
 
 //-----------------------------------------------------------------------------------------------
 #if defined( _WIN32 )
-#define PLATFORM_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
+#include "Engine/Core/WindowsCommon.hpp"
 #endif
 
 //-----------------------------------------------------------------------------------------------

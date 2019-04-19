@@ -18,6 +18,7 @@
 #include "Engine/Renderer/Mesh.hpp"
 #include "Engine/Renderer/ForwardRenderPath.hpp"
 #include "Engine/Renderer/Light.hpp"
+#include "Engine/Profiler/Profiler.hpp"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "Engine/ThirdParty/stb/stb_image.h"
@@ -315,6 +316,7 @@ void Renderer::Initialize() {
 	m_defaultUICamera = new Camera();
 
 	m_defaultColorTarget = CreateRenderTarget( Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight() );
+	m_defaultBloomColorTarget = CreateRenderTarget( Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight() );
 	m_defaultDepthTarget = CreateRenderTarget( Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight(), TEXTURE_FORMAT_D24S8 );
 	m_defaultFrameBuffer = new FrameBuffer();
 	m_defaultFrameBuffer->SetColorTarget(m_defaultColorTarget);
@@ -322,7 +324,7 @@ void Renderer::Initialize() {
 
 	m_defaultCamera->SetFrameBuffer(m_defaultFrameBuffer);
 	m_defaultUICamera->SetFrameBuffer(m_defaultFrameBuffer);
-	m_defaultUICamera->SetProjection(Matrix44::MakeOrtho2D(Vector2(0.f, 0.f), Vector2(100.f, 100.f)));
+	m_defaultUICamera->SetProjection(Matrix44::MakeOrtho2D(Vector2(0.f, 0.f), Vector2(Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight())));
 
 	m_defaultCamera->Finalize();
 
@@ -330,6 +332,7 @@ void Renderer::Initialize() {
 	LoadBuiltInShaders();
 	LoadMaterials();
 	EnableDepth(COMPARE_LESS, true);
+	glEnable( GL_TEXTURE_CUBE_MAP_SEAMLESS );
 
 	DisableAllLights();
 }
@@ -341,7 +344,7 @@ void Renderer::BeginFrame() {
 	SetShader(m_defaultShader);
 	SetCamera(m_defaultCamera);
 
-	glClearColor( 0.0f, 0.f, 0.0f, 1.f );
+	SetClearScreenColor( m_screenClearColor );
 	glClear( GL_COLOR_BUFFER_BIT );
 	ClearDepth();
 	EnableDepth(COMPARE_LESS, true);
@@ -349,6 +352,9 @@ void Renderer::BeginFrame() {
 
 	m_modelMatrix = Matrix44();
 }
+
+
+
 
 
 //----------------------------------------------------------------------------------------------------------------
@@ -378,12 +384,14 @@ void Renderer::DrawRenderable( Renderable* renderable ) {
 void Renderer::Draw( DrawCall& drawCall ) {
 	SetModelMatrix( drawCall.m_model );
 	BindMaterial( drawCall.m_material );
+	BindLightState();
 	DrawMesh( drawCall.m_mesh );
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::BindLightState() {
+	PROFILER_SCOPED_PUSH();
 	SetUniform("AMBIENT_COLOR", &m_ambientLightColor);
 	SetUniform("AMBIENT_INTENSITY", &m_ambientLightIntensity);
 	SetUniform("LIGHT_POSITION", m_lightPositions, MAX_LIGHTS);
@@ -402,14 +410,18 @@ void Renderer::BindLightState() {
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowVPUniform,		  MAX_LIGHTS, GL_FALSE, &(m_lightVP[0].Ix));
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), shadowInverseVPUniform, MAX_LIGHTS, GL_FALSE, &(m_inverseLightVP[0].Ix));
 	
+	GLint cameraPosUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "EYE_POSITION");
+	GLint cameraDirUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "EYE_DIRECTION");
+	Vector3 cameraPosition = m_currentCamera->m_cameraMatrix.GetTranslation();
+	Vector3 cameraDirection = m_currentCamera->GetForward();
+	glUniform3f(cameraPosUniform, cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	glUniform3f(cameraDirUniform, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMesh( Mesh* mesh ) {
-
-	glUseProgram(m_currentShader->GetProgram()->GetHandle());
-	
+	PROFILER_SCOPED_PUSH();	
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->GetVertexBufferHandle());
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->GetIndexBufferHandle());
 	BindLayoutToProgram(mesh->GetVertexLayout());
@@ -420,20 +432,13 @@ void Renderer::DrawMesh( Mesh* mesh ) {
 	GLint viewUniform		= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "VIEW");
 	GLint projectionUniform = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "PROJECTION");
 	GLint cameraUniform		= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "CAMERA");
-	GLint cameraPosUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "EYE_POSITION");
-	GLint cameraDirUniform	= glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), "EYE_DIRECTION");
-	
+
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), modelUniform,	1, GL_FALSE, &(m_modelMatrix.Ix));
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), viewUniform, 1, GL_FALSE, &(m_currentCamera->m_viewMatrix.Ix));
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), projectionUniform, 1, GL_FALSE, &(m_currentCamera->m_projMatrix.Ix));
 	glProgramUniformMatrix4fv(m_currentShader->GetProgram()->GetHandle(), cameraUniform, 1, GL_FALSE, &(m_currentCamera->m_cameraMatrix.Ix));
 		
-	Vector3 cameraPosition = m_currentCamera->m_cameraMatrix.GetTranslation();
-	Vector3 cameraDirection = m_currentCamera->GetForward();
-	glUniform3f(cameraPosUniform, cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	glUniform3f(cameraDirUniform, cameraDirection.x, cameraDirection.y, cameraDirection.z);
 
-	BindLightState();
 	SetUniform("MAX_FOG_DISTANCE", &m_fogMaxDistance);
 	SetUniform("FOG_FACTOR", &m_fogFactor);
 	SetUniform("FOG_COLOR", &m_fogColor);
@@ -451,6 +456,8 @@ void Renderer::DrawMesh( Mesh* mesh ) {
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimitive drawPrimitive ) {
+	PROFILER_SCOPED_PUSH();
+	glUseProgram(m_currentShader->GetProgram()->GetHandle());
 
 	Matrix44 model;
 	Mesh* immediateMesh = new Mesh(numVerts, verts);
@@ -458,12 +465,27 @@ void Renderer::DrawMeshImmediate( Vertex3D_PCU* verts, int numVerts, DrawPrimiti
 	SetModelMatrix(model);
 	DrawMesh(immediateMesh);
 	delete immediateMesh;
+}
 
+
+//----------------------------------------------------------------------------------------------------------------
+void Renderer::DrawMeshImmediate( MeshBuilder* builder ) {
+	PROFILER_SCOPED_PUSH();
+	glUseProgram(m_currentShader->GetProgram()->GetHandle());
+
+	Matrix44 model;
+	Mesh immediateMesh;
+	immediateMesh.FromBuilderAsType<Vertex3D_PCU>( builder );
+	SetModelMatrix(model);
+	DrawMesh(&immediateMesh);
 }
 
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawMeshImmediate( Vertex3D_Lit* verts, int numVerts, unsigned int* indices, int numIndices, DrawPrimitive drawPrimitive ) {
+	PROFILER_SCOPED_PUSH();
+	glUseProgram(m_currentShader->GetProgram()->GetHandle());
+
 
 	Matrix44 model;
 	Mesh* immediateMesh = new Mesh(numVerts, numIndices, verts, indices);
@@ -484,6 +506,7 @@ void Renderer::DisableTexture2D() {
 //----------------------------------------------------------------------------------------------------------------
 // Calls SwapBuffers, may include debug rendering
 void Renderer::EndFrame() {
+	PROFILER_SCOPED_PUSH();
 
 	CopyFrameBuffer(nullptr, m_currentCamera->m_frameBuffer);
 
@@ -595,16 +618,16 @@ void Renderer::DrawTexturedAABB( const AABB2& bounds, const Texture& texture,
 
 	vertices[0].position = Vector3(topLeft.x, topLeft.y, 0.f);
 	vertices[0].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMaxs.y);
-	vertices[2].position = Vector3(topRight.x, topRight.y, 0.f);
-	vertices[2].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
-	vertices[1].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
-	vertices[1].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
+	vertices[1].position = Vector3(topRight.x, topRight.y, 0.f);
+	vertices[1].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
+	vertices[2].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
+	vertices[2].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
 	vertices[3].position = Vector3(topRight.x, topRight.y, 0.f);
 	vertices[3].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMaxs.y);
-	vertices[5].position = Vector3(bottomRight.x, bottomRight.y, 0.f);
-	vertices[5].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMins.y);
-	vertices[4].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
-	vertices[4].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
+	vertices[4].position = Vector3(bottomRight.x, bottomRight.y, 0.f);
+	vertices[4].uv		 = Vector2(texCoordsAtMaxs.x, texCoordsAtMins.y);
+	vertices[5].position = Vector3(bottomLeft.x, bottomLeft.y, 0.f);
+	vertices[5].uv		 = Vector2(texCoordsAtMins.x, texCoordsAtMins.y);
 
 	for (int i = 0; i < 6; i++) {
 		vertices[i].color = tint;
@@ -782,6 +805,20 @@ void Renderer::ClearScreen(const Rgba& color) const {
 
 
 //----------------------------------------------------------------------------------------------------------------
+void Renderer::SetClearScreenColor( const Rgba& color ) {
+
+	float r = 0.f;
+	float g = 0.f;
+	float b = 0.f;
+	float a = 1.f;
+	m_screenClearColor = color;
+	m_screenClearColor.GetAsFloats( r, g, b, a );
+
+	glClearColor( r, g, b, a );
+
+}
+
+//----------------------------------------------------------------------------------------------------------------
 void Renderer::SetOrtho(float left, float right, float bottom, float top, float nearVal, float farVal) {
 	/*glLoadIdentity();
 	glOrtho(left, right, bottom, top, nearVal, farVal);*/
@@ -930,7 +967,11 @@ void Renderer::DrawText2D( const Vector2& drawMins,
 						   const Rgba& tint = Rgba(),
 						   float aspectScale = 1.f, // multiplied by the font’s inherent m_baseAspect
 						   const BitmapFont* font = nullptr ) {
+	PROFILER_SCOPED_PUSH();
 
+	MeshBuilder textMesh;
+	textMesh.Begin(TRIANGLES, false);
+	textMesh.SetColor(tint);
 	for (unsigned int character = 0; character < asciiText.length(); character++) {
 
 		char glyph = asciiText[character];
@@ -946,9 +987,17 @@ void Renderer::DrawText2D( const Vector2& drawMins,
 		AABB2 glyphUVs = font->GetUVsForGlyph(glyph);
 		UseTexture(0, *font->GetFontTexture());
 
-		DrawTexturedAABB(AABB2(glyphDrawMins, glyphDrawMaxs), *(font->GetFontTexture()), Vector2(glyphUVs.maxs.x, glyphUVs.mins.y), Vector2(glyphUVs.mins.x, glyphUVs.maxs.y), tint);
+		Vector3 bl(glyphDrawMins.x, glyphDrawMins.y, 0.f);
+		Vector3 tl(glyphDrawMins.x, glyphDrawMaxs.y, 0.f);
+		Vector3 tr(glyphDrawMaxs.x, glyphDrawMaxs.y, 0.f);
+		Vector3 br(glyphDrawMaxs.x, glyphDrawMins.y, 0.f);
+
+		textMesh.PushTexturedQuad(bl, br, tr, tl, glyphUVs);
 		
 	}
+
+	textMesh.End();
+	DrawMeshImmediate( &textMesh );
 }
 
 
@@ -980,8 +1029,8 @@ void Renderer::DrawText(const Vector3& position , const std::string& asciiText ,
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawTextInBox2D(const AABB2& drawBox, const Vector2& alignment, const std::string& asciiText, 
 					 float cellHeight, const Rgba& tint, float aspectScale, const BitmapFont* font, TextDrawMode mode) {
+	PROFILER_SCOPED_PUSH();
 
-	UseShaderProgram(CreateOrGetShaderProgram("Data/Shaders/font"));
 	UseTexture(0, *font->GetFontTexture());
 	std::string asciiTextModifiable = asciiText;
 
@@ -1303,7 +1352,6 @@ void Renderer::SetCamera(Camera* cam) {
 	m_currentCamera = cam;
 	m_currentCamera->Finalize();
 	glBindFramebuffer(GL_FRAMEBUFFER, cam->m_frameBuffer->GetHandle());
-
 }
 
 
@@ -1329,6 +1377,8 @@ void Renderer::SetCameraToUI() {
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::UseTexture( unsigned int slot, const Texture& tex, Sampler* sampler ) {
+	PROFILER_SCOPED_PUSH();
+
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindSampler(slot, GetSamplerForMode( tex.GetSamplerMode() )->GetHandle());
 	
@@ -1422,6 +1472,12 @@ Texture* Renderer::GetDefaultColorTarget() {
 
 
 //----------------------------------------------------------------------------------------------------------------
+Texture* Renderer::GetDefaultBloomColorTarget() {
+	return m_defaultBloomColorTarget;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 Texture* Renderer::GetDefaultDepthTarget() {
 	return m_defaultDepthTarget;
 }
@@ -1467,7 +1523,8 @@ void Renderer::ClearDepth( float depth )
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3& up, const Vector3& right, const Vector2& scale, const Rgba& tint /* = Rgba() */, bool isLit /* = false */) {
-	
+	PROFILER_SCOPED_PUSH();
+
 	if (isLit) {
 		SetShader(GetShader("lit-sprite"));
 	}
@@ -1547,7 +1604,9 @@ void Renderer::DrawSprite(const Vector3& position, Sprite* sprite, const Vector3
 
 
 //----------------------------------------------------------------------------------------------------------------
-void Renderer::SetUniform(const std::string& name, Rgba* color, unsigned int size ) const {
+void Renderer::SetUniform(const std::string& name, const Rgba* color, unsigned int size ) const {
+	PROFILER_SCOPED_PUSH();
+
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	
 	if (uniformLocation >= 0) {
@@ -1563,7 +1622,9 @@ void Renderer::SetUniform(const std::string& name, Rgba* color, unsigned int siz
 
 
 //----------------------------------------------------------------------------------------------------------------
-void Renderer::SetUniform(const std::string& name, float* param, unsigned int size) const {
+void Renderer::SetUniform(const std::string& name, const float* param, unsigned int size) const {
+	PROFILER_SCOPED_PUSH();
+
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
 		glUniform1fv(uniformLocation, size, param);
@@ -1572,7 +1633,9 @@ void Renderer::SetUniform(const std::string& name, float* param, unsigned int si
 
 
 //----------------------------------------------------------------------------------------------------------------
-void Renderer::SetUniform( const std::string& name, Vector3* vec3, unsigned int size ) const {
+void Renderer::SetUniform( const std::string& name, const Vector3* vec3, unsigned int size ) const {
+	PROFILER_SCOPED_PUSH();
+
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
 		glUniform3fv(uniformLocation, size, &(vec3->x));
@@ -1581,7 +1644,9 @@ void Renderer::SetUniform( const std::string& name, Vector3* vec3, unsigned int 
 
 
 //----------------------------------------------------------------------------------------------------------------
-void Renderer::SetUniform( const std::string& name, Vector4* vec4, unsigned int size ) const {
+void Renderer::SetUniform( const std::string& name, const Vector4* vec4, unsigned int size ) const {
+	PROFILER_SCOPED_PUSH();
+
 	GLint uniformLocation = glGetUniformLocation(m_currentShader->GetProgram()->GetHandle(), name.c_str());
 	if (uniformLocation >= 0) {
 		glUniform4fv(uniformLocation, size, &(vec4->x));
@@ -1591,6 +1656,8 @@ void Renderer::SetUniform( const std::string& name, Vector4* vec4, unsigned int 
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::SetShader( Shader* shader ) {
+	PROFILER_SCOPED_PUSH();
+
 	if (nullptr == shader) {
 		shader = m_defaultShader;
 	}
@@ -1601,13 +1668,21 @@ void Renderer::SetShader( Shader* shader ) {
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::BindRenderState() {
+	PROFILER_SCOPED_PUSH();
+
 	RenderState* renderState = m_currentShader->GetRenderState();
 
 	// Fill options
 	glPolygonMode( GL_FRONT_AND_BACK, ToGLPolygonMode( renderState->fillMode ) );
 
 	// Culling options
-	glCullFace( ToGLCullMode( renderState->cullMode ) );
+	if ( renderState->cullMode == CULLMODE_NONE ) {
+		glDisable( GL_CULL_FACE );
+	} else {
+		glEnable( GL_CULL_FACE );
+		glCullFace( ToGLCullMode( renderState->cullMode ) );
+	}
+
 	glFrontFace( ToGLWindOrder( renderState->windOrder ) );
 
 	// Depth options
@@ -1628,6 +1703,8 @@ void Renderer::BindRenderState() {
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::BindLayoutToProgram(VertexLayout const *layout) {
+	PROFILER_SCOPED_PUSH();
+	
 	unsigned int attribCount = layout->GetAttributeCount();
 	for (unsigned int attribIndex = 0; attribIndex < attribCount; attribIndex++) {
 		const VertexAttribute& attrib = layout->GetAttribute(attribIndex);
@@ -1647,6 +1724,8 @@ void Renderer::BindLayoutToProgram(VertexLayout const *layout) {
 
 //----------------------------------------------------------------------------------------------------------------
 Mesh* Renderer::CreateOrGetMesh( const std::string& path ) {
+	PROFILER_SCOPED_PUSH();
+
 	std::map< const std::string, Mesh* >::const_iterator meshIterator = m_loadedMeshes.find(path);
 
 	if (meshIterator != m_loadedMeshes.end()) {
@@ -1819,6 +1898,8 @@ void Renderer::LoadMaterials() {
 
 //----------------------------------------------------------------------------------------------------------------
 Shader* Renderer::GetShader( const std::string& name ) {
+	PROFILER_SCOPED_PUSH();
+
 	std::map< std::string, Shader* >::const_iterator it = m_shaders.find(name);
 	if (it != m_shaders.end()) {
 		return it->second;
@@ -1831,6 +1912,8 @@ Shader* Renderer::GetShader( const std::string& name ) {
 
 //----------------------------------------------------------------------------------------------------------------
 Material* Renderer::GetMaterial( const std::string& name ) {
+	PROFILER_SCOPED_PUSH();
+
 	std::map< std::string, Material* >::const_iterator it = m_materials.find(name);
 	if (it != m_materials.end()) {
 		return it->second;
@@ -1851,6 +1934,8 @@ void Renderer::DisableAllLights() {
 
 //----------------------------------------------------------------------------------------------------------------
 void Renderer::BindMaterial( Material const* material ) {
+	PROFILER_SCOPED_PUSH();
+
 	SetShader(material->shader);
 
 	for (unsigned int texIndex = 0; texIndex < material->GetTextureCount(); texIndex++) {
@@ -1936,4 +2021,13 @@ Sampler* Renderer::GetSamplerForMode( eSamplerModes mode ) {
 		default: 
 			return m_defaultSampler;
 	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+Matrix44 Renderer::GetClipToScreenSpace( Camera* worldCam ) {
+	PROFILER_SCOPED_PUSH();
+
+	Matrix44 uiProjectionInverse = m_defaultUICamera->GetViewProjection().GetInverse();
+	return uiProjectionInverse;
 }

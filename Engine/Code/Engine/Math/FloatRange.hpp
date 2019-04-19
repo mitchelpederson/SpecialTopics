@@ -8,6 +8,7 @@ public:
 
 
 	float GetRandomInRange() const;
+	float Evaluate( float percent ) const;
 
 	float min;
 	float max;

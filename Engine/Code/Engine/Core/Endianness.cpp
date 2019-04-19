@@ -30,7 +30,7 @@ void ToEndianness( size_t const size, void* data, eEndianness endianness ) {
 	// Swap all the bytes around
 	byte_t* bytes = (byte_t*) data;
 	unsigned int i = 0;
-	unsigned int j = size - 1;
+	unsigned int j = (unsigned int) size - 1;
 
 	while (i < j) {
 		std::swap( bytes[i], bytes[j] );
@@ -51,7 +51,7 @@ void FromEndianness( size_t const size, void* data, eEndianness endianness ) {
 	// Swap all the bytes around
 	byte_t* bytes = (byte_t*) data;
 	unsigned int i = 0;
-	unsigned int j = size - 1;
+	unsigned int j = (unsigned int) size - 1;
 
 	while (i < j) {
 		std::swap( bytes[i], bytes[j] );

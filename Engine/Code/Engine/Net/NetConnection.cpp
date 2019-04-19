@@ -98,7 +98,7 @@ int NetConnection::SendPacket( UDPSocket* socketToSendFrom ) {
 	packetHeader.previousRecvdAckBitfield = m_previousRecvdAckBitfield;
 	packet->WriteHeader( packetHeader ); // We should write the header to reserve the space in the buffer
 
-	TrackedPacket* trackedPacket = AddTrackedPacket( packet, packetHeader.ack );
+	TrackedPacket* trackedPacket = AddTrackedPacket( packet, (uint8_t) packetHeader.ack );
 
 	int reliablesInPacket = 0;
 
@@ -162,10 +162,16 @@ int NetConnection::SendPacket( UDPSocket* socketToSendFrom ) {
 		}
 	}
 
+
+	// Add net object updates
+	if ( m_session->AmIHost() ) {
+		packetHeader.messageCount += m_session->netObjectSystem->FillPacketWithUpdates( packet, this );
+	}
+
 	packet->WriteHeader( packetHeader ); // Write the real values over that
 
 	// Send the packet 
-	int sentBytes = socketToSendFrom->SendTo( m_remoteAddress, packet->GetBuffer(), packet->GetWrittenByteCount() );
+	int sentBytes = (int) socketToSendFrom->SendTo( m_remoteAddress, packet->GetBuffer(), packet->GetWrittenByteCount() );
 
 	m_timeAtLastSend = g_masterClock->total.seconds;
 	IncrementNextAckToSend();
@@ -194,10 +200,9 @@ int NetConnection::SendPacketImmediate( UDPSocket* socketToSendFrom, NetMessage&
 	packetHeader.previousRecvdAckBitfield = m_previousRecvdAckBitfield;
 
 	packet->WriteHeader( packetHeader );
-	TrackedPacket* trackedPacket = AddTrackedPacket( packet, packetHeader.ack );
 
 	if (!isAckConfirm) {
-
+		TrackedPacket* trackedPacket = AddTrackedPacket( packet, (uint8_t) packetHeader.ack );
 		if ( message.IsReliable() && CanSendNewReliable() ) {
 			NetMessage* msg = new NetMessage( message );
 			msg->SetReliableID(m_lastSentReliable + 1);
@@ -214,7 +219,9 @@ int NetConnection::SendPacketImmediate( UDPSocket* socketToSendFrom, NetMessage&
 		IncrementNextAckToSend();
 	}
 
-	return socketToSendFrom->SendTo( m_remoteAddress, packet->GetBuffer(), packet->GetWrittenByteCount() );
+	
+
+	return (int) socketToSendFrom->SendTo( m_remoteAddress, packet->GetBuffer(), packet->GetWrittenByteCount() );
 }
 
 
@@ -252,11 +259,11 @@ void NetConnection::ProcessIncoming( NetPacket& packet ) {
 		NetMessage* message = packet.ReadMessage( m_session );
 
 		if ( message->IsInOrder() ) {
-			actualSize += message->GetMessageLength() + 7;
+			actualSize += (int) message->GetMessageLength() + 7;
 		} else if ( message->IsReliable() ) {
-			actualSize += message->GetMessageLength() + 5;
+			actualSize += (int) message->GetMessageLength() + 5;
 		} else {
-			actualSize += message->GetMessageLength() + 3;
+			actualSize += (int) message->GetMessageLength() + 3;
 		}
 	}
 
@@ -272,7 +279,7 @@ void NetConnection::ProcessIncoming( NetPacket& packet ) {
 		for ( unsigned int i = 0; i < 16; i++ ) {
 			uint16_t flag = 1 << i;
 			if ( packetHeader.previousRecvdAckBitfield & flag ) {
-				ConfirmPacketReceived( packetHeader.lastRecvdAck - i );
+				ConfirmPacketReceived( packetHeader.lastRecvdAck - (uint16_t) i );
 			}
 		}
 	}
@@ -449,7 +456,7 @@ void NetConnection::ConfirmPacketReceived( uint16_t lastRecvdAck ) {
 
 		// Check if the tracked packet is valid. If so, calculate rtt, invalidate it and check if it has reliables
 		if ( m_trackedPackets[ trackedPacketSlot ]->IsValid() ) {
-			m_rtt = Interpolate( m_rtt, g_masterClock->total.seconds - m_trackedPackets[ trackedPacketSlot ]->GetTimeSent(), 0.1f );
+			m_rtt = Interpolate( m_rtt, g_masterClock->total.seconds - m_trackedPackets[ trackedPacketSlot ]->GetTimeSent(), 0.2f );
 			m_trackedPackets[ trackedPacketSlot ]->Invalidate();
 
 			// If it has reliables, iterate through and confirm those reliables.
@@ -523,7 +530,7 @@ uint8_t NetConnection::GetConnectionIndex() {
 
 //----------------------------------------------------------------------------------------------------------------
 uint16_t NetConnection::GetNumUnconfirmedReliables() {
-	return m_unconfirmedReliables.size();
+	return (uint16_t) m_unconfirmedReliables.size();
 }
 
 
@@ -536,7 +543,8 @@ uint16_t NetConnection::GetOldestUnconfirmedReliable() {
 
 	uint16_t oldest = m_unconfirmedReliables[0]->GetReliableID();
 	for ( int i = 0; i < m_unconfirmedReliables.size(); i++ ) {
-		if ( CyclicLess( m_unconfirmedReliables[i]->GetReliableID(), oldest ) ) {
+		uint16_t reliableID = m_unconfirmedReliables[i]->GetReliableID();
+		if ( CyclicLess( reliableID, oldest ) ) {
 			oldest = m_unconfirmedReliables[i]->GetReliableID();
 		}
 	}
@@ -598,7 +606,7 @@ void NetConnection::ProcessChannelOutOfOrders( NetMessageChannel& channel ) {
 	while ( it != channel.m_outOfOrderMessages.end() ) {
 
 		if ( (*it)->GetSequenceID() == channel.m_nextExpectedSequenceID ) {
-			NetCommand& command = NetSession::GetCommand( (*it)->GetMessageIndex() );
+			NetCommand command = NetSession::GetCommand( (*it)->GetMessageIndex() );
 			command.callback( **it, *this );
 
 			delete *it;

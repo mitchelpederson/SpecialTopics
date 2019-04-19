@@ -455,10 +455,10 @@ float Compute2dPerlinNoise( float posX, float posY, float scale, unsigned int nu
 //
 // In 3D, gradients are unit-length vectors in random (3D) directions.
 //
-/*float Compute3dPerlinNoise( float posX, float posY, float posZ, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed )
+float Compute3dPerlinNoise( float posX, float posY, float posZ, float scale, unsigned int numOctaves, float octavePersistence, float octaveScale, bool renormalize, unsigned int seed )
 {
 	const float OCTAVE_OFFSET = 0.636764989593174f; // Translation/bias to add to each octave
-
+	float fSQRT_3_OVER_3 = sqrtf(3.f) / 3.f;
 	const Vector3 gradients[ 8 ] = // Traditional "12 edges" requires modulus and isn't any better.
 	{
 		Vector3( +fSQRT_3_OVER_3, +fSQRT_3_OVER_3, +fSQRT_3_OVER_3 ), // Normalized unit 3D vectors
@@ -567,7 +567,7 @@ float Compute2dPerlinNoise( float posX, float posY, float scale, unsigned int nu
 	return totalNoise;
 }
 
-*/
+
 //-----------------------------------------------------------------------------------------------
 // Perlin noise is fractal noise with "gradient vector smoothing" applied.
 //

@@ -489,3 +489,16 @@ unsigned int Min(unsigned int a, unsigned int b) {
 		return b;
 	}
 }
+
+
+bool IsFloatNearlyZero( float value ) {
+	if ( value < 0.000001f && value > -0.000001f ) {
+		return true;
+	}
+	return false;
+}
+
+
+bool AreFloatsNearlyEqual( float a, float b ) {
+	return IsFloatNearlyZero( a - b );
+}

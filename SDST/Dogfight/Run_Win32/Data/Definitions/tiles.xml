@@ -1,0 +1,17 @@
+<TileDefinitions>
+	<Tile name="wall" solid="true" texelColor="112,83,12,255">
+		<textures>
+			<ceiling sprite-coord="0,0" />
+			<wall sprite-coord="0,1" />
+			<floor sprite-coord="7,5" />
+		</textures>
+	</Tile>
+
+	<Tile name="void" solid="true" texelColor="0,0,0,255">
+		<textures>
+			<ceiling sprite-coord="0,0" />
+			<wall sprite-coord="0,1" />
+			<floor sprite-coord="1,0" />
+		</textures>
+	</Tile>
+</TileDefinitions>

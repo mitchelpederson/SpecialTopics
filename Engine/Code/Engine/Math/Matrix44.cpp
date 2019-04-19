@@ -1,3 +1,4 @@
+#include "Game/EngineBuildPreferences.hpp"
 #include "Engine/Math/Matrix44.hpp"
 #include "Engine/Math/MathUtils.hpp"
 #include "Engine/Math/Vector4.hpp"
@@ -344,6 +345,10 @@ Matrix44 Matrix44::GetInverseFast() const {
 
 Matrix44 Matrix44::MakeRotationDegrees( const Vector3& rotation ) {
 
+	// We must use a different order of applying rotations depending
+	// on the basis we are currently using. Always do Yaw -> Pitch -> Roll
+#ifdef X_RIGHT_Y_UP_Z_FORWARD
+
 	Matrix44 xRot;
 	xRot.Jy = CosDegrees(rotation.x);
 	xRot.Jz = -SinDegrees(rotation.x);
@@ -364,11 +369,40 @@ Matrix44 Matrix44::MakeRotationDegrees( const Vector3& rotation ) {
 
 	yRot.Append(xRot);
 	yRot.Append(zRot);
-
 	return yRot;
+#endif
+
+#ifdef X_FORWARD_Y_LEFT_Z_UP
+
+	Matrix44 xRot;
+	xRot.Jy = CosDegrees(rotation.x);
+	xRot.Jz = -SinDegrees(rotation.x);
+	xRot.Ky = SinDegrees(rotation.x);
+	xRot.Kz = CosDegrees(rotation.x);
+
+	Matrix44 yRot;
+	yRot.Ix = CosDegrees(rotation.y);
+	yRot.Iz = SinDegrees(rotation.y);
+	yRot.Kx = -SinDegrees(rotation.y);
+	yRot.Kz = CosDegrees(rotation.y);
+
+	Matrix44 zRot;
+	zRot.Ix = CosDegrees(rotation.z);
+	zRot.Iy = SinDegrees(rotation.z);
+	zRot.Jx = -SinDegrees(rotation.z);
+	zRot.Jy = CosDegrees(rotation.z);
+
+	zRot.Append(yRot);
+	zRot.Append(xRot);
+	return zRot;
+#endif
+
 }
 
 
+//----------------------------------------------------------------------------------------------------------------
+// We must define our orietations here based on settings
+#ifdef X_RIGHT_Y_UP_Z_FORWARD
 Vector3 Matrix44::GetRight() const {
 	return Vector3(Ix, Iy, Iz).GetNormalized();
 }
@@ -379,6 +413,33 @@ Vector3 Matrix44::GetUp() const {
 
 Vector3 Matrix44::GetForward() const {
 	return Vector3(Kx, Ky, Kz).GetNormalized();
+}
+#endif
+
+#ifdef X_FORWARD_Y_LEFT_Z_UP
+Vector3 Matrix44::GetRight() const {
+	return Vector3(-Jx, -Jy, -Jz).GetNormalized();
+}
+
+Vector3 Matrix44::GetUp() const {
+	return Vector3(Kx, Ky, Kz).GetNormalized();
+}
+
+Vector3 Matrix44::GetForward() const {
+	return Vector3(Ix, Iy, Iz).GetNormalized();
+}
+#endif
+
+Vector3 Matrix44::GetI() const {
+	return Vector3( Ix, Iy, Iz ).GetNormalized();
+}
+
+Vector3 Matrix44::GetJ() const {
+	return Vector3( Jx, Jy, Jz ).GetNormalized();
+}
+
+Vector3 Matrix44::GetK() const {
+	return Vector3( Kx, Ky, Kz ).GetNormalized();
 }
 
 
@@ -693,13 +754,35 @@ Vector3 Matrix44::GetRotation() const {
 	float xEuler;
 	float yEuler;
 	float zEuler;
-	
+
+
+#ifdef X_FORWARD_Y_LEFT_Z_UP
+
+	float ySin = Iz;
+	ySin = ClampFloatNegativeOneToOne(ySin);
+	yEuler = AsinDegrees(ySin);
+
+	float yCos = CosDegrees(yEuler);
+	if ( !IsFloatNearlyZero(yCos) ) {
+		xEuler = Atan2Degrees( -Jz, Kz );
+		zEuler = Atan2Degrees( Iy, Ix );
+	}
+	else {
+		xEuler = 0.f;
+		zEuler = Atan2Degrees( Jy, Jx );
+	}
+
+	return Vector3( xEuler, yEuler, zEuler );
+
+#endif
+
+#ifdef X_RIGHT_Y_UP_Z_FORWARD
 	float xSin = -Ky;
 	xSin = ClampFloatNegativeOneToOne(xSin);
 	xEuler = -AsinDegrees(xSin);
 
 	float xCos = CosDegrees(xEuler);
-	if (!(abs(xCos) < 0.0000001f)) {
+	if (! IsFloatNearlyZero(xCos) ) {
 		yEuler = Atan2Degrees( Kx, Kz );
 		zEuler = Atan2Degrees( Iy, Jy );
 	}
@@ -708,7 +791,9 @@ Vector3 Matrix44::GetRotation() const {
 		yEuler = Atan2Degrees( -Iz, Ix );
 	}
 
+
 	return Vector3( xEuler, yEuler, zEuler );
+#endif
 }
 
 

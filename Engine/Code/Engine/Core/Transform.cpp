@@ -63,12 +63,20 @@ Vector3 Transform::GetWorldForward() const {
 	return GetLocalToWorldMatrix().GetForward();
 }
 
+Vector3 Transform::GetWorldUp() const {
+	return GetLocalToWorldMatrix().GetUp();
+}
+
+Vector3 Transform::GetWorldRight() const {
+	return GetLocalToWorldMatrix().GetRight();
+}
+
 void Transform::Translate( const Vector3& translation ) {
 	position = position + translation;
 }
 
 
-void Transform::Rotate(  const Vector3& rotationEuler ) {
+void Transform::Rotate( const Vector3& rotationEuler ) {
 	Matrix44 srt = GetLocalToWorldMatrix();
 	Matrix44 rot = Matrix44::MakeRotationDegrees(rotationEuler);
 	srt.Append(rot);

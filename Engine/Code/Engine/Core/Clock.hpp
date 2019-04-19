@@ -34,8 +34,9 @@ public:
 	// advance the clock by the given hpc
 	void Advance( uint64_t const hpc ); 
 
-	// adds a clock as a child to this clock
-	void AddChild( Clock *child ); 
+	// adds or removes a clock as a child to this clock
+	void AddChild( Clock* child );
+	void RemoveChild( Clock* child );
 
 	// returns time since this clock 
 	// using the current hpc, and our start hpc

@@ -1,0 +1,44 @@
+<particles>
+
+<particle-systems>
+	<system name="test">
+		<emitter def="a" name="test-world-particles" position-offset="5.0,0.0,0.0"  orientation="0.0,0.0,0.0" />
+		<emitter def="b" name="test-local-particles" position-offset="-5.0,0.0,0.0" orientation="0.0,0.0,90.0" />
+		<emitter def="c" name="test-ribbon" 		 position-offset="0.0,0.0,0.0"  orientation="0.0,0.0,0.0" />
+	</system>
+</particle-systems>
+
+
+<particle-emitters>
+	<emitter name="a" material="particle" type="world-space-particle" spawn-rate="0.1" burst-size="1~3" spawn-cone-angle="30.0" >
+		<particle-paramters lifespan="1.0~2.0" speed-at-spawn="1.0~3.0" size="0.5~0.7" />
+		<particle-forces acceleration-vector="0.0,-1.0,0.0" />
+		<color-curve mode="clamp">
+			<node time="0.0" color="100,255,255,0" />
+			<node time="0.2" color="200,200,255,255" />
+			<node time="2.0" color="100,100,255,0" />
+		</color-curve>
+	</emitter>
+
+	<emitter name="b" material="particle" type="local-space-particle" spawn-rate="0.1" burst-size="1~3" spawn-cone-angle="30.0"  >
+		<particle-paramters lifespan="2.0~4.0" speed-at-spawn="1.0~3.0" size="0.5~0.7" />
+		<particle-forces acceleration-vector="-1.0,0.0,0.0" />
+		<color-curve mode="loop">
+			<node time="0.0" color="255,255,0,0" />
+			<node time="0.2" color="200,200,0,255" />
+			<node time="0.5" color="100,100,0,0" />
+		</color-curve>
+	</emitter>
+
+	<emitter name="c" material="contrail" type="world-space-ribbon" spawn-rate="0.1" burst-size="1~3" spawn-cone-angle="30.0" >
+		<particle-paramters lifespan="5.0~5.0" speed-at-spawn="1.0~3.0" size="0.5~0.7" />
+		<particle-forces acceleration-vector="0.0,0.0,0.0" />
+		<color-curve mode="clamp">
+			<node time="0.0" color="255,255,255,0" />
+			<node time="0.5" color="255,255,255,255" />
+			<node time="5.0" color="255,255,255,0" />
+		</color-curve>
+	</emitter>
+</particle-emitters>
+
+</particles>

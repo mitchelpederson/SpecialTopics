@@ -1,6 +1,7 @@
 #include "Engine/Profiler/ProfilerWindow.hpp"
 #include "Engine/Core/EngineCommon.hpp"
 #include "Engine/Core/StringUtils.hpp"
+#include "Engine/Core/Window.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Renderer/MeshBuilder.hpp"
 #include "Engine/DevConsole/Command.hpp"
@@ -29,6 +30,26 @@ void ProfilerWindow::Initialize() {
 
 	CommandRegistration::RegisterCommand("pf_open", OpenProfiler, "Opens the profiler window");
 	CommandRegistration::RegisterCommand("pf_close", CloseProfiler, "Closes the profiler window");
+
+	float w = (float) Window::GetInstance()->GetWidth();
+	float h = (float) Window::GetInstance()->GetHeight();
+
+	instance->generalRenderBox.mins.x *= w;
+	instance->generalRenderBox.mins.y *= h;
+	instance->generalRenderBox.maxs.x *= w;
+	instance->generalRenderBox.maxs.y *= h;
+
+	instance->entryRenderBox.mins.x *= w;
+	instance->entryRenderBox.mins.y *= h;
+	instance->entryRenderBox.maxs.x *= w;
+	instance->entryRenderBox.maxs.y *= h;
+
+	instance->historyRenderBox.mins.x *= w;
+	instance->historyRenderBox.mins.y *= h;
+	instance->historyRenderBox.maxs.x *= w;
+	instance->historyRenderBox.maxs.y *= h;
+
+	instance->textHeight *= h;
 }
 
 
@@ -89,6 +110,7 @@ void ProfilerWindow::Render() const {
 		g_theRenderer->DisableDepth();
 		g_theRenderer->SetCameraToUI();
 		RenderBackground();
+		g_theRenderer->BindMaterial(g_theRenderer->GetMaterial("ui-font"));
 		RenderGeneralFrameInfo(latestFrame->root);
 		RenderReportEntries(latestFrame->root);
 		RenderHistoryGraph();
@@ -99,11 +121,11 @@ void ProfilerWindow::Render() const {
 //----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderGeneralFrameInfo( ProfilerReportEntry* root ) const {
 
-	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 1.f), "FPS: " + std::to_string( 1.0 / root->totalTime), 4.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
-	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 0.8f), "Frame Time: " + std::to_string( root->totalTime), 4.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
+	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 1.f), "FPS: " + std::to_string( 1.0 / root->totalTime), textHeight * 2.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
+	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 0.8f), "Frame Time: " + std::to_string( root->totalTime), textHeight * 2.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
 	
-	std::string reportHeader = Stringf("%-75s %10s %10s %10s %10s", "Function scope and name:", "time Inc", "\% Inc", "time Excl", "\% Excl");
-	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 0.0f), reportHeader, 2.f, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
+	std::string reportHeader = Stringf("%-75s %10s %10s %10s %10s", "Function scope and name:", "time Inc", "%% Inc", "time Excl", "%% Excl");
+	g_theRenderer->DrawTextInBox2D(generalRenderBox, Vector2(0.f, 0.0f), reportHeader, textHeight, Rgba(), 0.4f, g_theRenderer->CreateOrGetBitmapFont("Bisasam"), TEXT_DRAW_OVERRUN);
 
 }
 
@@ -145,7 +167,7 @@ unsigned int ProfilerWindow::RenderEntry( ProfilerReportEntry* node, unsigned in
 
 //----------------------------------------------------------------------------------------------------------------
 void ProfilerWindow::RenderBackground() const {
-	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 60, 100, 180));
+	g_theRenderer->DrawAABB(AABB2(0.f, 0.f, (float) Window::GetInstance()->GetWidth(), (float) Window::GetInstance()->GetHeight()), Rgba(0, 60, 100, 180));
 }
 
 

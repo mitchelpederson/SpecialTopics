@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/InputSystem/InputSystemCommon.hpp"
 #include "Engine/InputSystem/XboxController.hpp"
+#include "Engine/Math/IntVector2.hpp"
 
 class InputSystem {
 
@@ -10,8 +11,32 @@ public:
 	void BeginFrame();
 	void EndFrame();
 
+	void SetCursorVisibility( bool isVisible );
+	void SetCursorLock( bool isLocked );
+	
+	void OnMouseMove( int lastX, int lastY );
+	void OnLeftMouseDown();
+	void OnRightMouseDown();
+	void OnMiddleMouseDown();
+	void OnLeftMouseUp();
+	void OnRightMouseUp();
+	void OnMiddleMouseUp();
+
 	void OnKeyPressed( unsigned char keyCode );
 	void OnKeyReleased( unsigned char keyCode );
+
+	IntVector2 GetRawMousePosition() const;
+	IntVector2 GetMouseDelta() const;
+	bool WasLeftMouseJustClicked() const;
+	bool WasLeftMouseJustReleased() const;
+	bool IsLeftMouseClicked() const;
+	bool WasRightMouseJustClicked() const;
+	bool WasRightMouseJustReleased() const;
+	bool IsRightMouseClicked() const;
+	bool WasMiddleMouseJustClicked() const;
+	bool WasMiddleMouseJustReleased() const;
+	bool IsMiddleMouseClicked() const;
+
 	bool IsKeyPressed( unsigned char keyCode ) const;
 	bool WasKeyJustPressed( unsigned char keyCode ) const;
 	bool WasKeyJustReleased( unsigned char keyCode ) const;
@@ -56,18 +81,31 @@ public:
 
 	static const int XBOX_A = 10;
 	static const int XBOX_B = 11;
+	static const int XBOX_X = 12;
+	static const int XBOX_Y = 13;
 	static const int XBOX_DPAD_LEFT = 2;
 	static const int XBOX_DPAD_RIGHT = 3;
+	static const int XBOX_DPAD_UP = 0;
+	static const int XBOX_DPAD_DOWN = 1;
 	static const int XBOX_START = 4;
 	static const int XBOX_BACK = 5;
 	static const int XBOX_RB = 9;
 	static const int XBOX_LB = 8;
+	static const int XBOX_LS = 6;
+	static const int XBOX_RS = 7;
 
 
 private:
 	KeyButtonState m_keyStates[ NUM_KEYS ];
 	XboxController m_controllers[ NUM_CONTROLLERS ];
+	IntVector2 m_mouseLocation;
+	IntVector2 m_mouseDelta;
+	KeyButtonState m_leftMouse;
+	KeyButtonState m_middleMouse;
+	KeyButtonState m_rightMouse;
 
 	void RunMessagePump();
 
+	bool m_isCursorVisible = true;
+	bool m_isCursorLocked = false;
 };

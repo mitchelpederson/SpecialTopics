@@ -18,7 +18,7 @@ double NetSession::m_lastReceivedHostTime = 0.0;
 double NetSession::m_desiredClientTime = 0.0;
 double NetSession::m_currentClientTime = 0.0;
 Clock* NetSession::m_sessionClock = nullptr;
-float  NetSession::m_deltaTimeDilation = 1.0;
+double  NetSession::m_deltaTimeDilation = 1.0;
 
 std::vector<NetCommand> NetSession::m_registeredMessages;
 
@@ -133,9 +133,7 @@ bool NetSession::OnHeartbeat( NetMessage& message, NetConnection& sender ) {
 		double hostTime;
 		message.ReadValue<double>( &hostTime );
 		
-		if ( hostTime > NetSession::instance->GetNetTime() ) {
-			NetSession::instance->SetHostTime( hostTime + (sender.GetRTT() / 2.0) );
-		}
+		NetSession::instance->SetHostTime( hostTime );
 	}
 	return true;
 }
@@ -187,7 +185,12 @@ bool OnJoinRequest( NetMessage& message, NetConnection& sender ) {
 		NetMessage finishMsg( NETMSG_JOIN_FINISHED );
 		client->Send( finishMsg );
 
+		NetSession::instance->GetJoinCB()( client );
+
+
 		client->SetConnectionState( CONNECTION_READY );
+		NetSession::instance->netObjectSystem->OnConnectionJoined( client );
+
 	} 
 	
 	else {
@@ -217,6 +220,10 @@ bool OnJoinAccept( NetMessage& message, NetConnection& sender ) {
 	NetConnection* me = NetSession::instance->GetMyConnection();
 	me->SetConnectionState( CONNECTION_JOINING );
 	NetSession::instance->BindConnection( index, me );
+
+	if ( NetSession::instance->AmIHost() ) {
+		NetSession::instance->GetJoinCB()( me );
+	}
 
 	return true;
 }
@@ -263,9 +270,82 @@ bool OnHangup( NetMessage& message, NetConnection& sender ) {
 	NetConnection* senderPtr = NetSession::instance->GetConnection( sender.GetConnectionIndex() );
 	senderPtr->SetConnectionState( CONNECTION_DISCONNECTED );
 
+	if ( NetSession::instance->AmIHost() ) {
+		NetSession::instance->GetLeaveCB()( senderPtr );
+	}
+
 	if ( senderPtr == NetSession::instance->GetHostConnection() ) {
 		NetSession::instance->Disconnect();
 	}
+
+	
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+// Net Object System callbacks
+//----------------------------------------------------------------------------------------------------------------
+bool OnNetObjectCreate( NetMessage& message, NetConnection& sender ) {
+
+	uint8_t typeID;
+	uint16_t networkID;
+	message.ReadValue<uint8_t>( &typeID );
+	message.ReadValue<uint16_t>( &networkID );
+
+	NetObjectDef_T const& typeDef = NetSession::instance->netObjectSystem->GetObjectTypeByID( typeID );
+
+	void* obj = typeDef.recvCreateCB( &message );
+
+	NetObject* netObj = new NetObject();
+	netObj->localPtr = obj;
+	netObj->networkID = networkID;
+	netObj->typeID = typeID;
+	
+	if ( netObj->snapshot == nullptr ) {
+		typeDef.getSnapshotCB( netObj->snapshot, netObj->localPtr );
+	}
+
+	NetSession::instance->netObjectSystem->AddNetObjectToLists( netObj );
+
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool OnNetObjectDestroy( NetMessage& message, NetConnection& sender ) {
+	uint16_t networkID;
+	message.ReadValue<uint16_t>( &networkID );
+
+	NetObject* netObj = NetSession::instance->netObjectSystem->GetObjectByNetID( networkID );
+	NetObjectDef_T const& typeDef = NetSession::instance->netObjectSystem->GetObjectTypeByID( netObj->typeID );
+	
+	typeDef.recvDestroyCB( &message, netObj->localPtr );
+
+	NetSession::instance->netObjectSystem->RemoveNetObjectFromLists( netObj );
+	
+	return true;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+bool OnNetObjectUpdate( NetMessage& message, NetConnection& sender ) {
+
+	uint8_t typeID;
+	uint16_t networkID;
+	message.ReadValue<uint8_t>( &typeID );
+	message.ReadValue<uint16_t>( &networkID );
+
+
+	NetObjectDef_T const& typeDef = NetSession::instance->netObjectSystem->GetObjectTypeByID( typeID );
+	NetObject* obj = NetSession::instance->netObjectSystem->GetObjectByNetID( networkID );
+
+	if ( obj != nullptr ) {
+		void* snapshot = obj->snapshot;
+		typeDef.recvSnapshotCB( &message, snapshot ); 
+		typeDef.applySnapshotCB( snapshot, obj->localPtr, 0.f );
+	}
+
 	return true;
 }
 
@@ -300,7 +380,7 @@ void HostCommand( std::string const& command ) {
 	if ( !comm.GetNextInt( port ) ) {
 		port = 10084;
 	}
-	NetSession::instance->Host( "HOST", port );
+	NetSession::instance->Host( "HOST", (uint16_t) port );
 }
 
 
@@ -334,6 +414,7 @@ NetSession::NetSession()
 	CommandRegistration::RegisterCommand( "disconnect", DisconnectCommand, " - Sends a join request to the ip" );
 
 	instance = this;
+	netObjectSystem = new NetObjectSystem( this );
 }
 
 
@@ -373,6 +454,17 @@ void NetSession::RegisterCoreMessages() {
 	RegisterMessage( NETMSG_JOIN_FINISHED,		"join_finished",		OnJoinFinished,		NETMSG_OPTION_IN_ORDER );
 	RegisterMessage( NETMSG_UPDATE_CONN_STATE,	"update_conn_state",	OnUpdateConnState,	NETMSG_OPTION_IN_ORDER );
 	RegisterMessage( NETMSG_HANGUP,				"hangup",				OnHangup/*,			*/ );
+
+	RegisterMessage( NETMSG_OBJECT_CREATE,		"object_create",		OnNetObjectCreate,	NETMSG_OPTION_IN_ORDER );
+	RegisterMessage( NETMSG_OBJECT_DESTROY,		"object_destroy",		OnNetObjectDestroy, NETMSG_OPTION_IN_ORDER );
+	RegisterMessage( NETMSG_OBJECT_UPDATE,		"object_update",		OnNetObjectUpdate/*,*/ );
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetSession::RegisterLeaveAndJoinCallbacks( session_join_cb joinCB, session_leave_cb leaveCB ) {
+	m_joinCallback = joinCB;
+	m_leaveCallback = leaveCB;
 }
 
 
@@ -443,7 +535,7 @@ void NetSession::Disconnect() {
 
 	NetMessage disconnectMsg( NETMSG_HANGUP );
 
-	if ( m_hostConnection != m_myConnection ) {
+	if ( m_hostConnection != m_myConnection && m_hostConnection != nullptr ) {
 		m_hostConnection->SendPacketImmediate( m_socket, disconnectMsg );
 	} else {
 		std::list< NetConnection* >::iterator it = m_allConnections.begin();
@@ -486,6 +578,9 @@ void NetSession::Update() {
 		if ( (*it)->IsDisconnected() || (*it)->HasTimedOut() ) {
 			DestroyConnection( *it );
 			it = m_allConnections.begin();
+			if ( it == m_allConnections.end() ) {
+				break;
+			}
 		}
 		it++;
 	}
@@ -503,9 +598,9 @@ void NetSession::Update() {
 		m_desiredClientTime += m_sessionClock->frame.hp_seconds;
 
 		if ( m_currentClientTime + m_sessionClock->frame.hp_seconds >= m_desiredClientTime ) {
-			m_deltaTimeDilation = Max( 1.0f - MAX_NET_TIME_DILATION, m_deltaTimeDilation * 0.995f );
+			m_deltaTimeDilation = Max( 1.0 - MAX_NET_TIME_DILATION, m_deltaTimeDilation * 0.9988 );
 		} else {
-			m_deltaTimeDilation = Min( 1.0f + MAX_NET_TIME_DILATION, m_deltaTimeDilation * 1.005f );
+			m_deltaTimeDilation = Min( 1.0 + MAX_NET_TIME_DILATION, m_deltaTimeDilation * 1.0012 );
 		}
 		
 		m_currentClientTime += m_sessionClock->frame.hp_seconds * m_deltaTimeDilation;
@@ -513,6 +608,11 @@ void NetSession::Update() {
 	// If we're host just keep updating host time based on the session clock
 	else {
 		m_lastReceivedHostTime = m_sessionClock->total.hp_seconds;
+	}
+
+	// Update snapshots if we're host
+	if ( AmIHost() ) {
+		netObjectSystem->UpdateSnapshots();
 	}
 }
 
@@ -663,7 +763,8 @@ void NetSession::ProcessOutgoing() {
 bool NetSession::AddBinding( unsigned short session ) {
 
 	m_socket = new UDPSocket();
-	if ( m_socket->Bind( NetAddress_T::GetLocal( session ), DEFAULT_PORT_RANGE ) ) {
+	NetAddress_T localAddr = NetAddress_T::GetLocal( session );
+	if ( m_socket->Bind( localAddr, DEFAULT_PORT_RANGE ) ) {
 		return true;
 	} else {
 		m_socket->Close();
@@ -752,7 +853,7 @@ void NetSession::DestroyConnection( NetConnection* conn ) {
 
 //----------------------------------------------------------------------------------------------------------------
 NetConnection* NetSession::GetConnection( unsigned int index ) {
-	if ( index >= MAX_CLIENTS || !IsValidConnectionIndex( index ) ) {
+	if ( index >= MAX_CLIENTS || !IsValidConnectionIndex( (uint8_t) index ) ) {
 		return nullptr;
 	}
 	return m_boundConnections[index];
@@ -800,7 +901,7 @@ unsigned int NetSession::GetNumberOfUsers() const {
 
 //----------------------------------------------------------------------------------------------------------------
 unsigned int NetSession::GetNumberOfConnections() const {
-	return m_allConnections.size();
+	return (unsigned int) m_allConnections.size();
 }
 
 
@@ -856,7 +957,7 @@ void NetSession::SetTickRateCommand( std::string const& command ) {
 
 //----------------------------------------------------------------------------------------------------------------
 void NetSession::SetConnectionTickRate( int index, float rate ) {
-	if ( IsValidConnectionIndex( (uint16_t) index ) ) {
+	if ( IsValidConnectionIndex( (uint8_t) index ) ) {
 		m_boundConnections[ index ]->SetSendRate( rate );
 	}
 }
@@ -864,7 +965,7 @@ void NetSession::SetConnectionTickRate( int index, float rate ) {
 
 //----------------------------------------------------------------------------------------------------------------
 float NetSession::GetTimeSinceLastMessageOnConnection( unsigned int connIndex ) {
-	if ( IsValidConnectionIndex( connIndex ) ) {
+	if ( IsValidConnectionIndex( (uint8_t) connIndex ) ) {
 		return m_sessionClock->total.seconds - m_boundConnections[connIndex]->GetTimeSinceLastReceivedMessage();
 	}
 	return 0.f;
@@ -997,7 +1098,7 @@ void NetSession::InitializeTimesFromHost( double hostTime ) {
 void NetSession::SetHostTime( double hostTime ) {
 	m_lastReceivedHostTime = hostTime;
 	if ( !AmIHost() ) {
-		m_desiredClientTime = m_lastReceivedHostTime;
+		m_desiredClientTime = m_lastReceivedHostTime + (GetHostConnection()->GetRTT() / 2.0) ;
 	}
 }
 
@@ -1021,4 +1122,34 @@ double NetSession::GetHostTime() {
 //----------------------------------------------------------------------------------------------------------------
 bool NetSession::AmIHost() const {
 	return m_myConnection == m_hostConnection;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+float NetSession::GetCurrentDilation() {
+	return (float) m_deltaTimeDilation;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+session_join_cb NetSession::GetJoinCB() {
+	return m_joinCallback;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+session_leave_cb NetSession::GetLeaveCB() {
+	return m_leaveCallback;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+void NetSession::SendToAllOtherConnections( NetMessage& msg ) {
+	if ( m_state == SESSION_READY ) {
+		for ( int i = 0; i < m_boundConnections.size(); i++ ) {
+			if ( m_boundConnections[i] != nullptr && m_boundConnections[i]->IsReady() && m_boundConnections[i] != m_myConnection ) {
+				m_boundConnections[i]->Send( msg );
+			}
+		}
+	}
 }

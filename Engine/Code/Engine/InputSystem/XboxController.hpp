@@ -12,6 +12,7 @@ public:
 	void Update();
 
 	void SetId(int id);
+	bool IsConnected() const;
 
 	bool IsButtonPressed(int button) const;
 	bool WasButtonJustPressed(int button) const;
@@ -40,7 +41,7 @@ private:
 	float m_rightTriggerNormalized;
 
 	int m_controllerID;
-	bool m_isConnected;
+	bool m_isConnected = false;
 
 	void UpdateButton(int button, bool isPressed);
 

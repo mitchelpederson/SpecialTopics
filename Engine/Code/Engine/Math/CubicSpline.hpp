@@ -73,3 +73,124 @@ protected:
 	std::vector<Vector2>	m_velocities;
 	float					m_tension = 0.f;
 };
+
+
+template< typename T >
+class LerpSequence {
+public:
+	LerpSequence() {}
+
+	explicit LerpSequence( const float* tArray, const T* nodeArray, int numNodes ) {		
+		for ( int index = 0; index < numNodes; index++ ) {
+			AddNode( tArray[index], nodeArray[index] );
+		}
+	}
+
+	~LerpSequence() {}
+
+	// Mutators
+	void AddNode( float t, const T& nodeValue ) {
+		SplineEntry entry;
+		entry.t = t;
+		entry.value = nodeValue;
+
+		m_nodes.push_back( entry );
+
+		// iterate backwards over the list to find where this node should be placed.
+		for ( int i = m_nodes.size() - 1; i > 0; i-- ) {
+			// If the t of node i is less than the t of the node before it, swap.
+			if ( m_nodes[i].t < m_nodes[i - 1].t ) {
+				SplineEntry temporary = m_nodes[i];
+				m_nodes[i] = m_nodes[i - 1];
+				m_nodes[i - 1] = temporary;
+			} 
+
+			// if the node is ordered correctly, the whole vector is ordered correctly so stop.
+			else {
+				break;
+			}
+		}
+
+		//SetCardinalVelocities();
+	}
+
+	void SetNodeValue( int nodeIndex, const T& nodeValue ) {
+		m_nodes[nodeIndex].value = nodeValue;
+	}
+
+	
+	//----------------------------------------------------------------------------------------------------------------
+	int GetNumNodes() const {
+		return m_nodes.size();
+	}
+
+
+	//----------------------------------------------------------------------------------------------------------------
+	float GetMaximumT() const {
+		return m_nodes[m_nodes.size()-1].t;
+	}
+
+
+	//----------------------------------------------------------------------------------------------------------------
+	T EvaluateAtCumulativeParametric( float t ) const {
+		
+		if ( t > GetMaximumT() ) {
+			t = GetMaximumT();
+		}
+
+		// first we must figure out which two nodes to lerp between
+		SplineEntry first;
+		SplineEntry second;
+		for ( int i = m_nodes.size() - 2; i >= 0; i-- ) {
+			if ( m_nodes[i].t <= t ) {
+				first = m_nodes[i];
+				second = m_nodes[i+1];
+				break;
+			}
+		}
+
+		float nodeDistance = second.t - first.t;
+		float interpAmount = (t - first.t) / nodeDistance;
+
+		return Interpolate( first.value, second.value, interpAmount );
+	}
+
+
+	//----------------------------------------------------------------------------------------------------------------
+	T EvaluateAtNormalizedParametric( float t ) const {
+		if ( t > GetMaximumT() ) {
+			t = GetMaximumT();
+		}
+
+		float normalizedT = t / GetMaximumT();
+
+		// first we must figure out which two nodes to lerp between
+		SplineEntry first;
+		SplineEntry second;
+		for ( int i = m_nodes.size() - 2; i >= 0; i-- ) {
+			if ( m_nodes[i].t <= t ) {
+				first = m_nodes[i];
+				second = m_nodes[i+1];
+				break;
+			}
+		}
+
+		float normalizedFirstT = first.t / GetMaximumT();
+		float normalizedSecondT = second.t / GetMaximumT();
+
+		float nodeDistance = normalizedSecondT - normalizedFirstT;
+		float interpAmount = (normalizedT - normalizedFirstT) / nodeDistance;
+
+		return Interpolate( first.value, second.value, interpAmount );
+	}
+
+
+private:
+	struct SplineEntry {
+		float t;
+		T value;
+	};
+
+	float m_tension = 0.f;
+	std::vector< SplineEntry > m_nodes;
+};

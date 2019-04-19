@@ -1,0 +1,112 @@
+<materials>
+
+
+	<material name="eurofighter" shader="lit">
+		<textures>
+			<texture slot="0" path="Data/Models/EurofighterSimplified/eurofighter-diffuse.png"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
+		</textures>
+	</material>
+
+
+	<material name="terrain" shader="lit">
+		<textures>
+			<texture slot="0" path="Data/Images/grass01.png"/>
+			<texture slot="1" path="Data/Images/grass01_n.png"/>
+		</textures>
+	</material>
+	<material name="water" shader="lit-scrolling">
+		<textures>
+			<texture slot="0" path="Data/Images/water.gif"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
+		</textures>
+	</material>
+
+	<material name="particle" shader="additive">
+		<textures>
+			<texture slot="0" path="Data/Images/particle.png"/>
+		</textures>
+	</material>
+
+	<material name="contrail" shader="additive">
+		<textures>
+			<texture slot="0" path="Data/Images/contrails.png"/>
+		</textures>
+	</material>
+
+	<material name="player" shader="lit">
+		<textures>
+			<texture slot="0" path="Data/Models/EurofighterSimplified/eurofighter-diffuse.png"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
+		</textures>
+	</material>
+
+	<material name="gun-bullet" shader="additive-bloom">
+		<textures>
+			<texture slot="0" path="Data/Images/bullet-glow.png"/>
+			<texture slot="1" path="Data/Images/blank_normal.png"/>
+		</textures>
+	</material>
+
+	<material name="depth-only" shader="depth-only">
+		<textures>
+		</textures>
+	</material>
+
+
+	<material name="passthrough" shader="ui">
+		<textures>
+		</textures>
+	</material>
+
+
+	<material name="bloom-blur" shader="blur">
+		<textures>
+		</textures>
+		<properties>
+		</properties>
+	</material>
+	
+	<material name="bloom-add" shader="bloom-add">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="testPostProcessEffect" shader="testEffect">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="dashDistort" shader="burn">
+		<textures>
+		</textures>
+		<properties>
+			<float name="burnAmount" value="1.0"/>
+		</properties>
+	</material>
+
+	
+
+
+
+	<material name="fog" shader="fog">
+		<textures>
+		</textures>
+		<properties>
+		</properties>
+	</material>
+
+	<material name="debugRender" shader="debug">
+		<textures>
+		</textures>
+	</material>
+
+	<material name="ui-font" shader="ui-font">
+		<textures>
+		</textures>
+	</material>
+	<material name="ui" shader="ui">
+		<textures>
+		</textures>
+	</material>
+</materials>

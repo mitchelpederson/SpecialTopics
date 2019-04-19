@@ -1,5 +1,7 @@
 #pragma once
+#include "Engine/Math/AABB3.hpp"
 #include "Engine/Core/Rgba.hpp"
+#include "Engine/Core/Clock.hpp"
 #include "Engine/Renderer/Camera.hpp"
 #include "Engine/Renderer/Mesh.hpp"
 #include <vector>
@@ -42,6 +44,7 @@ class DebugRenderState {
 public:
 	static Renderer* currentRenderer;
 	static Camera* currentCamera;
+	static Clock* currentClock;
 	static std::vector<DebugRenderObject>* objects;
 	static bool isActive;
 };
@@ -49,7 +52,8 @@ public:
 void DebugRenderStartup( Renderer* renderer );
 void DebugRenderShutdown();
 void DebugRenderAndUpdate();
-void DebugRenderSet3DCamera( Camera *camera ); 
+void DebugRenderSet3DCamera( Camera* camera ); 
+void DebugRenderSetClock( Clock* clock );
 void DebugRenderClear();
 void DebugRenderToggle();
 
@@ -85,6 +89,12 @@ void DebugRenderWireCube( float lifetime,
 	const Rgba& start_color = Rgba(0, 255, 0, 255), 
 	const Rgba& end_color = Rgba(255, 0, 0, 255),
 	DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH); 
+
+void DebugRenderWireAABB3( float lifetime,
+	const AABB3& aabb3,
+	const Rgba& start_color = Rgba(0, 255, 0, 255),
+	const Rgba& end_color = Rgba(255, 0, 0, 255),
+	DebugRenderMode mode = DEBUG_RENDER_USE_DEPTH);
 
 void DebugRenderQuad( float lifetime, 
 	const Vector3& pos, 

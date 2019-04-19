@@ -14,7 +14,8 @@ public:
 	int x = 0;
 	int y = 0;
 
-	bool operator==(const IntVector2& compare);
+	bool operator==(const IntVector2& compare) const;
+	bool operator<(const IntVector2& compare) const;
 	void SetFromText( const char* text );
 
 	IntVector2 operator+(const IntVector2& add);

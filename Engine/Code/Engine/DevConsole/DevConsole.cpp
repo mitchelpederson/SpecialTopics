@@ -292,16 +292,19 @@ void DevConsole::ProcessTypingInput() {
 //----------------------------------------------------------------------------------------------------------------
 void DevConsole::Render() const {
 	if (m_isOpen == true) {
+		float w = (float) Window::GetInstance()->GetWidth();
+		float h = (float) Window::GetInstance()->GetHeight();
+
 		g_theRenderer->SetShader(nullptr);
 		g_theRenderer->DisableDepth();
 		g_theRenderer->SetCameraToUI();
 		//g_theRenderer->SetAlphaBlending();
-		g_theRenderer->DrawAABB( AABB2(0.f, 0.f, 100.f, 100.f), Rgba(0, 0, 0, 170) );		
+		g_theRenderer->DrawAABB( AABB2(0.f, 0.f, w, h ), Rgba(0, 0, 70, 170) );		
 		
 		g_theRenderer->SetShader(g_theRenderer->GetShader("ui-font"));
 		for (int messageIndex = (int) m_messages.size() - 1; messageIndex > (signed int) m_messages.size() - 50 && messageIndex >= 0; messageIndex--) {
-			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, 100.f, (m_messages.size() - messageIndex + 1.f) * m_fontSize);
-			g_theRenderer->DrawTextInBox2D( messageBoxBounds, Vector2(0.f, 0.5f), m_messages[messageIndex].message, m_fontSize, m_messages[messageIndex].color, 0.4f, m_currentFont, TEXT_DRAW_OVERRUN );
+			AABB2 messageBoxBounds(0.f, (m_messages.size() - messageIndex) * m_fontSize, w, (m_messages.size() - messageIndex + 1.f) * m_fontSize);
+			g_theRenderer->DrawTextInBox2D( messageBoxBounds, Vector2(0.f, 0.5f), m_messages[messageIndex].message, m_fontSize, m_messages[messageIndex].color, 0.8f, m_currentFont, TEXT_DRAW_OVERRUN );
 		}
 
 		m_rcsWidget.Render();

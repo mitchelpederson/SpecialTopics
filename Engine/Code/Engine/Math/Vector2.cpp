@@ -22,8 +22,8 @@ Vector2::Vector2( const Vector2& copy )
 
 //----------------------------------------------------------------------------------------------------------------
 Vector2::Vector2( const IntVector2& copyFrom ) 
-	: x( (int) copyFrom.x )
-	, y( (int) copyFrom.y )
+	: x( (float) copyFrom.x )
+	, y( (float) copyFrom.y )
 {
 }
 

@@ -5,7 +5,7 @@
 #include "Engine/Net/NetAddress.hpp"
 #include "Engine/Net/TCPSocket.hpp"
 
-#include "Engine/Core/Threads.hpp"
+#include "Engine/Async/Threads.hpp"
 
 #include "Engine/DevConsole/Command.hpp"
 #include "Engine/Core/ErrorWarningAssert.hpp"
@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------------------------------------------
 void TestHostThread( void* data ) {
 	unsigned int* portAddr = (unsigned int*) data;
-	TestHost(12345);
+	TestHost( *portAddr );
 }
 
 
@@ -107,7 +107,7 @@ void TestConnection( NetAddress_T const& address, std::string const& message ) {
 void TestHost( int port ) {
 
 	TCPSocket hostSocket;
-	if ( hostSocket.Listen( port, 32 ) ) {
+	if ( hostSocket.Listen( (uint16_t) port, 32 ) ) {
 		DevConsole::Printf("Created test listen socket");
 	} 
 

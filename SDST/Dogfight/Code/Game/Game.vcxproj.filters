@@ -1,0 +1,215 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="General">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{ca51d0d8-b81c-414b-8bcc-8a56a8efbba6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Definitions">
+      <UniqueIdentifier>{aab7496a-62b0-4544-b3c9-a790682235d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{fe7891b5-0edd-46f7-8c2f-6d0ae07560c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Maps">
+      <UniqueIdentifier>{ff645dfa-97ee-49b0-8430-e26de1d19f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Controllers">
+      <UniqueIdentifier>{3ffd9287-99bc-442c-9586-dae7861dc8ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\GameStates">
+      <UniqueIdentifier>{287f4c0c-20f3-421f-b5cf-402435af484c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="General\Jobs">
+      <UniqueIdentifier>{a348353a-0462-4e13-8b31-3c5569fa2ca9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main_Win32.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="TheGame.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\GameMap.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\TileDefinition.cpp">
+      <Filter>General\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityController.cpp">
+      <Filter>General\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>General\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="AIController.cpp">
+      <Filter>General\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityDefinition.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="MissileController.cpp">
+      <Filter>General\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="NetController.cpp">
+      <Filter>General\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\GameState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\LoadState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MenuState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\PlayState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\SetupState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MultiplayerHostState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MultiplayerClientState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MenuHostState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MenuJoinState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameState\MultiplayerState.cpp">
+      <Filter>General\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerHUD.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerInfo.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>General</Filter>
+    </ClCompile>
+    <ClCompile Include="Jobs\TerrainRebuildJob.cpp">
+      <Filter>General\Jobs</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TheGame.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="App.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameCommon.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineBuildPreferences.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDebug.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\GameMap.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\TileDefinition.hpp">
+      <Filter>General\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityController.hpp">
+      <Filter>General\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="AIController.hpp">
+      <Filter>General\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.hpp">
+      <Filter>General\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityDefinition.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="MissileController.hpp">
+      <Filter>General\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="NetController.hpp">
+      <Filter>General\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\GameState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\LoadState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MenuState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\PlayState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\SetupState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MultiplayerHostState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MultiplayerClientState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MenuHostState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MenuJoinState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState\MultiplayerState.hpp">
+      <Filter>General\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerHUD.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerInfo.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+    <ClInclude Include="Jobs\TerrainRebuildJob.hpp">
+      <Filter>General\Jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.hpp">
+      <Filter>General</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Data\GameConfig.xml">
+      <Filter>Data</Filter>
+    </Xml>
+    <Xml Include="Data\Definitions\Tiles.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+    <Xml Include="Data\Definitions\Maps.xml">
+      <Filter>Data\Definitions</Filter>
+    </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Run_Win32\Data\Shaders\passthrough.fs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\..\Run_Win32\Data\Shaders\passthrough.vs">
+      <Filter>Data\Shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>

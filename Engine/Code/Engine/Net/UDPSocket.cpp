@@ -60,7 +60,7 @@ size_t UDPSocket::SendTo( NetAddress_T const& address, void const* data, size_t 
 	address.ToSockaddr((sockaddr*) &addr, &addrLen);
 
 	SOCKET sock = (SOCKET) m_handle;
-	int sent = ::sendto( sock, (char const*) data, (int) byteCount, 0, (sockaddr*) &addr, addrLen );
+	int sent = ::sendto( sock, (char const*) data, (int) byteCount, 0, (sockaddr*) &addr, (int) addrLen );
 	if ( sent > 0 ) {
 		GUARANTEE_OR_DIE( sent == byteCount, "Something weird in UDPSocket::SendTo()" );
 		return sent;
@@ -90,7 +90,7 @@ size_t UDPSocket::ReceiveFrom( NetAddress_T& out_address, void* out_buffer, size
 	} else {
 
 		int err = ::WSAGetLastError();
-		// error check
+		GUARANTEE_RECOVERABLE( err != 0, "error in UDPSocket::ReceiveFrom()" );
 		return 0;
 	}
 }

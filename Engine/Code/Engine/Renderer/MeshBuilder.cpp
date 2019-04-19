@@ -1,3 +1,4 @@
+#include "Game/EngineBuildPreferences.hpp"
 #include "Engine/Renderer/MeshBuilder.hpp"
 #include "Engine/Renderer/Renderer.hpp"
 #include "Engine/Math/MathUtils.hpp"
@@ -11,6 +12,12 @@
 
 
 void MeshBuilder::Begin(DrawPrimitive primitive, bool useIndices) {
+	if (m_indices.size() > 0) {
+		m_indices.clear();
+	}
+	if (m_vertices.size() > 0) {
+		m_vertices.clear();
+	}
 	m_instructions.type = primitive;
 	m_instructions.useIndices = useIndices;
 
@@ -61,6 +68,11 @@ unsigned int MeshBuilder::PushVertex( const Vector3& position ) {
 }
 
 
+void MeshBuilder::PushIndex( unsigned int index ) {
+	m_indices.push_back( index );
+}
+
+
 unsigned int MeshBuilder::PushQuad( const Vector3& bl, const Vector3& br, const Vector3& tr, const Vector3& tl) {
 	unsigned int firstIndex = (unsigned int) m_vertices.size();
 	
@@ -75,6 +87,26 @@ unsigned int MeshBuilder::PushQuad( const Vector3& bl, const Vector3& br, const 
 	SetUV(Vector2(1.f, 1.f));
 	PushVertex(tr);
 	SetUV(Vector2(0.f, 1.f));
+	PushVertex(tl);
+
+	return firstIndex;
+}
+
+
+unsigned int MeshBuilder::PushTexturedQuad( const Vector3& bl, const Vector3& br, const Vector3& tr, const Vector3& tl, const AABB2& uvs ) {
+	unsigned int firstIndex = (unsigned int) m_vertices.size();
+
+	SetUV(uvs.mins);
+	PushVertex(bl);
+	SetUV(Vector2(uvs.maxs.x, uvs.mins.y));
+	PushVertex(br);
+	SetUV(uvs.maxs);
+	PushVertex(tr);
+	SetUV(uvs.mins);
+	PushVertex(bl);
+	SetUV(uvs.maxs);
+	PushVertex(tr);
+	SetUV(Vector2(uvs.mins.x, uvs.maxs.y));
 	PushVertex(tl);
 
 	return firstIndex;
@@ -119,12 +151,16 @@ void MeshBuilder::LoadMeshFromOBJ( const std::string& path ) {
 		objFile.getline(buffer, 256);
 		std::vector<std::string> tokens = SplitString(buffer, ' ');
 
+		if ( tokens.size() == 0 ) {
+			continue;
+		}
+
 		if (tokens[0] == "v") {
-			vertPositions.push_back( Vector3( std::stof(tokens[2]), std::stof(tokens[3]), std::stof(tokens[4]) ) );
+			vertPositions.push_back( Vector3( -std::stof(tokens[1]), std::stof(tokens[2]), -std::stof(tokens[3]) ) );
 		}
 
 		else if (tokens[0] == "vn") {
-			vertNormals.push_back( Vector3( std::stof(tokens[1]), std::stof(tokens[2]), std::stof(tokens[3]) ) );
+			vertNormals.push_back( Vector3( -std::stof(tokens[1]), std::stof(tokens[2]), -std::stof(tokens[3]) ) );
 		} 
 
 		else if (tokens[0] == "vt") {
@@ -134,13 +170,27 @@ void MeshBuilder::LoadMeshFromOBJ( const std::string& path ) {
 		else if (tokens[0] == "f") {
 
 			std::vector<unsigned int> faceIndices;
-			for (unsigned int i = 1; i < tokens.size() - 1; i++) {
+			for (unsigned int i = 1; i < tokens.size(); i++) {
 				std::vector<std::string> faceTokens = SplitString(tokens[i], '/');
-				int posIndex = std::stoi(faceTokens[0]) - 1;
-				int normalIndex = std::stoi(faceTokens[2]) - 1;
-				int uvIndex = std::stoi(faceTokens[1]) - 1;
+				int posIndex = 0;
+				int uvIndex = 0;
+				int normalIndex = 0;
 
-				SetNormal(vertNormals[normalIndex]);
+				if (faceTokens.size() == 2) {
+					posIndex = std::stoi(faceTokens[0]) - 1;
+					normalIndex = std::stoi(faceTokens[1]) - 1;
+				}
+
+				else if ( faceTokens.size() == 3 ) {
+					posIndex = std::stoi(faceTokens[0]) - 1;
+					if ( faceTokens[1] != "" ) {
+						uvIndex = std::stoi(faceTokens[1]) - 1;
+					} 
+					normalIndex = std::stoi(faceTokens[2]) - 1;
+					
+					SetNormal(vertNormals[normalIndex]);
+				}
+
 				SetUV(vertUVs[uvIndex]);
 				unsigned int index = PushVertex(vertPositions[posIndex]);
 				faceIndices.push_back(index);
@@ -148,6 +198,11 @@ void MeshBuilder::LoadMeshFromOBJ( const std::string& path ) {
 
 				// Triangle
 			if (faceIndices.size() == 3) {
+				/*VertexMaster& a = m_vertices[faceIndices[0]];
+				VertexMaster& b = m_vertices[faceIndices[1]];
+				VertexMaster& c = m_vertices[faceIndices[2]];
+				*/
+
 				m_indices.push_back(faceIndices[0]);
 				m_indices.push_back(faceIndices[2]);
 				m_indices.push_back(faceIndices[1]);
@@ -455,28 +510,28 @@ void MeshBuilder::BuildBasis( Mesh* mesh, const Matrix44& basis, const Vector3& 
 
 	Vertex3D_PCU vertices[6];
 
-	Vector3 right = basis.GetRight();
-	Vector3 up = basis.GetUp();
-	Vector3 forward = basis.GetForward();
+	Vector3 iBasis = basis.GetI();
+	Vector3 jBasis = basis.GetJ();
+	Vector3 kBasis = basis.GetK();
 
 	vertices[0].position = position;
 	vertices[0].uv = Vector2();
 	vertices[0].color = Rgba(255, 0, 0, 255);
-	vertices[1].position = right + position;
+	vertices[1].position = iBasis + position;
 	vertices[1].uv = Vector2();
 	vertices[1].color = Rgba(255, 0, 0, 255);
 
 	vertices[2].position = position;
 	vertices[2].uv = Vector2();
 	vertices[2].color = Rgba(0, 255, 0, 255);
-	vertices[3].position = up + position;
+	vertices[3].position = jBasis + position;
 	vertices[3].uv = Vector2();
 	vertices[3].color = Rgba(0, 255, 0, 255);
 
 	vertices[4].position = position;
 	vertices[4].uv = Vector2();
 	vertices[4].color = Rgba(0, 120, 255, 255);
-	vertices[5].position = forward + position;
+	vertices[5].position = kBasis + position;
 	vertices[5].uv = Vector2();
 	vertices[5].color = Rgba(0, 120, 255, 255);
 
@@ -856,13 +911,13 @@ void MeshBuilder::AddCube(
 
 	Vector3 halfSize = size * 0.5f;
 
+#ifdef X_RIGHT_Y_UP_Z_FORWARD
 	float left = center.x - halfSize.x;
 	float right = center.x + halfSize.x;
 	float top = center.y + halfSize.y;
 	float bottom = center.y - halfSize.y;
 	float front = center.z + halfSize.z;
 	float back = center.z - halfSize.z;
-
 	Vector3 leftTopFront(left, top, front);
 	Vector3 rightTopFront(right, top, front);
 	Vector3 leftBottomFront(left, bottom, front);
@@ -871,6 +926,25 @@ void MeshBuilder::AddCube(
 	Vector3 rightTopBack(right, top, back);
 	Vector3 leftBottomBack(left, bottom, back);
 	Vector3 rightBottomBack(right, bottom, back);
+#endif
+
+#ifdef X_FORWARD_Y_LEFT_Z_UP
+	float left = center.y + halfSize.y;
+	float right = center.y - halfSize.y;
+	float top = center.z + halfSize.z;
+	float bottom = center.z - halfSize.z;
+	float front = center.x + halfSize.x;
+	float back = center.x - halfSize.x;
+	Vector3 leftTopFront(front, left, top);
+	Vector3 rightTopFront(front, right, top);
+	Vector3 leftBottomFront(front, left, bottom);
+	Vector3 rightBottomFront(front, right, bottom);
+	Vector3 leftTopBack(back, left, top);
+	Vector3 rightTopBack(back, right, top);
+	Vector3 leftBottomBack(back, left, bottom);
+	Vector3 rightBottomBack(back, right, bottom);
+#endif
+
 
 	// front face
 	SetNormal(Vector3::FORWARD);
@@ -881,7 +955,7 @@ void MeshBuilder::AddCube(
 	PushVertex(rightTopFront);
 	SetUV(Vector2( sideUVs.mins.x, sideUVs.mins.y ));
 	PushVertex(leftBottomFront);
-	SetUV(Vector2( sideUVs.maxs.x, sideUVs.maxs.y ));
+	SetUV(Vector2( sideUVs.maxs.x, sideUVs.mins.y ));
 	PushVertex(rightBottomFront);
 	m_indices.push_back(vertices + 0);
 	m_indices.push_back(vertices + 1);
@@ -1035,4 +1109,10 @@ void MeshBuilder::AddSphere(
 			m_indices.push_back(vertices + topLeft);
 		}
 	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
+VertexMaster& MeshBuilder::GetVertexByIndex( int index ) {
+	return m_vertices[index];
 }

@@ -38,8 +38,26 @@ IntVector2::~IntVector2() {
 }
 
 
-bool IntVector2::operator==(const IntVector2& compare) {
+bool IntVector2::operator==(const IntVector2& compare) const {
 	return (compare.x == x) && (compare.y == y);
+}
+
+
+bool IntVector2::operator<(const IntVector2& compare) const {
+	if ( x == compare.x ) {
+		if ( y < compare.y ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	else {
+		if ( x < compare.x ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 
 

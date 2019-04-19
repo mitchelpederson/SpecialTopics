@@ -36,7 +36,7 @@ void AnalogJoystick::SetState(short x, short y) {
 		m_magnitude = RangeMapFloat( m_magnitude, m_minDeadZonePercent, m_maxDeadZonePercent, 0.f, 1.f);
 	}
 
-
+	m_positionCorrectedNormalized = Vector2::MakeDirectionAtDegrees( m_angleDegrees ) * m_magnitude;
 }
 
 

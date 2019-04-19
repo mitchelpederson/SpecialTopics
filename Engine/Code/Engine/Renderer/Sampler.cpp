@@ -61,7 +61,7 @@ void Sampler::SetSamplerMode( eSamplerModes mode ) {
 
 	switch (mode) {
 	case SAMPLER_NEAREST: 
-		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glSamplerParameteri( m_handle, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 		glSamplerParameteri( m_handle, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 		break;
 	case SAMPLER_LINEAR:

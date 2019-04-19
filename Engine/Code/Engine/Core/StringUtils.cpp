@@ -52,13 +52,18 @@ std::vector<std::string> SplitString( const std::string& toSplit, char delimiter
 	while (currentIndex < toSplit.size()) {
 		if (toSplit[currentIndex] == delimiter) {
 			tokens.push_back(toSplit.substr(previousDelimIndex, currentIndex - previousDelimIndex));
+			if ( tokens.back() == "" ) {
+				tokens.pop_back();
+			}
 			previousDelimIndex = currentIndex + 1;
 		}
 		currentIndex++;
 	}
 
-	tokens.push_back(toSplit.substr(previousDelimIndex, currentIndex - previousDelimIndex));
-	
+	std::string endToken = toSplit.substr(previousDelimIndex, currentIndex - previousDelimIndex);
+	if ( endToken.size() > 0 ) {
+		tokens.push_back( endToken );
+	}
 
 	return tokens;
 }

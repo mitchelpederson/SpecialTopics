@@ -19,6 +19,23 @@ ForwardRenderPath::ForwardRenderPath( Renderer* r ) : renderer( r ) {
 
 
 //----------------------------------------------------------------------------------------------------------------
+ForwardRenderPath::~ForwardRenderPath() {
+	delete m_effectCamera;
+	m_effectCamera = nullptr;
+
+	if ( m_bloomScratchTargetSrc != nullptr ) {
+		delete m_bloomScratchTargetSrc;
+		m_bloomScratchTargetSrc = nullptr;
+	}
+
+	if ( m_bloomScratchTargetDest != nullptr ) {
+		delete m_bloomScratchTargetDest;
+		m_bloomScratchTargetDest = nullptr;
+	}
+}
+
+
+//----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::Render( RenderSceneGraph* scene ) {
 	PROFILER_SCOPED_PUSH();
 	scene->SortCameras();
@@ -47,7 +64,7 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 	}
 
 	for ( ParticleEmitter* particleEmitter : scene->m_particleEmitters ) {
-		particleEmitter->PreRender( camera );
+		particleEmitter->PreRender( particleEmitter, camera );
 	}
 
 	std::vector<DrawCall> drawCalls;
@@ -69,7 +86,8 @@ void ForwardRenderPath::RenderSceneForCamera( Camera* camera, RenderSceneGraph* 
 		renderer->Draw( drawCall );
 	}
 
-	ApplyCameraEffects(camera);
+	ApplyBloom( camera );
+	ApplyCameraEffects( camera );
 }
 
 
@@ -85,8 +103,8 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 	Vector3 playerCamForward = currentCamera->m_cameraMatrix.GetForward();
 	Vector3 shadowCamPos = playerCamPos;
 
-	cam.SetProjection(Matrix44::MakeOrthographic(-32.f, 32.f, // left, right
-												 32.f, -32.f, // top, bottom
+	cam.SetProjection(Matrix44::MakeOrthographic(-24.f, 24.f, // left, right
+												 24.f, -24.f, // top, bottom
 												 50.f, -50.f)); // far, near
 
 	cam.transform.position = playerCamPos;
@@ -105,8 +123,10 @@ void ForwardRenderPath::RenderShadowCastingObjectsForLight( Light* light, Render
 	g_theRenderer->SetViewport(0, 0, light->m_shadowMapResolution.x, light->m_shadowMapResolution.y);
 	g_theRenderer->ClearDepth();
 	for (Renderable* r : scene->m_renderables) {
-		g_theRenderer->SetModelMatrix(r->GetModelMatrix());
-		g_theRenderer->DrawMesh(r->GetMesh());
+		if ( r->GetMesh() != nullptr ) {
+			g_theRenderer->SetModelMatrix(r->GetModelMatrix());
+			g_theRenderer->DrawMesh(r->GetMesh());
+		}
 	}
 	g_theRenderer->SetViewport(0, 0, Window::GetInstance()->GetWidth(), Window::GetInstance()->GetHeight());
 	g_theRenderer->UseTexture(8, *light->CreateOrGetShadowTexture());
@@ -224,6 +244,82 @@ void ForwardRenderPath::SortDrawCalls( std::vector<DrawCall>& drawCalls, Camera*
 }
 
 
+void ForwardRenderPath::ApplyBloom( Camera* camera ) {
+	PROFILER_SCOPED_PUSH();
+
+	if ( !camera->IsBloomEnabled() ) {
+		return;
+	}
+
+	float screenHalfWidth = Window::GetInstance()->GetWidth() * 0.5f;
+	float screenHalfHeight = Window::GetInstance()->GetHeight() * 0.5f;
+	Vector3 screenDimensions( screenHalfWidth * 2.f, screenHalfHeight * 2.f, 0.f );
+	AABB2 screenBounds = AABB2( -screenHalfWidth, -screenHalfHeight, screenHalfWidth, screenHalfHeight );
+
+	// We need to run the blur shader on our bloom target
+	Profiler::Push("bloom target creates");
+	if ( m_bloomScratchTargetSrc == nullptr ) {
+		m_bloomScratchTargetSrc = Texture::CreateDuplicateTarget( camera->m_frameBuffer->m_colorTarget );
+		m_bloomScratchTargetSrc->SetSamplerMode( SAMPLER_LINEAR );
+	}
+	if ( m_bloomScratchTargetDest == nullptr ) {
+		m_bloomScratchTargetDest = Texture::CreateDuplicateTarget( camera->m_frameBuffer->m_colorTarget );
+		m_bloomScratchTargetDest->SetSamplerMode( SAMPLER_LINEAR );
+	}
+
+	Texture* currentSourceTarget = m_bloomScratchTargetSrc;
+	Texture* currentDestinationTarget = m_bloomScratchTargetDest;
+	camera->m_frameBuffer->m_bloomTarget->SetSamplerMode( SAMPLER_LINEAR );
+	Profiler::Pop();
+
+	m_effectCamera->SetColorTarget( currentDestinationTarget );
+	renderer->SetCamera( m_effectCamera );
+	ClearBasedOnCameraOptions( m_effectCamera );
+
+	m_effectCamera->SetColorTarget( currentSourceTarget );
+	renderer->SetCamera( m_effectCamera );
+	ClearBasedOnCameraOptions( m_effectCamera );
+
+
+	// Draw the camera's bloom target to the effect source target
+	renderer->BindMaterial( renderer->GetMaterial("bloom-add") );
+	renderer->DrawTexturedAABB( screenBounds, *camera->m_frameBuffer->m_bloomTarget, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba());
+	
+	renderer->BindMaterial( renderer->GetMaterial("bloom-blur") );
+	renderer->SetUniform( "SCREEN_DIMENSIONS", &screenDimensions);
+	Vector3 dir( 1.f, 0.f, 0.f );
+	// Draw the bloom horizontally and vertically for however many times we defined in the .hpp
+	for ( int i = 0; i < BLOOM_PASSES; i++ ) {
+
+		// Set the current destination and refinalize the camera
+		m_effectCamera->SetColorTarget( currentDestinationTarget );
+		renderer->SetCamera( m_effectCamera );
+		
+		// Alternate vertical and horizontal blurring
+		if ( i % 2 == 0 ) {
+			dir = Vector3(1.f, 0.f, 0.f);
+		} else {
+			dir = Vector3(0.f, 1.f, 0.f);
+		}
+
+		// Blur the source targget onto the direction target
+		renderer->SetUniform( "blurDirection", &dir ); 
+		renderer->UseTexture( 3, *currentSourceTarget, renderer->GetSamplerForMode( SAMPLER_LINEAR ) );
+		renderer->DrawTexturedAABB( screenBounds, *currentSourceTarget, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba());
+
+		// swap!
+		std::swap( currentSourceTarget, currentDestinationTarget );
+	}
+	
+	renderer->BindMaterial( renderer->GetMaterial("bloom-add") );
+	m_effectCamera->SetColorTarget( camera->m_frameBuffer->m_colorTarget );
+	renderer->SetCamera( m_effectCamera );
+	renderer->DrawTexturedAABB(screenBounds, *currentSourceTarget, Vector2(0.f, 0.f), Vector2(1.f, 1.f), Rgba(255, 255, 255, 255));
+
+	renderer->SetCamera( camera );
+}
+
+
 //----------------------------------------------------------------------------------------------------------------
 void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 	PROFILER_SCOPED_PUSH();
@@ -253,10 +349,10 @@ void ForwardRenderPath::ApplyCameraEffects( Camera* camera ) {
 		std::swap(effectCurrentSourceTarget, effectCurrentDestTarget);
 	}
 
-
 	// We need to copy the effect camera's contents to the game camera
 	renderer->CopyFrameBuffer( camera->m_frameBuffer, m_effectCamera->m_frameBuffer );
 	renderer->SetCamera(camera);
+
 	// At the end, clean up
 	delete effectScratchTarget;
 	effectScratchTarget = nullptr;

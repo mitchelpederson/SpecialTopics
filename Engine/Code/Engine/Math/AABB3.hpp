@@ -12,8 +12,12 @@ public:
 	AABB3();
 	AABB3( const Vector3& mins, const Vector3& maxs );
 
+	Vector3 GetCenter() const;
+	Vector3 GetDimensions() const;
+
 	bool Contains( const Vector3& point ) const;
 	std::vector<RaycastHit3> DoesRayIntersect( const Ray3& ray ) const;
+	bool DoAABB3sOverlap( const AABB3& other ) const;
 
 	Plane GetFrontPlane() const;
 	Plane GetBackPlane() const;
@@ -21,6 +25,8 @@ public:
 	Plane GetRightPlane() const;
 	Plane GetTopPlane() const;
 	Plane GetBottomPlane() const;
+
+	Vector3 GetNearestPointOnSurface( const Vector3& outsidePoint );
 
 public:
 	Vector3 mins;

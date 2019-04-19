@@ -12,6 +12,8 @@ public:
 	Matrix44 GetParentToLocalMatrix() const;
 	Vector3 GetWorldLocation() const;
 	Vector3 GetWorldForward() const;
+	Vector3 GetWorldUp() const;
+	Vector3 GetWorldRight() const;
 
 	void Translate( const Vector3& translation );
 	void Rotate( const Vector3& rotationEuler );
@@ -26,9 +28,9 @@ public:
 
 	static Transform const IDENTITY;
 public:
-	Vector3 position;
-	Vector3 euler;
-	Vector3 scale;
+	Vector3 position = Vector3();
+	Vector3 euler = Vector3();
+	Vector3 scale = Vector3(1.f, 1.f, 1.f);
 
-	Transform* parent;
+	Transform* parent = nullptr;
 };

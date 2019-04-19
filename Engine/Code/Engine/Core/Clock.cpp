@@ -14,6 +14,7 @@ Clock::~Clock() {
 		delete m_children[i];
 		m_children[i] = nullptr;
 	}
+	m_parent->RemoveChild(this);
 }
 
 
@@ -44,7 +45,13 @@ void Clock::Advance( uint64_t const delta ) {
 
 	++m_frameCount;
 
-	uint64_t deltaModified = (uint64_t) ((double) delta * m_timeScale);
+	uint64_t deltaModified;
+	if ( m_timeScale == 1.0 ) {
+		deltaModified = delta;
+	} else {
+		deltaModified = (uint64_t) ((double) delta * m_timeScale);
+	}
+
 	if (m_paused) {
 		deltaModified = 0;
 	}
@@ -57,13 +64,26 @@ void Clock::Advance( uint64_t const delta ) {
 	frame.seconds = (float) frame.hp_seconds;
 
 	for (int i = 0; i < m_children.size(); i++) {
-		m_children[i]->Advance(deltaModified);
+		if ( m_children[i] != nullptr ) {
+			m_children[i]->Advance(deltaModified);
+		}
 	}
 }
 
 
 void Clock::AddChild( Clock *child ) {
 	m_children.push_back(child);
+}
+
+
+void Clock::RemoveChild( Clock* child ) {
+	for ( int i = 0; i < m_children.size(); i++ ){
+		if ( m_children[i] == child ) {
+			m_children[i] = m_children[m_children.size() - 1];
+			m_children.pop_back();
+			break;
+		}
+	}
 }
 
 

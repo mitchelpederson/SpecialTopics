@@ -42,7 +42,7 @@ void NetPacket::WriteMessage( NetMessage const& message ) {
 		headerSize = 1;
 	}
 
-	WriteValue<uint16_t>( message.GetMessageLength() + headerSize );
+	WriteValue<uint16_t>( (uint16_t) message.GetMessageLength() + headerSize );
 	WriteValue<uint8_t>( message.GetMessageIndex() );
 	if ( message.IsReliable() ) {
 		WriteValue<uint16_t>( message.GetReliableID() );

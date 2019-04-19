@@ -63,7 +63,8 @@ bool TCPSocket::Connect( NetAddress_T const& addr ) {
 
 		int errorCode = ::WSAGetLastError();
 		::closesocket( socketHandle );
-		ERROR_RECOVERABLE( "Could not connect in TCPSocket::Connect()" );
+		std::string errorMessage = Stringf( "Could not connect in TCPSocket::Connect(), connect result: %d, error: %d", connectResult, errorCode );
+		ERROR_RECOVERABLE( errorMessage );
 		return false;
 	}
 
@@ -105,7 +106,7 @@ bool TCPSocket::Listen( uint16_t port, unsigned int maxQueueSize ) {
 	size_t addrlen;
 	address.ToSockaddr( (sockaddr*) &saddr, &addrlen );
 
-	int bindResult = ::bind( socketHandle, (sockaddr*) &saddr, addrlen );
+	int bindResult = ::bind( socketHandle, (sockaddr*) &saddr, (int) addrlen );
 	if (bindResult == SOCKET_ERROR) {
 		::closesocket( socketHandle );
 		ERROR_RECOVERABLE( "Could not bind socket to host on in TestHost()" );

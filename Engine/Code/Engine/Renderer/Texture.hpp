@@ -35,6 +35,6 @@ protected:
 	IntVector2		m_dimensions;
 	eTextureFormat  m_format = TEXTURE_FORMAT_RGBA8;
 	bool			m_isCubemap = false;
-	eSamplerModes	m_sampleMode = SAMPLER_NEAREST_MIPMAP_LINEAR;
+	eSamplerModes	m_sampleMode = SAMPLER_NEAREST;
 
 };

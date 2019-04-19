@@ -38,7 +38,7 @@ const Vector2 CubicSpline2D::GetVelocity( int pointIndex ) const {
 
 
 Vector2 CubicSpline2D::EvaluateAtCumulativeParametric( float t ) const {
-	int splineStartIndex = (int) t;
+	int splineStartIndex = ClampInt( (int) t, 0, (int) m_positions.size() - 1 );
 	float fractionInSplineSegment = fmodf(t, 1.f);
 
 	return EvaluateCubicHermite(m_positions[splineStartIndex], m_velocities[splineStartIndex], m_positions[splineStartIndex + 1], m_velocities[splineStartIndex + 1], fractionInSplineSegment);
@@ -114,4 +114,6 @@ void CubicSpline2D::SetCardinalVelocities( float tension/* =0.f */, const Vector
 		m_velocities[velIndex] = (m_positions[velIndex + 1] - m_positions[velIndex - 1]) * 0.5f * (1.f - m_tension);
 	}
 }
+
+
 

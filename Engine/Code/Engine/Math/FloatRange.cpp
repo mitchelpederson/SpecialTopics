@@ -26,6 +26,11 @@ float FloatRange::GetRandomInRange() const {
 }
 
 
+float FloatRange::Evaluate( float percent ) const {
+	return Interpolate( min, max, percent );
+}
+
+
 bool DoRangesOverlap( const FloatRange& a, const FloatRange& b ) {
 
 	if (a.min >= b.min && a.min <= b.max) {

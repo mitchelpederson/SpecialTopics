@@ -1,0 +1,13 @@
+newmtl support02 Merged Material
+Ka 1.000000 1.000000 1.000000
+Kd 0.000000 0.000000 0.000000
+Ks 1.000000 1.000000 1.000000
+Ns 6.062867
+d 1.000000
+Tr 0.000000
+map_Kd support02 Merged Diffuse Texture0000.psd 
+map_D support02 Merged Opacity Texture.psd 
+map_Ks support02 Merged Specular Color Texture.psd 
+adobe_map_Normal support02 Merged Normal Texture0000.psd 
+adobe_map_Shininess support02 Merged Shininess Texture0000.psd 
+

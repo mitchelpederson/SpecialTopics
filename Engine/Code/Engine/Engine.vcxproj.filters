@@ -35,6 +35,15 @@
     <Filter Include="Net">
       <UniqueIdentifier>{4a1cc5d2-c7a4-40a8-ae8f-d3673a1ffe59}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Net\NetObject">
+      <UniqueIdentifier>{b25d7978-e7c1-4ce5-aef2-6cb72918d010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Async">
+      <UniqueIdentifier>{1c1656b7-8229-4a91-ad61-d0678fc1a5eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Renderer\Particles">
+      <UniqueIdentifier>{ea9198a8-80a5-435e-855c-bafb2957806b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector2.cpp">
@@ -271,9 +280,6 @@
     <ClCompile Include="Profiler\ProfilerWindow.cpp">
       <Filter>Profiler</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Threads.cpp">
-      <Filter>General</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Logger.cpp">
       <Filter>General</Filter>
     </ClCompile>
@@ -322,6 +328,21 @@
     <ClCompile Include="Net\TrackedPacket.cpp">
       <Filter>Net</Filter>
     </ClCompile>
+    <ClCompile Include="Net\NetObjectSystem.cpp">
+      <Filter>Net</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\IntVector3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\TextBox.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Async\Threads.cpp">
+      <Filter>Async</Filter>
+    </ClCompile>
+    <ClCompile Include="Async\JobSystem.cpp">
+      <Filter>Async</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\Vector2.hpp">
@@ -359,9 +380,6 @@
     </ClInclude>
     <ClInclude Include="Math\IntVector2.hpp">
       <Filter>Math</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Entity.hpp">
-      <Filter>General</Filter>
     </ClInclude>
     <ClInclude Include="Renderer\Texture.hpp">
       <Filter>Renderer</Filter>
@@ -603,9 +621,6 @@
     <ClInclude Include="Profiler\ProfilerWindow.hpp">
       <Filter>Profiler</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Threads.hpp">
-      <Filter>General</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Logger.hpp">
       <Filter>General</Filter>
     </ClInclude>
@@ -659,6 +674,36 @@
     </ClInclude>
     <ClInclude Include="Net\TrackedPacket.hpp">
       <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Net\NetObjectSystem.hpp">
+      <Filter>Net</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\IntVector3.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\TextBox.hpp">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\JobSystem.hpp">
+      <Filter>Async</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\Threads.hpp">
+      <Filter>Async</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\ThreadSafeQueue.hpp">
+      <Filter>Async</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\Job.hpp">
+      <Filter>Async</Filter>
+    </ClInclude>
+    <ClInclude Include="Async\ThreadSafeMap.hpp">
+      <Filter>Async</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles\ParticleSystemDefinition.hpp">
+      <Filter>Renderer\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles\ParticleEmitterDefinition.hpp">
+      <Filter>Renderer\Particles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

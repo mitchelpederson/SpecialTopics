@@ -29,6 +29,8 @@ Vector3	PolarToCartesian3D( float radius, float theta, float phi );
 
 
 	// Round, Clamp and Range Mapping
+bool	IsFloatNearlyZero( float value );
+bool	AreFloatsNearlyEqual( float a, float b );
 int		RoundToNearestInt( float inValue );
 int		ClampInt( int value, int min, int max );
 float	ClampFloat( float value, float min, float max );
@@ -74,9 +76,10 @@ float	SmoothStep3( float t ); // 3rd-degree smooth start/stop (a.k.a. “smoothste
 
 // Cyclic
 template <typename T>
-bool CyclicLess( T a, T b ) {
+bool CyclicLess( const T& a, const T& b ) {
 	T diff = b - a;
-	T check = (~T(0));
+	T check =  T(0);
+	check = ~check;
 	check = check >> 1;
 	if ( diff < check ) {
 		return true;
